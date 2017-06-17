@@ -59,6 +59,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             '/careeradvisory/templates',
+            '/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
