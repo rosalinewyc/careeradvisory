@@ -1,0 +1,84 @@
+{% load static %}
+{% block bar %}
+    {% include "ajaxpost.html" %}
+{% endblock %}
+<style>
+    .homepage-nav{
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card card-container">
+        <a class="navbar-brand" style="color: #333; text-align: center" href="#"><img src="{% static 'img/ngeeann-logo.png' %}" alt="" style="display: inline-block; height: 30px;">Career Advisory</a>
+        <hr/>
+
+            <form class="form-signin" method="post" action="/authenticate/">
+                {% csrf_token %}
+                <span id="reauth-email" class="reauth-email"> </span>
+                <p class="input_title">Email</p>
+
+                <input type="text" id="username_input" name="username_input" class="login_box" placeholder="user@np.com" required autofocus>
+
+                <p class="input_title">Password</p>
+
+                <input type="password" id="password_input" name="password_input" class="login_box" placeholder="******" required>
+
+                <button class="btn btn-lg btn-primary" type="submit" id="loginBtn" name="loginBtn">Login</button>
+            </form><!-- /form -->
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+</body>
+
+</html>
+
+{% load static %}
+<script src="{% static 'js/ajaxpost.js' %}"></script>
+<script>
+    $("#loginBtn").click(function (event) {
+        event.preventDefault();
+        var dataString = '&username=' + $("#username_input").val() + '&password=' + $("#password_input").val();
+        $.ajax({
+            type: 'POST',
+            url: '/authenticate/',
+            dataType: 'json',
+            data: dataString,
+            success: function(data) {
+                alert('Login Success!')
+                if (data.status == 'success') {
+                    var role = '{{ request.session.role }}';
+                    if (role == 1) {
+                        //Redirect to Student's profile page
+                        window.location.href = "/profile/";
+                    }
+                    if (role == 3) {
+                        //Redirect to Admin's index page
+                        window.location.href = "/bootstrap/";
+                    }
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function(xhr) {
+                alert(xhr);
+            }
+        });
+        return false;
+    });
+</script>

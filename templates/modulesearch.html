@@ -1,0 +1,63 @@
+{% block bar %}
+   {% include "base.html" %}
+{% endblock %}
+
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/modulesearch-css.css' %}"/>
+        <script src="{% static 'js/modulesearch-js.js' %}"/>
+        <script src="{% static 'js/jquery.dataTables.js' %}"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="todolist not-done">
+                        <h1>Module Search</h1>
+                        <div class="input-group">
+                          <input type="text" class="form-control add-todo" placeholder="Add modules to planner">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary searchbutton">Search</button>
+                          </span>
+                        </div>
+                        <hr>
+                        <ul id="sortable" class="list-unstyled">
+                            <li class="ui-state-default">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" />Java Language</label>
+                                </div>
+                            </li>
+                            <li class="ui-state-default">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" />Enterprise Solutions</label>
+                                </div>
+                            </li>
+                            <li class="ui-state-default">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" />Cloud Computing</label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="todo-footer">
+                            <strong><span class="count-todos"></span></strong> Items Left
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12" style="text-align:right; padding-top:40px">
+                <a class="btn btn-primary" href="#">Save <span class="glyphicon glyphicon-chevron-right"></span></a>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#dataTables-example').dataTable();
+    });
+</script>

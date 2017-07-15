@@ -1,0 +1,187 @@
+body {
+    background: url('../img/bg.png') repeat;
+}
+
+.homepage-nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    color: #fff;
+}
+
+.intro-header {
+    background-color: #777777;
+    background: no-repeat center center;
+    background-attachment: scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    margin-bottom: 50px;
+}
+
+.intro-header .site-heading{
+    padding: 100px 0 50px;
+    color: white;
+}
+
+@media only screen and (min-width: 768px) {
+    .intro-header{
+        padding: 150px 0;
+    }
+
+    .intro-header .site-heading,
+    .intro-header .page-heading {
+        text-align: center;
+    }
+}
+
+.thumbnail > img,
+.thumbnail a > img,
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+.img-rounded {
+    border-radius: 6px;
+}
+.img-thumbnail {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.feature_card {
+    margin-bottom: 30px;
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+caption_featurecard {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: #777;
+    text-align: left;
+}
+
+.row featurerow{
+    padding: 10px 10px 10px 10px;
+}
+
+.sign-with {
+    margin-top: 25px;
+    padding: 20px;
+}
+div#OR {
+    height: 30px;
+    width: 30px;
+    border: 1px solid #C2C2C2;
+    border-radius: 50%;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+    font-size: 12px;
+    float: right;
+    position: absolute;
+    right: -16px;
+    top: 40%;
+    z-index: 1;
+    background: #DFDFDF;
+}
+
+.navbar_button{
+    position: relative;
+    display: block;
+    text-align: -webkit-match-parent;
+    background-color: #84CEEB;
+    color: #ffffff;
+}
+
+
+
+footer {
+    position:fixed;
+    width:100%;
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    bottom:0px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.control-label{
+    color:#000000;
+}
+
+.whitetext{
+    color:#ffffff;
+}
+
+.navlogin{
+    padding-top:10px;
+    padding-right:10px;
+}
+
+.logincontainer{
+    margin:0 auto;
+    width: 500px;
+    padding-top: 10%;
+}
+
+.gradientDiv {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#5ab9ea+1,54a3ee+50,3690f0+65,1e69de+100 */
+    background: rgb(90, 185, 234); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(90, 185, 234, 1) 1%, rgba(84, 163, 238, 1) 50%, rgba(54, 144, 240, 1) 65%, rgba(30, 105, 222, 1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(90, 185, 234, 1) 1%, rgba(84, 163, 238, 1) 50%, rgba(54, 144, 240, 1) 65%, rgba(30, 105, 222, 1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(90, 185, 234, 1) 1%, rgba(84, 163, 238, 1) 50%, rgba(54, 144, 240, 1) 65%, rgba(30, 105, 222, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5ab9ea', endColorstr='#1e69de', GradientType=0); /* IE6-9 */
+}
+
+.gradientNav{
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#c3c3c3+0,7c7c7c+100,bdbdbe+100 */
+    background: #30566e;
+    border-bottom: #0090d9 solid 5px;
+}
+
+.site-heading{
+    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+             0px 8px 13px rgba(0,0,0,0.1),
+             0px 18px 23px rgba(0,0,0,0.1);
+}
+.subheading{
+    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+             0px 8px 13px rgba(0,0,0,0.1),
+             0px 18px 23px rgba(0,0,0,0.1);
+}
+
+.small{
+    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+             0px 8px 13px rgba(0,0,0,0.1),
+             0px 18px 23px rgba(0,0,0,0.1);
+}
+
+.todolist{
+    background-color:#FFF;
+    padding:20px 20px 10px 20px;
+    margin-top:30px;
+}

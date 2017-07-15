@@ -1,0 +1,93 @@
+{% load static %}
+{% block bar %}
+    {% include "base.html" %}
+{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% url 'login' as login %}
+    {% url 'recommendjob' as recommendjob %}
+    {% url 'modulesearch' as modulesearch %}
+    {% url 'courseplanner' as courseplanner %}
+    {% url 'userprofile' as userprofile %}
+</head>
+
+<body>
+<header class="intro-header" style="background-image: url('{% static 'img/fog2.jpg' %}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>Find jobs and other opportunities at NP's Career Advisory today!</h1>
+                    <hr class="small">
+                    <span class="subheading">A Platform that Brings You Closer to the Jobs You Wish To Explore</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Title -->
+    <div class="row featurerow">
+        <div class="col-lg-12">
+            <h3>Latest Features</h3>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <!-- Page Features -->
+    <div class="row featurerow text-center">
+
+        <div class="col-md-4 col-sm-6 feature_card">
+            <div class="thumbnail">
+                <img src="{% static 'img/lookout.jpg' %}" alt="">
+                <div class="caption_featurecard">
+                    <h3>Explore for jobs of your interest</h3>
+                    <p>Real-time job offers available here</p>
+                    <p>
+                        <a href="recommendjob" class="btn btn-primary">Explore</a> <a href="recommendjob" class="btn btn-default">More
+                        Info</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6 feature_card">
+            <div class="thumbnail">
+                <img src="{% static 'img/coursemap.jpg' %}" alt="">
+                <div class="caption_featurecard">
+                    <h3>Module Recommendation</h3>
+                    <p>Bringing you closer to jobs you dream to explore</p>
+                    <p>
+                        <a href="modulesearch" class="btn btn-primary">Explore</a> <a href="modulesearch" class="btn btn-default">More
+                        Info</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6 feature_card">
+            <div class="thumbnail">
+                <img src="{% static 'img/collaborate.jpg' %}" alt="">
+                <div class="caption_featurecard">
+                    <h3>Find out your personality</h3>
+                    <p>Find out more about yourself and your working style</p>
+                    <p>
+                        <a href="#" class="btn btn-primary">Explore</a> <a href="#" class="btn btn-default">More
+                        Info</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div><!-- /.container -->
+<!-- /.row -->
+</div><!-- /.container-fluid -->
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+</html>

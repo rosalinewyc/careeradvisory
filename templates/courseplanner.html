@@ -1,0 +1,69 @@
+{% block bar %}
+   {% include "base.html" %}
+{% endblock %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/courseplanner-css.css' %}"/>
+
+    </head>
+    <body>
+    <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="todolist">
+                        <h1>Course Planner</h1>
+                        <div>
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#">Year 1 Term 1</a></li>
+                            <li><a href="#">Year 1 T2</a></li>
+                            <li><a href="#">Year 2 T1</a></li>
+                            <li><a href="#">Year 2 T2</a></li>
+                            <li><a href="#">Year 3 T1</a></li>
+                            <li><a href="#">Year 3 T2</a></li>
+                        </ul>
+                            <button class="btn-block btn-primary" style="right:0px; height:50px;"> Click to add modules </button>
+                        </div>
+
+                        <div id="table" class="table-editable">
+
+                            <table class="table">
+                                <tr>
+                                    <th>Course code</th>
+                                    <th>Course Name</th>
+                                    <th>Instructor</th>
+                                    <th>Status</th>
+                                </tr>
+                                <tr>
+                                    <td contenteditable="true">Intro to Python</td>
+                                    <td contenteditable="true">IS100</td>
+                                    <td contenteditable="true">Mark Otto</td>
+                                    <td contenteditable="true">Not completed</td>
+                                    <td>
+                                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                                    </td>
+                                </tr>
+                                <!-- This is our clonable table line -->
+                                <tr class="hide">
+                                    <td contenteditable="true">Intro to Information Systems</td>
+                                    <td contenteditable="true">IS103</td>
+                                    <td contenteditable="true">Jacob Thornton</td>
+                                    <td contenteditable="true">Not completed</td>
+                                    <td>
+                                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="text-align:right">
+                        <button id="export-btn" class="btn btn-primary" >Save changes</button>
+                        <p id="export"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
