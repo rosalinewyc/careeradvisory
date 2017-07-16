@@ -1,8 +1,12 @@
 import json
+import csv
+import io
+from zipfile import *
+from django.core import serializers
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
+from django.views.decorators import csrf
 from app.models import *
-from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -11,26 +15,6 @@ def index(request):
 
 def login(request):
     return render(request, 'login.html', {})
-
-
-def adminbootstrap(request):
-    return render(request, 'adminbootstrap.html', {})
-
-
-def courseplanner(request):
-    return render(request, 'courseplanner.html', {})
-
-
-def recommendjob(request):
-    return render(request, 'recommendjob.html', {})
-
-
-def modulesearch(request):
-    return render(request, 'modulesearch.html', {})
-
-
-def userprofile(request):
-    return render(request, 'userprofile.html', {})
 
 
 def authenticate(request):
@@ -74,3 +58,96 @@ def logout(request):
         response['message'] = 'Sign Out failed. Please try again.'
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+# Admin
+def admin_index(request):
+    return render(request, './admin/index.html', {})
+
+
+def admin_bootstrap(request):
+    response = {}
+    error_message =[]
+
+    if request.method == 'POST':
+        if len(request.content_type) != 0:
+            # Retrieve uploaded file and token
+            token = csrf.get_token(request)
+            try:
+                file_uploaded = request.FILES['bootstrap_input']
+            except KeyError:
+                error_message.append("No file selected")
+
+            if len(error_message) == 0:
+                # Validate token and file
+                if len(token) != 0 and is_zipfile(file_uploaded):
+                    # Read the ZIP file
+                    with ZipFile(file_uploaded, 'r') as z_file:
+                        files_hash = {}
+                        key_files_hash = files_hash.keys()
+
+                        z_list = z_file.namelist()
+                        if len(z_list) != 0:
+                            # Proceed to clear database
+                            clear_database()
+
+                            # Get files listing
+                            for listing in z_list:
+                                # Insert into hash according to database schema and its constraints
+                                if listing == 'user.csv':
+                                    files_hash['1'] = 'user.csv'
+
+                            if '1' in key_files_hash:
+                                with z_file.open('user.csv', 'r') as csvfile:
+                                    csvfile = io.TextIOWrapper(csvfile)
+                                    contents = csv.reader(csvfile)
+                                    for row in contents:
+                                        if len(row) != 0 and row[0].lower() != 'userid':
+                                            new_user = User(user_id=row[0], password=row[1], role=row[2])
+                                            User.save(new_user)
+                            else:
+                                error_message.append("user.csv is needed")
+
+                            if len(error_message) != 0:
+                                # Proceed to next table insertion
+                                print("Proceed!")
+                        else:
+                            error_message.append("Empty file")
+
+                else:
+                    if len(token) == 0:
+                        error_message.append("Invalid token")
+                    if is_zipfile(file_uploaded) is False:
+                        error_message.append("Non ZIP file format")
+        else:
+            error_message.append("Invalid Content Type")
+
+    if len(error_message) == 0:
+        response['status'] = 'success'
+        response['message'] = 'Database updated'
+    else:
+        response['status'] = 'fail'
+        response['message'] = error_message
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def clear_database():
+    User.objects.all().exclude(user_id='admin').delete()
+
+
+# Student
+def courseplanner(request):
+    return render(request, 'courseplanner.html', {})
+
+
+def recommendjob(request):
+    return render(request, 'recommendjob.html', {})
+
+
+def modulesearch(request):
+    return render(request, 'modulesearch.html', {})
+
+
+def userprofile(request):
+    return render(request, 'userprofile.html', {})
