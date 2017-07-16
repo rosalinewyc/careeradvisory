@@ -1,15 +1,7 @@
 {% block bar %}
    {% include "base.html" %}
 {% endblock %}
-
 <html>
-<head>
-    <link rel="stylesheet" type="text/css"
-      href="https://cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
-    <script type="text/javascript"
-        src="https://cdn.datatables.net/r/bs-3.3.5/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
-
-</head>
 <body>
 <div id="">
     <div class="container-fluid todolist" style="margin: 20px 60px 40px 40px">
@@ -80,8 +72,7 @@
 
                 <br>
                 <div class="row">
-                    <table class="table table-bordered table-responsive" id="loaded-rows" class="display"
-                           cellspacing="5px" width="100%">
+                    <table class="table table-bordered table-responsive" id="loaded-rows" class="display" cellspacing="5px" width="100%">
                         <thead>
                         <tr>
                             <th>Name</th>

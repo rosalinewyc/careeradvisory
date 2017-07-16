@@ -62,10 +62,11 @@
             success: function(data) {
                 alert('Login Success!')
                 if (data.status == 'success') {
+                    location.reload();
                     var role = '{{ request.session.role }}';
                     if (role == 1) {
                         //Redirect to Student's profile page
-                        window.location.href = "/profile/";
+                        window.location.href = "/";
                     }
                     if (role == 3) {
                         //Redirect to Admin's index page

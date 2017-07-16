@@ -15,6 +15,8 @@ def check_session(request):
 
 def index(request):
     if check_session(request) is not None:
+        if request.session.get('role') is 3:
+            return render(request, './admin/index.html')
         return render(request, 'index.html')
     return render(request, 'login.html')
 
@@ -69,7 +71,15 @@ def logout(request):
 
 # Admin
 def admin_index(request):
-    return render(request, './admin/index.html', {})
+    print(request.session.get('role'))
+    if check_session(request) is not None:
+        if request.session.get('role') is 3:
+            return render(request, './admin/index.html')
+
+        if request.session.get('role') is not 3:
+            return render(request, 'index.html')
+
+    return render(request, 'login.html')
 
 
 def admin_bootstrap(request):
@@ -147,16 +157,24 @@ def clear_database(request):
 
 # Student
 def courseplanner(request):
-    return render(request, 'courseplanner.html', {})
+    if check_session(request) is not None:
+        return render(request, 'courseplanner.html')
+    return render(request, 'login.html')
 
 
 def recommendjob(request):
-    return render(request, 'recommendjob.html', {})
+    if check_session(request) is not None:
+        return render(request, 'recommendjob.html')
+    return render(request, 'login.html')
 
 
 def modulesearch(request):
-    return render(request, 'modulesearch.html', {})
+    if check_session(request) is not None:
+        return render(request, 'modulesearch.html')
+    return render(request, 'login.html')
 
 
 def userprofile(request):
-    return render(request, 'userprofile.html', {})
+    if check_session(request) is not None:
+        return render(request, 'userprofile.html')
+    return render(request, 'login.html')
