@@ -9,8 +9,14 @@ from django.views.decorators import csrf
 from app.models import *
 
 
+def check_session(request):
+    return request.session.get('user', None)
+
+
 def index(request):
-    return render(request, 'index.html')
+    if check_session(request) is not None:
+        return render(request, 'index.html')
+    return render(request, 'login.html')
 
 
 def login(request):
@@ -36,8 +42,8 @@ def authenticate(request):
             response['status'] = 'fail'
             response['message'] = 'No such user!'
 
-        #print("Debug 1:" + str(username_input))
-        #print("Debug 2:" + str(password_input))
+        # print("Debug 1:" + str(username_input))
+        # print("Debug 2:" + str(password_input))
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
@@ -47,6 +53,7 @@ def logout(request):
     if request.method == 'POST':
         del request.session['user']
         del request.session['role']
+        request.session.flush()
 
     session_user = request.session.get('user', None)
     session_role = request.session.get('role', None)
@@ -89,7 +96,7 @@ def admin_bootstrap(request):
                         z_list = z_file.namelist()
                         if len(z_list) != 0:
                             # Proceed to clear database
-                            clear_database()
+                            clear_database(request)
 
                             # Get files listing
                             for listing in z_list:
@@ -132,8 +139,10 @@ def admin_bootstrap(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def clear_database():
-    User.objects.all().exclude(user_id='admin').delete()
+def clear_database(request):
+    session_user = request.session.get('user', None)
+    if session_user is not None:
+        User.objects.all().exclude(user_id=session_user).delete()
 
 
 # Student
