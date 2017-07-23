@@ -8,7 +8,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 body{
 	padding:0;
 	margin:0;
-	background:#FFF;
+	background: url('../img/bg.png') repeat;
 }
 body a{
     transition:0.5s all;
@@ -283,7 +283,7 @@ img.img-responsive {
     margin: auto;
 }
 .mydetails , .myskills {
-	background-color: #e8e8e8;
+	background-color: #ffffff;
 }
 .mydetails {
 	padding:6.3em 0;

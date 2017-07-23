@@ -16,4 +16,7 @@ urlpatterns = [
     url(r'^recommendjob/$', views.recommendjob, name='recommendjob'),
     url(r'^modulesearch/$', views.modulesearch, name='modulesearch'),
     url(r'^userprofile/$', views.userprofile, name='userprofile'),
+    url(r'^personalinterest/$', views.personalinterest, name='personalinterest'),
+    url(r'^transitionjobpage/$', views.transitionjobpage, name='transitionjobpage'),
+    url(r'^courserequirement/$', views.courserequirement, name='courserequirement'),
 ]

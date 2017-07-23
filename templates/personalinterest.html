@@ -1,0 +1,89 @@
+{% block bar %}
+    {% include "base.html" %}
+{% endblock %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/personalinterest.css' %}"/>
+    <script src={% static 'js/personalinterest-js.js' %}></script>
+
+</head>
+<body>
+<header class="intro-header">
+    <div class="transbox"></div>
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <h1 style="color:white;text-align: center;text-shadow: #d3d3d3 0px 0px 1px;">Find Your Own Interest!</h1>
+            <hr class="small">
+            <span class="subheading" style="text-shadow: none!important;">
+                <div class="row">
+                <div class="col-md-5 col-sm-5 col-xs-12 gutter">
+                    <div class="subcat">
+                        <h2>Industry</h2>
+
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span>Field:</span> Finance
+                                <i class="col-md-1  glyphicon glyphicon-chevron-down" style="float:right;"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="#">Engineering</a>
+                                <a href="#">Health Science</a>
+                                <a href="#">Business & Accountancy</a>
+                                <a href="#">Media</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 gutter">
+                    <div class="subcat">
+                        <h2>Subcategory</h2>
+                        <div class="btn-group col-lg-8 col-md-8 col-sm-8">
+                            <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span>Specialization:</span> Trading
+                                <i class="col-md-1  glyphicon glyphicon-chevron-down" style="float:right;"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="#">Credit and Marketing</a>
+                                <a href="#">Corporate finance</a>
+                                <a href="#">Wealth Management</a>
+                                <a href="#">Investment</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="col-lg-7 col-md-7 col-sm-7" style="padding: 15px 0 15px 0;">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="offcanvas"
+                                    data-target="#side-menu" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+                    <div class="searchInterest">
+                        <input type="text" placeholder="Search based on keywords"><button class="btn btn-primary btn-lg" style="float:right;margin-right:15px;width:15%;">Search</button>
+                    </div>
+            </span>
+        </div>
+    </div>
+
+
+
+</header>
+
+</body>
+</html>
+
+{% load static %}
+<script src="{% static 'js/ajaxpost.js' %}"></script>

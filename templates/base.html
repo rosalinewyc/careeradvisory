@@ -17,6 +17,9 @@
     {% url 'courseplanner' as courseplanner %}
     {% url 'admin_index' as admin_index %}
     {% url 'userprofile' as userprofile %}
+    {% url 'transitionjobpage' as transitionjobpage %}
+    {% url 'courserequirement' as courserequirement %}
+    {% url 'personalinterest' as personalinterest %}
     {% url 'logout' as logout %}
 
 <nav class="navbar-static-top homepage-nav gradientNav">
@@ -30,20 +33,38 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" style="color: #fff; margin-top: -5px;" href="#"><img src="{% static 'img/np-white.png' %}" alt="" style="display: inline-block; height: 30px;">   Career Advisory</a>
+            <a class="navbar-brand" style="color: #fff; margin-top: -5px;" href="/"><img src="{% static 'img/np-white.png' %}" alt="" style="display: inline-block; height: 30px;">   Career Advisory</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-left">
+                {% if request.session.role == 1 %}
                 <li><a href="{{ recommendjob }}" class="whitetext">Jobs</a></li>
-                <li><a href="{{ courseplanner }}" class="whitetext">Course Guidance</a></li>
+                <li><a href="{{ personalinterest }}" class="whitetext">Personal Interest</a></li>
+                {%  endif %}
+
+                {% if request.session.role == 3 %}
                 <li><a href="{{ admin_index }}" class="whitetext">Account</a></li>
+                {% endif %}
+
+                {% if request.session.role == 1 %}
+                <li class="dropdown" style="color: #fff;">
+                    <a href="#" class="dropdown-toggle whitetext" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false"> Course Guidance<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ courseplanner }}">Course Planner</a></li>
+                        <li><a href="{{ courserequirement }}">Course Requirement</a></li>
+                        <li><a href="{{ modulesearch }}">Module Search</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="{{ login }}" class="whitetext">
-                      Login</a></li>
-
+            {% if request.session == None %}
+              <li><a href="{{ login }}" class="whitetext">Login</a></li>
+            {% else %}
                 <!--Only appear when signed in as user-->
                 <li class="dropdown" style="color: #fff;">
                     <a href="#" class="dropdown-toggle whitetext" data-toggle="dropdown" role="button"
@@ -55,6 +76,7 @@
                     </ul>
                 </li>
             </ul>
+            {% endif %}
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav><!-- End of Nav Bar -->

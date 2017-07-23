@@ -1,0 +1,77 @@
+{% block bar %}
+   {% include "base.html" %}
+{% endblock %}
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/courserequirement-css.css' %}"/>
+    <script src={% static 'js/courserequirement-js.js' %}></script>
+</head>
+<body>
+<div class="container todolist">
+    <h2>Course Requirements in School Of IT</h2>
+    <p>These are the required modules to be taken in NP.</p>
+	<div class="row col-list">
+		<div class="col-md-4 t1">
+			<div class="col-head text-center">
+				<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+				<h2>Year 1 Required Modules</h2>
+			</div>
+			<ul class="list-unstyled">
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS200 Intro to Java</p>
+	         </li>
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS201 Object Oriented Analysis & Design</p>
+	         </li>
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS202 Database Management</p>
+	         </li>
+			</ul>
+		</div>
+		<div class="col-md-4 t2">
+			<div class="col-head text-center">
+				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+				<h2>Year 2 Required Modules</h2>
+			</div>
+			<ul class="list-unstyled">
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS203 Software Engineer</p>
+	         </li>
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS303 Infocomm Security</p>
+	         </li>
+			</ul>
+		</div>
+		<div class="col-md-4 t3">
+			<div class="col-head text-center">
+				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+				<h2>Year 3 Required Modules</h2>
+			</div>
+			<ul class="list-unstyled">
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS343 Enterprise Integration</p>
+	         </li>
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS430 Enterprise Web Solutions</p>
+	         </li>
+	         <li>
+	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS435 Visual Analytics</p>
+	         </li>
+			</ul>
+		</div>
+	</div>
+  	<hr />
+  	<div class="text-right">
+
+		<!-- Button trigger modal -->
+		<button type="button" id="btn-reset" class="btn btn-primary btn-lg">
+		  Back
+		</button>
+    </div>
+</div>
+</body>
+</html>
+
+{% load static %}
+<script src="{% static 'js/ajaxpost.js' %}"></script>

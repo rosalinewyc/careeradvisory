@@ -178,3 +178,21 @@ def userprofile(request):
     if check_session(request) is not None:
         return render(request, 'userprofile.html')
     return render(request, 'login.html')
+
+
+def personalinterest(request):
+    if check_session(request) is not None:
+        return render(request, 'personalinterest.html')
+    return render(request, 'login.html')
+
+
+def transitionjobpage(request):
+    if check_session(request) is not None:
+        return render(request, 'transitionjobpage.html')
+    return render(request, 'login.html')
+
+
+def courserequirement(request):
+    if check_session(request) is not None:
+        return render(request, 'courserequirement.html')
+    return render(request, 'login.html')
