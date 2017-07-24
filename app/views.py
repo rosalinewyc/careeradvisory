@@ -71,7 +71,6 @@ def logout(request):
 
 # Admin
 def admin_index(request):
-    print(request.session.get('role'))
     if check_session(request) is not None:
         if request.session.get('role') is 3:
             return render(request, './admin/index.html')
@@ -85,6 +84,8 @@ def admin_index(request):
 def admin_bootstrap(request):
     response = {}
     error_message =[]
+    duplicate_error_message = {}
+    validation_error_message = {}
 
     if request.method == 'POST':
         if len(request.content_type) != 0:
@@ -100,37 +101,183 @@ def admin_bootstrap(request):
                 if len(token) != 0 and is_zipfile(file_uploaded):
                     # Read the ZIP file
                     with ZipFile(file_uploaded, 'r') as z_file:
+                        file_array = []
                         files_hash = {}
                         key_files_hash = files_hash.keys()
 
                         z_list = z_file.namelist()
+                        z_list = sorted(z_list)
                         if len(z_list) != 0:
                             # Proceed to clear database
-                            clear_database(request)
+                            # clear_database(request)
 
                             # Get files listing
                             for listing in z_list:
                                 # Insert into hash according to database schema and its constraints
                                 if listing == 'user.csv':
-                                    files_hash['1'] = 'user.csv'
+                                    files_hash['1'] = listing
+                                if listing == 'course.csv':
+                                    files_hash['2'] = listing
+                                if listing == 'student.csv':
+                                    files_hash['3'] = listing
+                                if listing == 'module.csv':
+                                    files_hash['4'] = listing
+                                if listing == 'prerequisite.csv':
+                                    files_hash['5'] = listing
+                                if listing == 'coursemapping.csv':
+                                    files_hash['6'] = listing
+                                if listing == 'coursespecialization.csv':
+                                    files_hash['7'] = listing
+                                if listing == 'mbti.csv':
+                                    files_hash['8'] = listing
+                                if listing == 'jobcategory.csv':
+                                    files_hash['9'] = listing
+                                if listing == 'interestsector.csv':
+                                    files_hash['10'] = listing
 
-                            if '1' in key_files_hash:
-                                with z_file.open('user.csv', 'r') as csvfile:
-                                    csvfile = io.TextIOWrapper(csvfile)
-                                    contents = csv.reader(csvfile)
-                                    for row in contents:
-                                        if len(row) != 0 and row[0].lower() != 'userid':
-                                            new_user = User(user_id=row[0], password=row[1], role=row[2])
-                                            User.save(new_user)
-                            else:
-                                error_message.append("user.csv is needed")
+                            if '3' in key_files_hash:
+                                # Check for user.csv
+                                if '1' not in key_files_hash:
+                                    error_message.append("Missing: user.csv")
 
-                            if len(error_message) != 0:
-                                # Proceed to next table insertion
-                                print("Proceed!")
+                                # Check if course table is empty in database
+                                if check_table(Course) is None and '2' not in key_files_hash:
+                                    error_message.append("Missing: course.csv")
+
+                            # if '1' not in key_files_hash:
+                            #     error_message.append("Missing: user.csv")
+                            # if '2' not in key_files_hash:
+                            #     error_message.append("Missing: course.csv")
+                            # if '3' not in key_files_hash:
+                            #     error_message.append("Missing: student.csv")
+                            # if '4' not in key_files_hash:
+                            #     error_message.append("Missing: module.csv")
+                            # if '5' not in key_files_hash:
+                            #     error_message.append("Missing: prerequisite.csv")
+
+                            if len(error_message) == 0:
+                                for key in sorted(files_hash.keys()):
+                                    file = files_hash[key]
+
+                                    # Bootstrap [user.csv]
+                                    if file == 'user.csv':
+                                        status = bootstrap_user(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [course.csv]
+                                    if file == 'course.csv':
+                                        clear_database(Course)
+                                        status = bootstrap_course(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [student.csv]
+                                    if file == 'student.csv':
+                                        status = bootstrap_student(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [module.csv]
+                                    if file == 'module.csv':
+                                        clear_database(Module)
+                                        status = bootstrap_module(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [prerequisite.csv]
+                                    if file == 'prerequisite.csv':
+                                        clear_database(Prerequisite)
+                                        status = bootstrap_prerequisite(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [coursemapping.csv]
+                                    if file == 'coursemapping.csv':
+                                        clear_database(CourseMapping)
+                                        status = bootstrap_course_mapping(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [coursespecialization.csv]
+                                    if file == 'coursespecialization.csv':
+                                        clear_database(CourseSpecialization)
+                                        status = bootstrap_course_specialization(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [mbti.csv]
+                                    if file == 'mbti.csv':
+                                        clear_database(Mbti)
+                                        status = bootstrap_mbti(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [jobcategory.csv]
+                                    if file == 'jobcategory.csv':
+                                        clear_database(JobCategory)
+                                        status = bootstrap_jobcategory(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [interestsector.csv]
+                                    if file == 'interestsector.csv':
+                                        clear_database(InterestSector)
+                                        status = bootstrap_interestsector(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+
+                                        if len(get_duplicate_error) != 0:
+                                            duplicate_error_message[file] = get_duplicate_error
+                                        if len(get_validation_error) != 0:
+                                            validation_error_message[file] = get_validation_error
                         else:
                             error_message.append("Empty file")
-
                 else:
                     if len(token) == 0:
                         error_message.append("Invalid token")
@@ -142,6 +289,8 @@ def admin_bootstrap(request):
     if len(error_message) == 0:
         response['status'] = 'success'
         response['message'] = 'Database updated'
+        response['duplicate'] = duplicate_error_message
+        response['validation'] = validation_error_message
     else:
         response['status'] = 'fail'
         response['message'] = error_message
@@ -149,10 +298,336 @@ def admin_bootstrap(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def clear_database(request):
-    session_user = request.session.get('user', None)
-    if session_user is not None:
-        User.objects.all().exclude(user_id=session_user).delete()
+def check_table(model):
+    try:
+        return model.objects.all()
+    except model.DoesNotExist:
+        return None
+
+
+def clear_database(model):
+    model.objects.all().delete()
+
+
+def models_get(model, **kwargs):
+    try:
+        return model.objects.get(**kwargs)
+    except model.DoesNotExist:
+        return None
+
+
+def bootstrap_user(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'userid':
+                # Validations Required
+
+                # Check for duplicate entry
+                userid = row[0]
+                existing_user = models_get(User, user_id=userid)
+                if existing_user is None:
+                    new_user = User(user_id=userid, password=row[1], role=row[2])
+                    User.save(new_user)
+                else:
+                    duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_course(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'course_code':
+                # Check for duplicate entry
+                coursecode = row[0]
+                existing_course = models_get(Course, course_code=coursecode)
+                if existing_course is None:
+                    new_course = Course(course_code=coursecode, course_name=row[1], no_of_modules=row[2])
+                    Course.save(new_course)
+                else:
+                    duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_student(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'user_id':
+                # Validations Required. <For Email>
+                user = models_get(User, user_id=row[0])
+                course = models_get(Course, course_code=row[7])
+                mbti = models_get(Mbti, mbti_code=row[8])
+
+                if user is not None:
+                    if course is None:
+                        validation_error.append("Line " + str(line_num) + ": no such course code")
+                    else:
+                        # Check for duplicate entry
+                        existing_student = models_get(Student, user_id=row[0])
+                        if existing_student is None:
+                            new_student = Student(user_id=user, name=row[1], course_specialization=row[2],current_year=row[3], current_semester=row[4], email=row[5], profile_picture=row[6], course_code=course, mbti_code=mbti)
+                            Student.save(new_student)
+                        else:
+                            duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    validation_error.append("Line " + str(line_num) + ": no such user ID")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_module(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'module_code':
+                # Check for duplicate entry
+                existing_module = models_get(Module, module_name=row[1])
+                if existing_module is None:
+                    prerequiste_boolean = False
+                    elective_boolean = False
+
+                    if row[3].lower() == 'true':
+                        prerequiste_boolean = True
+                    if row[4].lower() == 'true':
+                        elective_boolean = True
+
+                    new_module = Module(module_code=row[0], module_name=row[1], school=row[2], has_prerequiste=prerequiste_boolean, is_elective=elective_boolean, specialisation=row[5], mod_description=row[6])
+                    Module.save(new_module)
+                else:
+                    duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_prerequisite(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'module_code':
+                a_module = models_get(Module, module_code=row[0])
+                a_prerequisite = models_get(Module, module_code=row[1])
+
+                if a_module is None or a_prerequisite is None:
+                    validation_error.append("Line " + str(line_num) + ": no such module code")
+                else:
+                    # Check for duplicate entry
+                    existing_prerequisite = models_get(Prerequisite, module_code=a_module)
+                    if existing_prerequisite is None:
+                        new_prerequisite = Prerequisite(module_code=a_module, prereq=a_prerequisite)
+                        Prerequisite.save(new_prerequisite)
+                    else:
+                        duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_course_mapping(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'course_mapping_id':
+                a_course = models_get(Course, course_code=row[1])
+                a_module = models_get(Module, module_code=row[2])
+
+                if a_course is not None and a_module is not None:
+                    # Check for duplicate entry
+                    existing_course_mapping = models_get(CourseMapping, course_code=a_course, module_code=a_module, year=row[3], semester=row[4])
+                    # Check for unique ID
+                    existing_course_mapping_id = models_get(CourseMapping, course_mapping_id=row[0])
+
+                    if existing_course_mapping is None and existing_course_mapping_id is None:
+                        new_course_mapping = CourseMapping(course_mapping_id=row[0], course_code=a_course, module_code=a_module, year=row[3], semester=row[4])
+                        CourseMapping.save(new_course_mapping)
+                    else:
+                        if existing_course_mapping_id is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": course mapping ID is not unique")
+                        if existing_course_mapping is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    if a_course is None:
+                        validation_error.append("Line " + str(line_num) + ": no such course code")
+                    if a_module is None:
+                        validation_error.append("Line " + str(line_num) + ": no such module code")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_course_specialization(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'course_specialization_id':
+                a_course = models_get(Course, course_code=row[1])
+
+                if a_course is not None:
+                    # Check for duplicate entry
+                    existing_course_specialization = models_get(CourseSpecialization, course_code=a_course, course_specialization=row[2])
+                    # Check for unique ID
+                    existing_course_specialization_id = models_get(CourseSpecialization, course_specialization_id=row[0])
+
+                    if existing_course_specialization is None and existing_course_specialization_id is None:
+                        new_course_specialization = CourseSpecialization(course_specialization_id=row[0],  course_code=a_course, course_specialization=row[2])
+                        CourseSpecialization.save(new_course_specialization)
+                    else:
+                        if existing_course_specialization_id is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": course specialization ID is not unique")
+                        if existing_course_specialization is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    if a_course is None:
+                        validation_error.append("Line " + str(line_num) + ": no such course code")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_mbti(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'mbti_code':
+                # Logical Validations
+                mbtiCode = row[0]
+                if len(mbtiCode) != 4:
+                    validation_error.append("Line " + str(line_num) + ": MBTI code must be in length of 4")
+                else:
+                    # Check for duplicate entry - from unique ID
+                    existing_mbti = models_get(Mbti, mbti_code=mbtiCode)
+                    if existing_mbti is None:
+                        new_mbti = Mbti(mbti_code=mbtiCode, mbti_description=row[1], possible_job_sector=row[2].replace(' &', ','))
+                        Mbti.save(new_mbti)
+                    else:
+                        duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_jobcategory(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'job_category_id':
+                a_course = models_get(Course, course_code=row[2])
+
+                if a_course is not None:
+                    # Check for duplicate entry
+                    existing_job_category = models_get(JobCategory, job_category=row[1], course_code=a_course)
+                    # Check for duplicate unique ID
+                    existing_job_category_id = models_get(JobCategory, job_category_id=row[0])
+
+                    if existing_job_category is None and existing_job_category_id is None:
+                        new_job_category = JobCategory(job_category_id=row[0],  job_category=row[1], course_code=a_course)
+                        JobCategory.save(new_job_category)
+                    else:
+                        if existing_job_category_id is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": job category ID is not unique")
+                        if existing_job_category is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    if a_course is None:
+                        validation_error.append("Line " + str(line_num) + ": no such course code")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
+
+
+def bootstrap_interestsector(z_file, file):
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file)
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'interest_sector_id':
+                # Logical Validation - Check if id is integer
+                interestSectorId = row[0]
+                if interestSectorId.isdigit():
+                    # Check for duplicate entry
+                    existing_interest_sector = models_get(InterestSector, personal_interest_sector=row[1])
+                    # Check for duplicate unique ID
+                    existing_interest_sector_id = models_get(InterestSector, interest_sector_id=interestSectorId)
+
+                    if existing_interest_sector is None and existing_interest_sector_id is None:
+                        new_interest_sector = InterestSector(interest_sector_id=interestSectorId,  personal_interest_sector=row[1])
+                        InterestSector.save(new_interest_sector)
+                    else:
+                        if existing_interest_sector_id is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": interest sector ID is not unique")
+                        if existing_interest_sector is not None:
+                            duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    validation_error.append("Line " + str(line_num) + ": interest sector ID is not integer")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error}
+    return status
 
 
 # Student

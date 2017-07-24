@@ -115,9 +115,31 @@
             contentType: false,
             success: function(data) {
                 if (data.status == 'success') {
-                    alert(data.message);
+                    //alert(data.message);
+                    var duplicateErrorSize = Object.keys(data.duplicate).length;
+                    var validationErrorSize = Object.keys(data.validation).length;
+
+                    if (duplicateErrorSize == 0 && validationErrorSize == 0) {
+                        alert(data.message);
+                    } else {
+                        if (duplicateErrorSize != 0) {
+                            alert(data.message + " with duplicate entries. You may choose to rectify or ignore.")
+                            for (file in data.duplicate) {
+                                alert(file + " - " + data.duplicate[file]);
+                            }
+                        }
+                        if (validationErrorSize != 0) {
+                            alert(data.message + " with validation errors. Please rectify.")
+                            for (file in data.validation) {
+                                alert(file + " - " + data.validation[file]);
+                            }
+                        }
+                    }
+                    $('#bootstrapForm')[0].reset();
                 } else {
+                    //location.reload();
                     alert(data.message);
+                    $('#bootstrapForm')[0].reset();
                 }
             },
             error: function (xhr) {
