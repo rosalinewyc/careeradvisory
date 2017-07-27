@@ -6756,3 +6756,9 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+
+.progress {
+    margin-bottom: 0;
+  border:none;
+  position:absolute;
+}

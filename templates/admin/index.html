@@ -26,6 +26,21 @@
                                         {% csrf_token %}
                                         <div class="form-group">
                                             <label for="upload">Upload Zip files here</label>
+
+                                            <p id="fileUploadError" class="text-danger hide"></p>
+
+                                            <div class="list-group" id="files"></div>
+
+                                            <script id="fileUploadProgressTemplate" type="text/x-jquery-tmpl">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                                                </div>
+                                            </script>
+
+                                            <div class="box-body">
+                                                <div class="alert alert-warning" id="alert-box" role="alert" style="display: none;"></div>
+                                            </div><!-- /.box-body -->
+
                                             <input type="file" class="form-control btn-primary" id="bootstrap_input" name="bootstrap_input" accept=".zip"
                                                    onchange="$('#upload-file-info').html(this.files[0].name)"/>
                                             <br/>
@@ -35,7 +50,7 @@
                                 </div><!-- /.box-body -->
                             </div><!-- /.box box-info -->
                         </div><!-- /.row -->
-
+                        <!--
                         <div class="row">
                             <div class='box'>
                                 <div class='box-header with-border'>
@@ -57,37 +72,30 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                     </div><!-- /.col-md-12 -->
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Upload results..</h3>
-                            </div><!-- /.box-header -->
-                            <div class="box-body">
-                                No errors
-                            </div><!-- /.box-body -->
-                        </div><!-- /.box box solid -->
-                    </div><!-- /.col-xs-8 col-sm-8 col-md-8 col-lg-8 -->
+
                 </div><!-- /.row -->
 
                 <br>
-                <div class="row">
+                <div class="row" id="resultchunk" style="display:none;">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Upload results</h3>
+                            </div><!-- /.box-header -->
+                        </div><!-- /.box box solid -->
+                    </div><!-- /.col-xs-8 col-sm-8 col-md-8 col-lg-8 -->
+
                     <table class="table table-bordered table-responsive" id="loaded-rows" class="display" cellspacing="5px" width="100%">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Salary</th>
+                            <th>File</th>
+                            <th>Error Type</th>
+                            <th>Description</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>$320,800</td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -99,12 +107,11 @@
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 
 <script type="text/javascript" charset="utf-8">
-    $(document).ready(function () {
-        $('#loaded-rows').DataTable();
-    });
 
     $("#bootstrapBtn").click(function (event) {
         event.preventDefault();
+        $('#alert-box').empty(); //clear alert messages
+        $("#files").append($("#fileUploadProgressTemplate").tmpl());
         var formData = new FormData($('#bootstrapForm')[0]);
         $.ajax({
             type: 'POST',
@@ -113,32 +120,58 @@
             data: formData,
             processData: false,
             contentType: false,
+            xhr: function() {
+            var xhr = $.ajaxSettings.xhr();
+            if (xhr.upload) {
+                xhr.upload.addEventListener('progress', function(evt) {
+                    var percent = (evt.loaded / evt.total) * 100;
+                    $("#files").find(".progress-bar").width(percent + "%");
+                }, false);
+            }
+            return xhr;
+        },
             success: function(data) {
                 if (data.status == 'success') {
                     //alert(data.message);
+                    document.getElementById("resultchunk").style.display = 'block';
                     var duplicateErrorSize = Object.keys(data.duplicate).length;
                     var validationErrorSize = Object.keys(data.validation).length;
+                    var trHTML = '';
+                    $("#files").children().last().remove(); //remove progressbar
 
                     if (duplicateErrorSize == 0 && validationErrorSize == 0) {
-                        alert(data.message);
+                        //alert(data.message);
+                        document.getElementById("alert-box").style.display = 'block';
+                        $("#alert-box").append(data.message + " with duplicate entries. You may choose to rectify or ignore.");
                     } else {
                         if (duplicateErrorSize != 0) {
-                            alert(data.message + " with duplicate entries. You may choose to rectify or ignore.")
+                            document.getElementById("alert-box").style.display = 'block';
+                            $("#alert-box").append(data.message + " with duplicate entries. You may choose to rectify or ignore.");
+                            //alert(data.message + " with duplicate entries. You may choose to rectify or ignore.")
                             for (file in data.duplicate) {
-                                alert(file + " - " + data.duplicate[file]);
+                                //alert(file + " - " + data.duplicate[file]);
+                                trHTML += '<tr><td>' + file + '</td><td>' + 'Duplicate Entries' + '</td><td>' + String(data.duplicate[file]).split(",").join("<br />") + '</td></tr>';
                             }
                         }
                         if (validationErrorSize != 0) {
-                            alert(data.message + " with validation errors. Please rectify.")
+                            document.getElementById("alert-box").style.display = 'block';
+                            $("#alert-box").append("</br>" + data.message + " with validation errors. Please rectify.");
+                            //alert(data.message + " with validation errors. Please rectify.")
                             for (file in data.validation) {
-                                alert(file + " - " + data.validation[file]);
+                                //alert(file + " - " + data.validation[file]);
+                                trHTML += '<tr><td class="col-md-2">' + file + '</td><td class="col-md-3">' + 'Validation Error' + '</td><td>' + String(data.validation[file]).split(",").join("<br />") + '</td></tr>';
                             }
                         }
+                        $('#loaded-rows').find('tbody').empty(); //empty
+                        $('#loaded-rows tbody').append(trHTML);
+                        $('#loaded-rows').DataTable();
                     }
                     $('#bootstrapForm')[0].reset();
                 } else {
-                    //location.reload();
-                    alert(data.message);
+                    document.getElementById("alert-box").style.display = 'block';
+                    $("#alert-box").append(data.message);
+                    //alert(data.message);
+                    $("#files").children().last().remove(); //remove progressbar
                     $('#bootstrapForm')[0].reset();
                 }
             },
