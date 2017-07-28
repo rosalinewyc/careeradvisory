@@ -651,7 +651,7 @@ def modulesearch(request):
 
 def userprofile(request):
     if check_session(request) is not None:
-        return render(request, 'userprofile.html')
+        return render(request, 'userprofile.html', student_info(request))
     return render(request, 'login.html')
 
 
@@ -669,5 +669,20 @@ def transitionjobpage(request):
 
 def courserequirement(request):
     if check_session(request) is not None:
-        return render(request, 'courserequirement.html')
+        return render(request, 'courserequirement.html', student_info(request))
     return render(request, 'login.html')
+
+
+def student_info(request):
+    current_student = {}
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    course = Course.objects.get(course_code=student.course_code_id)
+    coursemapping = CourseMapping.objects.filter(course_code_id=student.course_code_id)
+    module = {}
+    for mod in coursemapping:
+        module.update({Module.objects.get(module_code=mod.module_code_id):mod.year})
+    print(module)
+    current_student['student'] = student
+    current_student['course'] = course
+    current_student['module'] = module
+    return current_student

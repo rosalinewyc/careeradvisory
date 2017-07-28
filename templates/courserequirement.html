@@ -9,8 +9,8 @@
 </head>
 <body>
 <div class="container todolist">
-    <h2>Course Requirements in School Of IT</h2>
-    <p>These are the required modules to be taken in NP.</p>
+    <h2>Course Requirements for {{ course.course_name }}</h2>
+    <p>These are the required modules to be taken.</p>
 	<div class="row col-list">
 		<div class="col-md-4 t1">
 			<div class="col-head text-center">
@@ -18,15 +18,13 @@
 				<h2>Year 1 Required Modules</h2>
 			</div>
 			<ul class="list-unstyled">
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS200 Intro to Java</p>
-	         </li>
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS201 Object Oriented Analysis & Design</p>
-	         </li>
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS202 Database Management</p>
-	         </li>
+                {% for mod, year in module.items%}
+                {% if year is 1 %}
+                <li>
+                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                </li>
+                {% endif %}
+                {% endfor %}
 			</ul>
 		</div>
 		<div class="col-md-4 t2">
@@ -35,12 +33,13 @@
 				<h2>Year 2 Required Modules</h2>
 			</div>
 			<ul class="list-unstyled">
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS203 Software Engineer</p>
-	         </li>
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS303 Infocomm Security</p>
-	         </li>
+                {% for mod, year in module.items%}
+                {% if year is 2 %}
+                <li>
+                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                </li>
+                {% endif %}
+                {% endfor %}
 			</ul>
 		</div>
 		<div class="col-md-4 t3">
@@ -49,15 +48,13 @@
 				<h2>Year 3 Required Modules</h2>
 			</div>
 			<ul class="list-unstyled">
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS343 Enterprise Integration</p>
-	         </li>
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS430 Enterprise Web Solutions</p>
-	         </li>
-	         <li>
-	         	<p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>IS435 Visual Analytics</p>
-	         </li>
+                {% for mod, year in module.items%}
+                {% if year is 3 %}
+                 <li>
+                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                </li>
+                {% endif %}
+                {% endfor %}
 			</ul>
 		</div>
 	</div>

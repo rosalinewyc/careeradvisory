@@ -1,7 +1,3 @@
-{% load static %}
-{% block bar %}
-    {% include "ajaxpost.html" %}
-{% endblock %}
 <style>
     .homepage-nav{
         display: -webkit-flex;
@@ -32,9 +28,9 @@
             <form class="form-signin" method="post" action="/authenticate/">
                 {% csrf_token %}
                 <span id="reauth-email" class="reauth-email"> </span>
-                <p class="input_title">Email</p>
+                <p class="input_title">Username</p>
 
-                <input type="text" id="username_input" name="username_input" class="login_box" placeholder="user@np.com" required autofocus>
+                <input type="text" id="username_input" name="username_input" class="login_box" placeholder="Username" required autofocus>
 
                 <p class="input_title">Password</p>
 

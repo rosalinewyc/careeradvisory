@@ -18,8 +18,15 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="mydetails text-center">
                             <img class="img-circle img-responsive" src="../static/img/profile/man.jpg" alt="Generic placeholder image" width="200" height="200">
-                            <h3 style="text-transform: capitalize">{{ request.session.user }}</h3>
-                            <p>Web Designer</p>
+                            <h3 style="text-transform: capitalize">{{ student.name }}</h3>
+                            <div class="personalinfo">
+                            {{ student.email }}
+                            <br/>
+                            {{ course.course_name }}
+                            <br/>
+                            Year {{ student.current_year }}
+                            <br/>
+                            </div>
 
                         </div>
                     </div>
