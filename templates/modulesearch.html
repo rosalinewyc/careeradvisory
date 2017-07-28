@@ -16,49 +16,83 @@
                 <div class="col-md-12">
                     <div class="todolist not-done">
                         <h1>Module Search</h1>
-                        <div class="input-group">
-                          <input type="text" class="form-control add-todo" placeholder="Add modules to planner">
-                          <span class="input-group-btn">
-                            <button class="btn btn-primary searchbutton">Search</button>
-                          </span>
-                        </div>
+                        <form method="post" action="/modsearch/">
+                        {% csrf_token %}
+                            <div class="input-group">
+                              <input type="text" class="form-control add-todo" id="searchinput" placeholder="Add modules to planner">
+                              <span class="input-group-btn">
+                                <button class="btn btn-primary searchbutton" id="searchbtn" name="searchbtn">Search</button>
+                              </span>
+                            </div>
+                        </form>
                         <hr>
-                        <ul id="sortable" class="list-unstyled">
-                            <li class="ui-state-default">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="" />Java Language</label>
-                                </div>
-                            </li>
-                            <li class="ui-state-default">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="" />Enterprise Solutions</label>
-                                </div>
-                            </li>
-                            <li class="ui-state-default">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="" />Cloud Computing</label>
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="todo-footer">
-                            <strong><span class="count-todos"></span></strong> Items Left
+
+                        <h3 id="searchtext" style="display:none;"></h3>
+
+                        <div id="searchblock" style="display: none">
+                            <table class="table table-bordered table-responsive" id="loaded-rows" class="display" cellspacing="5px" width="100%">
+                                <thead>
+                                <tr>
+                                    <th class="col-md-4">Module Name</th>
+                                    <th class="col-md-2">School</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div class="col-md-12" style="text-align:right; padding-top:40px">
+                                <a class="btn btn-primary" href="#">Save <span class="glyphicon glyphicon-chevron-right"></span></a>
+                            </div>
                         </div>
+
+                        <div id="noresult" style="display: none;"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-12" style="text-align:right; padding-top:40px">
-                <a class="btn btn-primary" href="#">Save <span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
+
         </div>
     </body>
 </html>
 {% load static %}
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 <script>
-    $(document).ready(function () {
-        $('#dataTables-example').dataTable();
+    $("#searchbtn").click(function (event) {
+        event.preventDefault();
+        var dataString = '&modsearch=' + $("#searchinput").val();
+        $('#loaded-rows').DataTable().clear(); //remove previous search results
+        $.ajax({
+            type: 'POST',
+            url: '/modsearch/',
+            dataType: 'json',
+            data: dataString,
+            success: function(data) {
+                var resultsSize = Object.keys(data.results).length;
+                document.getElementById("searchtext").style.display = 'block';
+                $("#searchtext").html("Search results for '" + data.searchinput + "'"); //display search term
+
+                if (resultsSize == 0) { //undefined or invalid search
+                    document.getElementById("noresult").style.display = 'block';
+                    document.getElementById("searchblock").style.display = 'none';
+                    $("#noresult").html("No results");
+                } else {
+                    if (resultsSize != 0) {
+                        document.getElementById("noresult").style.display = 'none';
+                        document.getElementById("searchblock").style.display = 'block';
+                        for (i = 0; i < resultsSize; i++){
+                            $('#loaded-rows').dataTable().fnAddData([ //datatable's drawing of rows
+                                data.results[i]['module_name'],
+                                data.results[i]['school'],
+                                data.results[i]['mod_description']
+                            ]);
+                        }
+                    }
+                }
+            },
+            error: function(xhr) {
+                alert(xhr);
+            }
+        });
+        return false;
     });
 </script>

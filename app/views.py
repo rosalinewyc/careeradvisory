@@ -5,6 +5,7 @@ from zipfile import *
 from django.core import serializers
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
+from django.utils.safestring import mark_safe
 from django.views.decorators import csrf
 from app.models import *
 
@@ -685,3 +686,19 @@ def student_info(request):
     current_student['course'] = course
     current_student['module'] = module
     return current_student
+
+
+def modsearch(request):
+    response = {}
+    if request.method == 'POST':
+        search_input = request.POST.get('modsearch')
+        if not search_input:
+            response['results'] = ''
+        else:
+            results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
+                    Module.objects.filter(specialisation__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
+                    Module.objects.filter(mod_description__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description')
+            response['results'] = list(results)
+            response['searchinput'] = search_input
+        print(response)
+    return HttpResponse(json.dumps(response), content_type="application/json")
