@@ -681,7 +681,6 @@ def student_info(request):
     module = {}
     for mod in coursemapping:
         module.update({Module.objects.get(module_code=mod.module_code_id):mod.year})
-    print(module)
     current_student['student'] = student
     current_student['course'] = course
     current_student['module'] = module
