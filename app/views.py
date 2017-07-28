@@ -28,8 +28,8 @@ def login(request):
 def authenticate(request):
     response = {}
     if request.method == 'POST':
-        username_input = request.POST['username']
-        password_input = request.POST['password']
+        username_input = request.POST.get('username')
+        password_input = request.POST.get('password')
 
         try:
             user = User.objects.get(user_id=username_input)

@@ -28,7 +28,7 @@
         <div class="card card-container">
         <a class="navbar-brand" style="color: #333; text-align: center" href="#"><img src="{% static 'img/ngeeann-logo.png' %}" alt="" style="display: inline-block; height: 30px;">Career Advisory</a>
         <hr/>
-
+            <div class="alert alert-warning" id="alert-box" role="alert" style="display: none;"></div>
             <form class="form-signin" method="post" action="/authenticate/">
                 {% csrf_token %}
                 <span id="reauth-email" class="reauth-email"> </span>
@@ -60,20 +60,13 @@
             dataType: 'json',
             data: dataString,
             success: function(data) {
-                alert('Login Success!')
                 if (data.status == 'success') {
                     location.reload();
-                    var role = '{{ request.session.role }}';
-                    if (role == 1) {
-                        //Redirect to Student's profile page
-                        window.location.href = "/";
-                    }
-                    if (role == 3) {
-                        //Redirect to Admin's index page
-                        window.location.href = "/admin/index/";
-                    }
+                    //alert('Login Success!')
                 } else {
-                    alert(data.message);
+                    //alert(data.message);
+                    document.getElementById("alert-box").style.display = 'block';
+                    $("#alert-box").html(data.message);
                 }
             },
             error: function(xhr) {
