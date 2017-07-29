@@ -33,8 +33,9 @@
                             <table class="table table-bordered table-responsive" id="loaded-rows" class="display" cellspacing="5px" width="100%">
                                 <thead>
                                 <tr>
-                                    <th class="col-md-4">Module Name</th>
-                                    <th class="col-md-2">School</th>
+                                    <th>Select</th>
+                                    <th>Module Name</th>
+                                    <th>School</th>
                                     <th>Description</th>
                                 </tr>
                                 </thead>
@@ -79,11 +80,22 @@
                     if (resultsSize != 0) {
                         document.getElementById("noresult").style.display = 'none';
                         document.getElementById("searchblock").style.display = 'block';
+                        var $resultTable=$('#loaded-rows').dataTable({
+                            "bAutoWidth": false ,
+                            aoColumns : [
+                                  { "sWidth": "5%"},
+                                  { "sWidth": "25%"},
+                                  { "sWidth": "10%"},
+                                  { "sWidth": "60%"}
+                                ],
+                            "bDestroy": true
+                            });
                         for (i = 0; i < resultsSize; i++){
-                            $('#loaded-rows').dataTable().fnAddData([ //datatable's drawing of rows
+                            $resultTable.fnAddData([ //datatable's drawing of rows
+                                "<div class='checkbox'><label><input type='checkbox' value='' /></label>",
                                 data.results[i]['module_name'],
                                 data.results[i]['school'],
-                                data.results[i]['mod_description']
+                                String(data.results[i]['mod_description']).split(".").join(".<br />")
                             ]);
                         }
                     }
