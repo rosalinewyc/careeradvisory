@@ -39,6 +39,7 @@
 
                                             <div class="box-body">
                                                 <div class="alert alert-warning" id="alert-box" role="alert" style="display: none;"></div>
+                                                <div class="alert alert-success" id="success" role="alert" style="display: none"></div>
                                             </div><!-- /.box-body -->
 
                                             <input type="file" class="form-control btn-primary" id="bootstrap_input" name="bootstrap_input" accept=".zip"
@@ -110,7 +111,11 @@
 
     $("#bootstrapBtn").click(function (event) {
         event.preventDefault();
+        document.getElementById("alert-box").style.display = 'none';
+        document.getElementById("success").style.display = 'none';
+        document.getElementById("resultchunk").style.display = 'none';
         $('#alert-box').empty(); //clear alert messages
+        $('#success').empty(); //clear success message
         $("#files").append($("#fileUploadProgressTemplate").tmpl());
         var formData = new FormData($('#bootstrapForm')[0]);
         $.ajax({
@@ -121,11 +126,13 @@
             processData: false,
             contentType: false,
             xhr: function() {
+
             var xhr = $.ajaxSettings.xhr();
             if (xhr.upload) {
                 xhr.upload.addEventListener('progress', function(evt) {
                     var percent = (evt.loaded / evt.total) * 100;
                     $("#files").find(".progress-bar").width(percent + "%");
+                    $("#files").find(".progress-bar").delay(1000);
                 }, false);
             }
             return xhr;
@@ -141,8 +148,8 @@
 
                     if (duplicateErrorSize == 0 && validationErrorSize == 0) {
                         //alert(data.message);
-                        document.getElementById("alert-box").style.display = 'block';
-                        $("#alert-box").append(data.message + " with duplicate entries. You may choose to rectify or ignore.");
+                        document.getElementById("success").style.display = 'block';
+                        $("#success").append(data.message);
                     } else {
                         if (duplicateErrorSize != 0) {
                             document.getElementById("alert-box").style.display = 'block';
@@ -169,7 +176,7 @@
                     $('#bootstrapForm')[0].reset();
                 } else {
                     document.getElementById("alert-box").style.display = 'block';
-                    $("#alert-box").append(data.message);
+                    $("#alert-box").append(String(data.message).split(",").join("<br />"));
                     //alert(data.message);
                     $("#files").children().last().remove(); //remove progressbar
                     $('#bootstrapForm')[0].reset();

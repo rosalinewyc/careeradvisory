@@ -145,16 +145,16 @@ def admin_bootstrap(request):
                                 if check_table(Course) is None and '2' not in key_files_hash:
                                     error_message.append("Missing: course.csv")
 
-                            # if '1' not in key_files_hash:
-                            #     error_message.append("Missing: user.csv")
-                            # if '2' not in key_files_hash:
-                            #     error_message.append("Missing: course.csv")
-                            # if '3' not in key_files_hash:
-                            #     error_message.append("Missing: student.csv")
-                            # if '4' not in key_files_hash:
-                            #     error_message.append("Missing: module.csv")
-                            # if '5' not in key_files_hash:
-                            #     error_message.append("Missing: prerequisite.csv")
+                            if '1' not in key_files_hash:
+                             error_message.append("Missing: user.csv")
+                            if '2' not in key_files_hash:
+                             error_message.append("Missing: course.csv")
+                            if '3' not in key_files_hash:
+                             error_message.append("Missing: student.csv")
+                            if '4' not in key_files_hash:
+                             error_message.append("Missing: module.csv")
+                            if '5' not in key_files_hash:
+                             error_message.append("Missing: prerequisite.csv")
 
                             if len(error_message) == 0:
                                 for key in sorted(files_hash.keys()):

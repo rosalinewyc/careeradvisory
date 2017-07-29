@@ -19,10 +19,10 @@
                         <form method="post" action="/modsearch/">
                         {% csrf_token %}
                             <div class="input-group">
-                              <input type="text" class="form-control add-todo" id="searchinput" placeholder="Add modules to planner">
-                              <span class="input-group-btn">
+                            <input type="text" class="form-control add-todo" id="searchinput" placeholder="Add modules to planner">
+                            <span class="input-group-btn">
                                 <button class="btn btn-primary searchbutton" id="searchbtn" name="searchbtn">Search</button>
-                              </span>
+                            </span>
                             </div>
                         </form>
                         <hr>
@@ -46,12 +46,10 @@
                                 <a class="btn btn-primary" href="#">Save <span class="glyphicon glyphicon-chevron-right"></span></a>
                             </div>
                         </div>
-
                         <div id="noresult" style="display: none;"></div>
                     </div>
                 </div>
             </div>
-
         </div>
     </body>
 </html>
@@ -83,10 +81,10 @@
                         var $resultTable=$('#loaded-rows').dataTable({
                             "bAutoWidth": false ,
                             aoColumns : [
-                                  { "sWidth": "5%"},
-                                  { "sWidth": "25%"},
-                                  { "sWidth": "10%"},
-                                  { "sWidth": "60%"}
+                                  {"sWidth": "5%"},
+                                  {"sWidth": "25%"},
+                                  {"sWidth": "10%"},
+                                  {"sWidth": "60%"}
                                 ],
                             "bDestroy": true
                             });
