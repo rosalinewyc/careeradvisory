@@ -677,14 +677,13 @@ def student_info(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
     coursemapping = CourseMapping.objects.filter(course_code_id=student.course_code_id)
+
     module = {}
     for mod in coursemapping:
-        module.update({CourseMapping.objects.filter(module_code_id=mod.module_code_id).values('course_mapping_id'):{Module.objects.get(module_code=mod.module_code_id): str(mod.year) +  str(mod.semester)}})
+        module.update({CourseMapping.objects.filter(module_code_id=mod.module_code_id):{Module.objects.get(module_code=mod.module_code_id): str(mod.year) +  str(mod.semester)}})
     current_student['student'] = student
     current_student['course'] = course
     current_student['module'] = module
-    current_student['module_des'] = Module.objects.values('module_name' , 'mod_description')
-    print(current_student['module_des'])
     return current_student
 
 
@@ -700,17 +699,32 @@ def modsearch(request):
                     Module.objects.filter(mod_description__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description')
             response['results'] = list(results)
             response['searchinput'] = search_input
-        print(response)
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 def modcompare(request):
     response = {}
     modname = request.GET.get('modname')
-    #print(modname)
-    #mod_des = Module.objects.filter(module_name=modname).values('mod_description')
     mod_des = Module.objects.filter(module_name=modname).values('mod_description')
-    print(mod_des)
     response['results'] = list(mod_des)
-    #print(response['results'])
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def specialisedropdown(request):
+    response = {}
+    course_specialise = CourseSpecialization.objects.values('course_specialization')
+    response['results'] = list(course_specialise)
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def specialisechoice(request):
+    response = {}
+    specialise = request.GET.get('specialise')
+    specialise_mod = Module.objects.filter(specialisation=specialise)
+    special_mod_year = {}
+    for mod in specialise_mod:
+        special_mod_year.update({mod.module_name:CourseMapping.objects.filter(module_code_id=mod.module_code).values('year')})
+
+    response['results'] = list(special_mod_year)
+    print(response['results'])
     return HttpResponse(json.dumps(response), content_type="application/json")

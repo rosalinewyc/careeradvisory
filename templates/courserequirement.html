@@ -11,22 +11,23 @@
 <div class="container todolist">
     <div>
         <h2>Course Requirements for {{ course.course_name }}</h2>
-        <p>These are the required modules to be taken.</p>
     </div>
-    <div class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        Dropdown
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">Separated link</a></li>
-      </ul>
-    </div>
+    <hr/>
+    <div style="width:100%; float:left">
+        <div class="dropdown" style="float:left">
+          <button style="width:220px" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span id="selected">Select Course Specialization</span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="specialisedropdown">
 
+          </ul>
+        </div>
+        <div id="specialmods" style="display: none; margin-left: 230px; margin-top:3px; font-size:18px"></div>
+    </div>
+<br/>
+<br/>
+<br/>
 	<div class="row col-list">
 		<div class="col-md-4 t1">
 			<div class="col-head text-center">
@@ -39,7 +40,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "11" %}
                             <li class="toggleContent">
-                                <p onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -49,7 +50,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "12" %}
                             <li class="toggleContent">
-                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -67,7 +68,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "21" %}
                             <li>
-                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -77,7 +78,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "22" %}
                             <li>
-                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -95,7 +96,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "31" %}
                             <li>
-                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -104,7 +105,7 @@
                     {% for mod, year in modlist.items%}
                         {% if year == "32" %}
                             <li>
-                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -112,16 +113,16 @@
 			</ul>
 		</div>
 	</div>
-  	<hr />
-    <div class="row col-list modDescription">
-        test
-    </div>
+
   	<div class="text-right">
 		<!-- Button trigger modal -->
-		<button type="button" id="btn-reset" class="btn btn-primary btn-lg">
-		  Back
-		</button>
+{#		<button type="button" id="btn-reset" class="btn btn-primary btn-lg">#}
+{#		  Back#}
+{#		</button>#}
     </div>
+</div>
+<div class="container todolist" id="descontainer" style="display:none; margin-bottom:50px; padding:30px; font-size:18px;">
+    <div class="row col-list modDescription"></div>
 </div>
 </body>
 </html>
@@ -131,7 +132,7 @@
 <script>
     function mod_click(clicked_id) {
         //alert(clicked_id);
-        var dataString = '&modname=' + clicked_id;
+        var dataString = '&modname=' + encodeURIComponent(clicked_id);
         $.ajax({
             type: 'GET',
             url: '/modcompare/',
@@ -139,8 +140,57 @@
             dataType: 'json',
             success: function (data) {
                 //alert(data.results[0].mod_description);
-                $('.modDescription').html(data.results[0].mod_description);
+                document.getElementById("descontainer").style.display = 'block';
+                $('.modDescription').html('<p>' + String(data.results[0].mod_description).split(".").join(".<br />") + '</p>');
+                $('html,body').animate({
+                    scrollTop: $("#descontainer").offset().top},
+                    'slow');
             }
         });
     }
+
+    $(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/specialisedropdown/',
+            dataType: 'json',
+            success: function (data) {
+                var fields = data.results;
+                var htmlToAppend = "";
+                for (var i = 0; i < fields.length; i++) {
+                    htmlToAppend += '<li value="' + fields[i].course_specialization  + '"><a id="link" href="#">' + fields[i].course_specialization + '</a></li>'
+                }
+                $('#specialisedropdown').append(htmlToAppend);
+            }
+        });
+    });
+
+    $(document).on('click', '#specialisedropdown li a', function () {
+        $("#selected").text($(this).parent().attr('value'));
+        var dataString = '&specialise=' + $(this).parent().attr('value');
+        $('#specialmods').empty();
+        $.ajax({
+            type: 'GET',
+            url: '/specialisechoice/',
+            data: dataString,
+            success: function (data) {
+                var resultsSize = Object.keys(data.results).length;
+                if (resultsSize != 0) {
+                    for (i = 0 ; i < resultsSize; i++) {
+                        //alert(data.results[mod])
+                        document.getElementById("specialmods").style.display = 'block';
+                        if (i == resultsSize - 1) {
+                            $('#specialmods').append(data.results[i]);
+                        } else {
+                            $('#specialmods').append(data.results[i] + ", ");
+                        }
+                    }
+                } else {
+                    document.getElementById("specialmods").style.display = 'block';
+                    $('#specialmods').html("No additional modules for this specialization.");
+                }
+            }
+        });
+    });
+
 </script>
