@@ -51,12 +51,15 @@ class InterestSector(models.Model):
 
 
 class Job(models.Model):
-    job_id = models.IntegerField(primary_key=True)
-    job_description = models.CharField(max_length=250)
-    job_url = models.CharField(max_length=100)
-    job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
-    job_interest = models.ForeignKey(InterestSector, on_delete=models.CASCADE)
+    job_id = models.CharField(max_length=255, primary_key=True)
+    job_url = models.TextField(null=True)
+    job_position = models.TextField(null=True)
+    job_company = models.TextField(null=True)
+    job_category = models.TextField(null=True)
+    job_description = models.TextField(null=True)
     job_date = models.DateField()
+    job_keyword = models.CharField(max_length=255, null=True)
+    job_interest = models.CharField(max_length=255, null=True)
 
 
 class Mbti(models.Model):

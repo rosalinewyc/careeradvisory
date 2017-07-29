@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^personalinterest/$', views.personalinterest, name='personalinterest'),
     url(r'^transitionjobpage/$', views.transitionjobpage, name='transitionjobpage'),
     url(r'^courserequirement/$', views.courserequirement, name='courserequirement'),
+    url(r'^modcompare/$', views.modcompare, name='modcompare'),
 ]

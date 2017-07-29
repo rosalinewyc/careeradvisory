@@ -9,58 +9,114 @@
 </head>
 <body>
 <div class="container todolist">
-    <h2>Course Requirements for {{ course.course_name }}</h2>
-    <p>These are the required modules to be taken.</p>
+    <div>
+        <h2>Course Requirements for {{ course.course_name }}</h2>
+        <p>These are the required modules to be taken.</p>
+    </div>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Dropdown
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+    </div>
+
 	<div class="row col-list">
 		<div class="col-md-4 t1">
 			<div class="col-head text-center">
 				<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
-				<h2>Year 1 Required Modules</h2>
+				<h2>Year 1</h2>
 			</div>
 			<ul class="list-unstyled">
-                {% for mod, year in module.items%}
-                {% if year is 1 %}
-                <li>
-                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                </li>
-                {% endif %}
+                <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "11" %}
+                            <li class="toggleContent">
+                                <p onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "12" %}
+                            <li class="toggleContent">
+                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
 			</ul>
 		</div>
 		<div class="col-md-4 t2">
 			<div class="col-head text-center">
 				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-				<h2>Year 2 Required Modules</h2>
+				<h2>Year 2</h2>
 			</div>
 			<ul class="list-unstyled">
-                {% for mod, year in module.items%}
-                {% if year is 2 %}
-                <li>
-                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                </li>
-                {% endif %}
+                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "21" %}
+                            <li>
+                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "22" %}
+                            <li>
+                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
 			</ul>
 		</div>
 		<div class="col-md-4 t3">
 			<div class="col-head text-center">
 				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-				<h2>Year 3 Required Modules</h2>
+				<h2>Year 3</h2>
 			</div>
 			<ul class="list-unstyled">
-                {% for mod, year in module.items%}
-                {% if year is 3 %}
-                 <li>
-                    <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                </li>
-                {% endif %}
+                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "31" %}
+                            <li>
+                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}<li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                {% for coursemapid, modlist in module.items%}
+                    {% for mod, year in modlist.items%}
+                        {% if year == "32" %}
+                            <li>
+                                <p class="option"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
 			</ul>
 		</div>
 	</div>
   	<hr />
+    <div class="row col-list modDescription">
+        test
+    </div>
   	<div class="text-right">
-
 		<!-- Button trigger modal -->
 		<button type="button" id="btn-reset" class="btn btn-primary btn-lg">
 		  Back
@@ -72,3 +128,19 @@
 
 {% load static %}
 <script src="{% static 'js/ajaxpost.js' %}"></script>
+<script>
+    function mod_click(clicked_id) {
+        //alert(clicked_id);
+        var dataString = '&modname=' + clicked_id;
+        $.ajax({
+            type: 'GET',
+            url: '/modcompare/',
+            data: dataString,
+            dataType: 'json',
+            success: function (data) {
+                //alert(data.results[0].mod_description);
+                $('.modDescription').html(data.results[0].mod_description);
+            }
+        });
+    }
+</script>

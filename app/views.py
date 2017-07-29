@@ -2,10 +2,8 @@ import json
 import csv
 import io
 from zipfile import *
-from django.core import serializers
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
-from django.utils.safestring import mark_safe
 from django.views.decorators import csrf
 from app.models import *
 
@@ -681,10 +679,12 @@ def student_info(request):
     coursemapping = CourseMapping.objects.filter(course_code_id=student.course_code_id)
     module = {}
     for mod in coursemapping:
-        module.update({Module.objects.get(module_code=mod.module_code_id):mod.year})
+        module.update({CourseMapping.objects.filter(module_code_id=mod.module_code_id).values('course_mapping_id'):{Module.objects.get(module_code=mod.module_code_id): str(mod.year) +  str(mod.semester)}})
     current_student['student'] = student
     current_student['course'] = course
     current_student['module'] = module
+    current_student['module_des'] = Module.objects.values('module_name' , 'mod_description')
+    print(current_student['module_des'])
     return current_student
 
 
@@ -701,4 +701,16 @@ def modsearch(request):
             response['results'] = list(results)
             response['searchinput'] = search_input
         print(response)
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def modcompare(request):
+    response = {}
+    modname = request.GET.get('modname')
+    #print(modname)
+    #mod_des = Module.objects.filter(module_name=modname).values('mod_description')
+    mod_des = Module.objects.filter(module_name=modname).values('mod_description')
+    print(mod_des)
+    response['results'] = list(mod_des)
+    #print(response['results'])
     return HttpResponse(json.dumps(response), content_type="application/json")

@@ -1,7 +1,7 @@
 {% block bar %}
    {% include "base.html" %}
 {% endblock %}
-
+{% url 'modulesearch' as modulesearch %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,14 +17,14 @@
                         <h1>Course Planner</h1>
                         <div>
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#">Year 1 Term 1</a></li>
+                            <li class="active"><a href="#">Year 1 T1</a></li>
                             <li><a href="#">Year 1 T2</a></li>
                             <li><a href="#">Year 2 T1</a></li>
                             <li><a href="#">Year 2 T2</a></li>
                             <li><a href="#">Year 3 T1</a></li>
                             <li><a href="#">Year 3 T2</a></li>
                         </ul>
-                            <button class="btn-block btn-primary" style="right:0px; height:50px;"> Click to add modules </button>
+                            <a href="{{ modulesearch }}" style="right:0px; height:50px; line-height:50px; text-align: center; vertical-align: middle;" class="btn-block btn-primary"><div class="glyphicon glyphicon-plus"></div> Click to add modules</a>
                         </div>
 
                         <div id="table" class="table-editable">
