@@ -35,7 +35,6 @@
   cursor: pointer;
   width: 40%;
   height: 100%;
-  background: transparent url(../images/blank.gif);
 }
 .cobox-prev {
   left: 0;
@@ -49,7 +48,6 @@
 .cobox-nav:before {
   display: none;
   content: "";
-  background-image: url(../images/nav.png);
   position: absolute;
   top: 50%;
   margin-top: -22px;
@@ -84,7 +82,6 @@
 .cobox-loading {
   width: 100%;
   height: 100%;
-  background: url(..images/loading.gif) no-repeat center center;
   background-color: #fff;
   margin: 0 auto;
 }

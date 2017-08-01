@@ -116,7 +116,6 @@
 .loading {
 	opacity: 0;
 	z-index: 1;
-	background: transparent url(../images/loader.gif) no-repeat center center;
 	-webkit-transform: scale(0.5);
 	transform: scale(0.5);
 	-webkit-transition: opacity 0.5s, -webkit-transform 0.5s;
