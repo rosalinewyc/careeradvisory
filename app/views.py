@@ -17,7 +17,12 @@ def index(request):
     if check_session(request) is not None:
         if request.session.get('role') is 3:
             return render(request, './admin/index.html')
-        return render(request, 'index.html')
+        student = Student.objects.get(user_id_id=request.session.get('user'))
+        interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+        if not interest:
+            return render(request, 'transitionjobpage.html')
+        else:
+            return render(request, 'index.html')
     return render(request, 'login.html')
 
 
@@ -764,7 +769,7 @@ def interestinput(request):
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
-
+# have repeated code from getstudentinterest
 def retrievestudentinterest(request):
     response = {}
     user_id = request.session.get('user')
@@ -783,3 +788,14 @@ def retrievestudentinterest(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+def getstudentinterest(request):
+    user_id = request.session.get('user')
+    existing_user = models_get(User, user_id=user_id)
+    indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values(
+        'personal_interest_sector_id')
+    sector = ""
+    for interest in indicated_interests_id:
+        indicated_id = interest['personal_interest_sector_id']
+        sector += "<li>" + models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector+"</li>"
+    print(sector)
+    return HttpResponse(json.dumps(sector), content_type="application/json")

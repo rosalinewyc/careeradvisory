@@ -22,6 +22,7 @@ urlpatterns = [
         name='personalinterestsectordropdown'),
     url(r'^interestinput/$', views.interestinput, name='interestinput'),
     url(r'^retrievestudentinterest/$', views.retrievestudentinterest, name='retrievestudentinterest'),
+    url(r'^getstudentinterest/$', views.getstudentinterest, name='getstudentinterest'),
     url(r'^transitionjobpage/$', views.transitionjobpage, name='transitionjobpage'),
     url(r'^courserequirement/$', views.courserequirement, name='courserequirement'),
     url(r'^modcompare/$', views.modcompare, name='modcompare'),

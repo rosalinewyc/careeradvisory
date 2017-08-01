@@ -12,14 +12,14 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 3.6.0 (C:\Users\rosaline\AppData\Local\Programs\Python\Python36\python.exe)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.6.1 (C:\Users\Adelinejong01\AppData\Local\Programs\Python\Python36\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/../app\templates" />
+        <option value="C:/app\templates" />
       </list>
     </option>
   </component>
