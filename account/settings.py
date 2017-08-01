@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -87,9 +87,9 @@ DATABASES = {
         # 'COLLATION': 'utf8_general_ci',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ecg_db',
-        'USER': 'is480firestorm',
-        'PASSWORD': 'is480npfirestorm',
-        'HOST': 'ecg.c7z3osufzsph.ap-southeast-1.rds.amazonaws.com',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '3306',
         'CHARSET': 'utf8_general_ci',
         'COLLATION': 'utf8_general_ci',
@@ -135,5 +135,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static'),
+  os.path.join(BASE_DIR, 'staticfiles'),
 )
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
