@@ -5,11 +5,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {% url 'login' as login %}
-    {% url 'recommendjob' as recommendjob %}
-    {% url 'modulesearch' as modulesearch %}
-    {% url 'courseplanner' as courseplanner %}
-    {% url 'userprofile' as userprofile %}
 </head>
 
 <body>
@@ -46,8 +41,7 @@
                     <h3>Explore for jobs of your interest</h3>
                     <p>Real-time job offers available here</p>
                     <p>
-                        <a href="recommendjob" class="btn btn-primary">Explore</a> <a href="recommendjob" class="btn btn-default">More
-                        Info</a>
+                        <a href="recommendjob" class="btn btn-primary">Explore</a>
                     </p>
                 </div>
             </div>
@@ -60,8 +54,7 @@
                     <h3>Module Recommendation</h3>
                     <p>Bringing you closer to jobs you dream to explore</p>
                     <p>
-                        <a href="modulesearch" class="btn btn-primary">Explore</a> <a href="modulesearch" class="btn btn-default">More
-                        Info</a>
+                        <a href="modulesearch" class="btn btn-primary">Explore</a>
                     </p>
                 </div>
             </div>
@@ -71,11 +64,11 @@
             <div class="thumbnail">
                 <img src="{% static 'img/collaborate.jpg' %}" alt="">
                 <div class="caption_featurecard">
-                    <h3>Find out your personality</h3>
-                    <p>Find out more about yourself and your working style</p>
+                    <h3>Change Personal Interest or <br/>
+                        Redo Personality Result</h3>
+                    <p>Update current personality test results or change personal interest</p>
                     <p>
-                        <a href="#" class="btn btn-primary">Explore</a> <a href="#" class="btn btn-default">More
-                        Info</a>
+                        <a href="transitionjobpage" class="btn btn-primary">Do Now</a>
                     </p>
                 </div>
             </div>

@@ -1,89 +1,97 @@
 {% block bar %}
     {% include "base.html" %}
 {% endblock %}
-
+<style>
+    .ul.select2-selection__rendered {
+        padding: 5px 5px 5px 5px !important;
+    }
+</style>
 <!DOCTYPE html>
 <html>
 <head>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/personalinterest.css' %}"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script src={% static 'js/personalinterest-js.js' %}></script>
-
 </head>
 <body>
+<div class="alert alert-info alert-dismissable">
+    <button type="button" class="close" aria-hidden="true">&times;</button>
+    <p id="alertmsgtext"></p>
+</div>
+
 <header class="intro-header">
     <div class="transbox"></div>
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <h1 style="color:white;text-align: center;text-shadow: #d3d3d3 0px 0px 1px;">Find Your Own Interest!</h1>
+            <h1 style="color:white;text-align: center;text-shadow: #d3d3d3 0px 0px 1px;">Pick Your Own
+                Interest!</h1>
             <hr class="small">
-            <span class="subheading" style="text-shadow: none!important;">
-                <div class="row">
-                <div class="col-md-5 col-sm-5 col-xs-12 gutter">
-                    <div class="subcat">
-                        <h2>Industry</h2>
 
-                        <div class="btn-group">
-                            <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                <span>Field:</span> Finance
-                                <i class="col-md-1  glyphicon glyphicon-chevron-down" style="float:right;"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a href="#">Engineering</a>
-                                <a href="#">Health Science</a>
-                                <a href="#">Business & Accountancy</a>
-                                <a href="#">Media</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 gutter">
-                    <div class="subcat">
-                        <h2>Subcategory</h2>
-                        <div class="btn-group col-lg-8 col-md-8 col-sm-8">
-                            <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                <span>Specialization:</span> Trading
-                                <i class="col-md-1  glyphicon glyphicon-chevron-down" style="float:right;"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a href="#">Credit and Marketing</a>
-                                <a href="#">Corporate finance</a>
-                                <a href="#">Wealth Management</a>
-                                <a href="#">Investment</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="col-lg-7 col-md-7 col-sm-7" style="padding: 15px 0 15px 0;">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="offcanvas"
-                                    data-target="#side-menu" aria-expanded="false">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                        </div>
-
-                    </div>
-
-                </div>
-                    <div class="searchInterest">
-                        <input type="text" placeholder="Search based on keywords"><button class="btn btn-primary btn-lg" style="float:right;margin-right:15px;width:15%;">Search</button>
-                    </div>
-            </span>
+            <select class="col-md-12 js-example-basic-multiple" multiple="multiple"
+                    style="padding: 5px 5px 5px 5px!important;">
+            </select>
         </div>
     </div>
-
-
-
+    <div class="row" style="text-align:center;z-index:100;position: relative">
+        <button class="btn btn-primary" style="width:15%;margin-top:30px;" id="save-interest-btn"> Save</button>
+    </div>
 </header>
-
 </body>
 </html>
 
 {% load static %}
 <script src="{% static 'js/ajaxpost.js' %}"></script>
+<script>
+    $(function () {
+
+        {#initialize multiselect#}
+        $('select').select2();
+        $.ajax({
+            type: 'GET',
+            url: '/personalinterestsectordropdown/',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                var fields = data.results;
+                var htmlToAppend = "";
+                for (var i = 0; i < fields.length; i++) {
+                    htmlToAppend += '<option value="' + fields[i] + '">' + fields[i] + '</option>'
+                }
+                $('.js-example-basic-multiple').append(htmlToAppend);
+            }
+        });
+
+        $(".js-example-basic-multiple").select2();
+
+        $("#save-interest-btn").click(function () {
+            var dataString = '&interestinput=' + $(".js-example-basic-multiple").val();
+            console.log(dataString);
+
+            var interestarray = [];
+            $(".js-example-basic-multiple option:selected").each(function () {
+                interestarray.push($(this).val());
+            });
+            console.log(interestarray);
+            $.ajax({
+                type: 'POST',
+                url: '/interestinput/',
+                data: {'interestarray[]': interestarray},
+                success: function (data) {
+                    if (data.status == 'success') {
+{#                        alert(data.message);#}
+                        $('#alertmsgtext').html(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+
+        });
+
+        $(".alert button.close").click(function () {
+            $(this).parent().fadeOut('fast');
+        });
+    });
+</script>

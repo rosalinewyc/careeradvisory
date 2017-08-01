@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.views.decorators import csrf
 from app.models import *
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 def check_session(request):
@@ -728,3 +729,57 @@ def specialisechoice(request):
     response['results'] = list(special_mod_year)
     print(response['results'])
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+
+def personalinterestsectordropdown(request):
+    response = {}
+    data = []
+    sectors_array = InterestSector.objects.values('personal_interest_sector')
+    for sector in sectors_array:
+        data.append(sector['personal_interest_sector'])
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def interestinput(request):
+    response = {}
+    data = []
+    if request.method == 'POST':
+        user_id = request.session.get('user')
+        interest_input = request.POST.getlist('interestarray[]')
+
+        if len(interest_input) == 0:
+            response['status'] = 'fail'
+            response['message'] = 'Empty input'
+        else:
+            # Save it to database
+            for interest in interest_input:
+                existing_user = models_get(User, user_id=user_id)
+                existing_interest = models_get(InterestSector, personal_interest_sector=interest)
+                new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector=existing_interest)
+                StudentInterestSector.save(new_student_interest)
+            response['status'] = 'success'
+            response['message'] = 'Interests updated'
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def retrievestudentinterest(request):
+    response = {}
+    user_id = request.session.get('user')
+    existing_user = models_get(User, user_id=user_id)
+    indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
+    jobs = []
+    for interest in indicated_interests_id:
+        indicated_id = interest['personal_interest_sector_id']
+        sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
+        job = Job.objects.filter(job_interest=sector).values()
+        jobs.append(list(job))
+        # print(jobs)
+
+    serialized_q = json.dumps(list(jobs), cls=DjangoJSONEncoder)
+    response['results'] = serialized_q
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
