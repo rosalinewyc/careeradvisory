@@ -1,1 +1,1 @@
-web: gunicorn careeradvisory.wsgi
+web: gunicorn account.wsgi
