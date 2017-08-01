@@ -385,16 +385,17 @@ def run():
     print("Running: Retrieving keywords for Jobs & Personal Interests")
     retrieve_keywords()
 
-    print("Running: Job Keyword Scraping from Careers@GOV")
-    cg_scrape_keyword()
-    print("Running: Job Interest Scraping from Careers@GOV")
-    cg_scrape_interest()
-
-    print("Running: Job Keyword Scraping from JobStreet")
-    js_scrape_keyword()
-    print("Running: Job Interest Scraping from JobStreet")
-    js_scrape_interest()
+    # print("Running: Job Keyword Scraping from Careers@GOV")
+    # cg_scrape_keyword()
+    # print("Running: Job Interest Scraping from Careers@GOV")
+    # cg_scrape_interest()
+    #
+    # print("Running: Job Keyword Scraping from JobStreet")
+    # js_scrape_keyword()
+    # print("Running: Job Interest Scraping from JobStreet")
+    # js_scrape_interest()
 
     print("------------------- Job Scraping End -------------------")
 
 run()
+print(str(keywords_search))
