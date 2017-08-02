@@ -1,1 +1,1 @@
-web: gunicorn account.wsgi --preload --max-requests 1200 --worker-class gevent
+web: gunicorn account.wsgi --preload --max-requests 1200
