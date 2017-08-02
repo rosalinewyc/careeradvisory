@@ -16,9 +16,11 @@
     <script src={% static 'js/personalinterest-js.js' %}></script>
 </head>
 <body>
+<div id="updatedbox" style="display:none;">
 <div class="alert alert-info alert-dismissable">
     <button type="button" class="close" aria-hidden="true">&times;</button>
     <p id="alertmsgtext"></p>
+</div>
 </div>
 
 <header class="intro-header">
@@ -81,9 +83,11 @@
                 success: function (data) {
                     if (data.status == 'success') {
 {#                        alert(data.message);#}
+                        document.getElementById("updatedbox").style.display = 'block';
                         $('#alertmsgtext').html(data.message);
                     } else {
-                        alert(data.message);
+                        document.getElementById("updatedbox").style.display = 'block';
+                        $('#alertmsgtext').html(data.message);
                     }
                 }
             });

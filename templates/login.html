@@ -8,14 +8,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1" charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-
 </head>
 
 <body>
@@ -50,12 +49,14 @@
     $("#loginBtn").click(function (event) {
         event.preventDefault();
         var dataString = '&username=' + $("#username_input").val() + '&password=' + $("#password_input").val();
+        $('#cover').fadeOut(1000);
         $.ajax({
             type: 'POST',
             url: '/authenticate/',
             dataType: 'json',
             data: dataString,
             success: function(data) {
+                $('#overlay').remove();
                 if (data.status == 'success') {
                     location.reload();
                     //alert('Login Success!')

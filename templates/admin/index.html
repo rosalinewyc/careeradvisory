@@ -35,7 +35,7 @@
 
                                             <script id="fileUploadProgressTemplate" type="text/x-jquery-tmpl">
                                                 <div class="progress">
-                                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
                                                 </div>
                                             </script>
 
@@ -131,10 +131,10 @@
 
             var xhr = $.ajaxSettings.xhr();
             if (xhr.upload) {
-                xhr.upload.addEventListener('progress', function(evt) {
-                    var percent = (evt.loaded / evt.total) * 100;
-                    $("#files").find(".progress-bar").width(percent + "%");
-                    $("#files").find(".progress-bar").delay(1000);
+                xhr.upload.addEventListener('progress', function(event) {
+                    //var percent = (event.loaded / event.total) * 100;
+                    //var percent = 100;
+                    //$("#files").find(".progress-bar").width(percent + "%");
                 }, false);
             }
             return xhr;

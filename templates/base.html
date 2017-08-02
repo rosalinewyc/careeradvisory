@@ -1,5 +1,6 @@
 {% load static %}
-
+<head>
+    <meta name="viewport" content="initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/customize.css' %}"/>
     <script src={% static 'js/bootstrap.min.js' %}></script>
@@ -9,9 +10,6 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
     <script type="text/javascript" src="http://cdn.datatables.net/r/bs-3.3.5/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
-
-
-
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
 
     {% url 'login' as login %}
@@ -24,7 +22,7 @@
     {% url 'courserequirement' as courserequirement %}
     {% url 'personalinterest' as personalinterest %}
     {% url 'logout' as logout %}
-<link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}"/>
+</head>
 <nav class="navbar-static-top homepage-nav gradientNav">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -56,7 +54,7 @@
                     <a href="#" class="dropdown-toggle whitetext" data-toggle="dropdown" role="button"
                        aria-haspopup="true" aria-expanded="false"> Course Guidance<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ courseplanner }}">Course Planner</a></li>
+{#                        <li><a href="{{ courseplanner }}">Course Planner</a></li>#}
                         <li><a href="{{ courserequirement }}">Course Requirement</a></li>
                         <li><a href="{{ modulesearch }}">Module Search</a></li>
                     </ul>
