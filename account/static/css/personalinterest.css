@@ -2,7 +2,7 @@
 body {
     height: 100%;
     background-repeat: no-repeat;
-    background-image: url("../img/discover.jpeg");
+    background-image: url("https://s3-ap-southeast-1.amazonaws.com/is480firestorm/discover.jpeg");
     background-position: center center;
     background-attachment: fixed;
     background-size:  cover;
