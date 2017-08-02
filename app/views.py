@@ -728,7 +728,6 @@ def specialisechoice(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-
 def personalinterestsectordropdown(request):
     response = {}
     data = []
@@ -745,17 +744,23 @@ def interestinput(request):
     if request.method == 'POST':
         user_id = request.session.get('user')
         interest_input = request.POST.getlist('interestarray[]')
-
+        student_interest_array = []
         if len(interest_input) == 0:
             response['status'] = 'fail'
             response['message'] = 'Empty input'
         else:
             # Save it to database
             for interest in interest_input:
+                # Check if student and interest is in student and personal interest database
                 existing_user = models_get(User, user_id=user_id)
                 existing_interest = models_get(InterestSector, personal_interest_sector=interest)
-                new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector=existing_interest)
-                StudentInterestSector.save(new_student_interest)
+                if existing_user is not None and existing_interest is not None:
+                    # Delete all existing interests under the student
+                    StudentInterestSector.objects.filter(user_id=existing_user).delete()
+                    new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector=existing_interest)
+                    student_interest_array.append(new_student_interest)
+
+            StudentInterestSector.objects.bulk_create(student_interest_array)
             response['status'] = 'success'
             response['message'] = 'Interests updated'
 

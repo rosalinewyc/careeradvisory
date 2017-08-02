@@ -16,18 +16,19 @@
     <div style="width:100%; float:left">
         <div class="dropdown" style="float:left">
           <button style="width:220px" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span id="selected">Select Course Specialization</span>
+              <span id="selected">Select Interest</span>
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="specialisedropdown">
 
           </ul>
         </div>
-        <div id="specialmods" style="display: none; margin-left: 230px; margin-top:3px; font-size:18px"></div>
+
     </div>
+    <div id="interestelectives" style="display: none;">Possible electives to take:</div>
+    <div id="specialmods" style="display: none; margin-top:3px; font-size:18px"></div>
 <br/>
-<br/>
-<br/>
+
 	<div class="row col-list">
 		<div class="col-md-4 t1">
 			<div class="col-head text-center">
@@ -179,6 +180,7 @@
                     for (i = 0 ; i < resultsSize; i++) {
                         //alert(data.results[mod])
                         document.getElementById("specialmods").style.display = 'block';
+                        document.getElementById("interestelectives").style.display = 'block';
                         if (i == resultsSize - 1) {
                             $('#specialmods').append(data.results[i]);
                         } else {
@@ -187,6 +189,7 @@
                     }
                 } else {
                     document.getElementById("specialmods").style.display = 'block';
+                    document.getElementById("interestelectives").style.display = 'none';
                     $('#specialmods').html("No additional modules for this specialization.");
                 }
             }
