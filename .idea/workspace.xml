@@ -2,71 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="604cf8bd-5760-4519-9b05-2ee69e01710c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/books.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/path.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/1-1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/2-2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/3-3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/4-4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/5-5.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/5.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/6-6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/7-7.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/7.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/8-8.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/8.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/9-9.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/9.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/banner.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/blank.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/loader.GIF" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/loading.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/man.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me1-1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me10-10.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me10.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me11-11.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me11.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me12-12.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me12.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me2-2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me3-3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me4-4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me5-5.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me5.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me6-6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me7-7.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me7.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me8-8.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me8.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me9-9.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/me9.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/nav.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/profile/social-icons.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/account/static/img/space.jpg" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/static/img/buildings.jpg" afterPath="$PROJECT_DIR$/account/static/img/buildings.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/static/img/discover.jpeg" afterPath="$PROJECT_DIR$/account/static/img/discover.jpeg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/static/img/fog2.jpg" afterPath="$PROJECT_DIR$/account/static/img/fog2.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/settings.py" afterPath="$PROJECT_DIR$/account/settings.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/static/css/customize.css" afterPath="$PROJECT_DIR$/account/static/css/customize.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/account/static/css/login.css" afterPath="$PROJECT_DIR$/account/static/css/login.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views.py" afterPath="$PROJECT_DIR$/app/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/admin/index.html" afterPath="$PROJECT_DIR$/templates/admin/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/base.html" afterPath="$PROJECT_DIR$/templates/base.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/login.html" afterPath="$PROJECT_DIR$/templates/login.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/modulesearch.html" afterPath="$PROJECT_DIR$/templates/modulesearch.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/personalinterest.html" afterPath="$PROJECT_DIR$/templates/personalinterest.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -101,7 +37,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/account/settings.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="255">
@@ -113,11 +49,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/admin/index.html">
+      <file leaf-file-name="wsgi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/account/wsgi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="129">
-              <caret line="58" column="52" lean-forward="false" selection-start-line="58" selection-start-column="48" selection-end-line="58" selection-end-column="52" />
+            <state relative-caret-position="238">
+              <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+              <folding>
+                <element signature="e#220#229#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Procfile" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Procfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -163,11 +111,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
-              <caret line="406" column="26" lean-forward="false" selection-start-line="406" selection-start-column="26" selection-end-line="406" selection-end-column="26" />
+            <state relative-caret-position="246">
+              <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -296,9 +244,9 @@
         <option value="$PROJECT_DIR$/templates/personalinterest.html" />
         <option value="$PROJECT_DIR$/account/static/css/customize.css" />
         <option value="$PROJECT_DIR$/templates/login.html" />
-        <option value="$PROJECT_DIR$/app/views.py" />
         <option value="$PROJECT_DIR$/account/static/css/login.css" />
         <option value="$PROJECT_DIR$/account/settings.py" />
+        <option value="$PROJECT_DIR$/app/views.py" />
       </list>
     </option>
   </component>
@@ -1161,24 +1109,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/account/wsgi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding>
-            <element signature="e#220#229#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Procfile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/admin/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="129">
@@ -1222,14 +1152,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="406" column="26" lean-forward="false" selection-start-line="406" selection-start-column="26" selection-end-line="406" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/account/static/css/customize.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="40">
@@ -1253,6 +1175,32 @@
           <folding>
             <element signature="e#307#316#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Procfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/account/wsgi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="e#220#229#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
