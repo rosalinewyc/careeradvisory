@@ -386,13 +386,11 @@ def bootstrap_student(z_file, file):
                         existing_student = models_get(Student, user_id=row[0])
                         if existing_student is None:
                             new_student = Student(user_id=user, name=row[1], course_specialization=row[2],current_year=row[3], current_semester=row[4], email=row[5], profile_picture=row[6], course_code=course, mbti_code=mbti)
-                            student_array.append(new_student)
+                            Student.save(new_student)
                         else:
                             duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
                 else:
                     validation_error.append("Line " + str(line_num) + ": no such user ID")
-    for student in student_array:
-        Student.save(student)
 
     status = {'duplicate': duplicates_error, 'validation': validation_error}
     return status
