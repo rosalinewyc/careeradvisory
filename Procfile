@@ -1,2 +1,1 @@
-web: gunicorn account.wsgi
-web: gunicorn careeradvisory:app --timeout 1200
+web: gunicorn account.wsgi --timeout 1200
