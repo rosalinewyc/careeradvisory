@@ -314,6 +314,7 @@ def models_get(model, **kwargs):
 def bootstrap_user(z_file, file):
     duplicates_error = []
     validation_error = []
+    user_array = []
     with z_file.open(file, 'r') as csv_file:
         csv_file = io.TextIOWrapper(csv_file)
         contents = csv.reader(csv_file)
@@ -329,10 +330,10 @@ def bootstrap_user(z_file, file):
                 existing_user = models_get(User, user_id=userid)
                 if existing_user is None:
                     new_user = User(user_id=userid, password=row[1], role=row[2])
-                    User.save(new_user)
+                    user_array.append(new_user)
                 else:
                     duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
-
+    User.objects.bulk_create(user_array)
     status = {'duplicate': duplicates_error, 'validation': validation_error}
     return status
 
