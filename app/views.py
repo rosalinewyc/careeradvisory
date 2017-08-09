@@ -728,16 +728,6 @@ def specialisechoice(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def personalinterestsectordropdown(request):
-    response = {}
-    data = []
-    sectors_array = InterestSector.objects.values('personal_interest_sector')
-    for sector in sectors_array:
-        data.append(sector['personal_interest_sector'])
-    response['results'] = data
-    return HttpResponse(json.dumps(response), content_type="application/json")
-
-
 def interestinput(request):
     response = {}
     data = []
@@ -766,19 +756,26 @@ def interestinput(request):
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+
 # have repeated code from getstudentinterest
 def retrievestudentinterest(request):
     response = {}
     user_id = request.session.get('user')
     existing_user = models_get(User, user_id=user_id)
-    indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
     jobs = []
-    for interest in indicated_interests_id:
-        indicated_id = interest['personal_interest_sector_id']
-        sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
-        job = Job.objects.filter(job_interest=sector).values()
+    interestFilter = request.GET.get('interestFilter')
+    if interestFilter is not None:
+        job = Job.objects.filter(job_interest=interestFilter).values()
         jobs.append(list(job))
-        # print(jobs)
+    else:
+        indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
+        for interest in indicated_interests_id:
+            indicated_id = interest['personal_interest_sector_id']
+            sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
+            print(sector)
+            job = Job.objects.filter(job_interest=sector).values()
+            jobs.append(list(job))
+            # print(jobs)
 
     serialized_q = json.dumps(list(jobs), cls=DjangoJSONEncoder)
     response['results'] = serialized_q
@@ -793,6 +790,7 @@ def getstudentinterest(request):
     sector = ""
     for interest in indicated_interests_id:
         indicated_id = interest['personal_interest_sector_id']
-        sector += "<li>" + models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector+"</li>"
+        interest_name = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
+        sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
     print(sector)
     return HttpResponse(json.dumps(sector), content_type="application/json")

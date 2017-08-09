@@ -18,8 +18,6 @@ urlpatterns = [
     url(r'^modsearch/$', views.modsearch, name='modsearch'),
     url(r'^userprofile/$', views.userprofile, name='userprofile'),
     url(r'^personalinterest/$', views.personalinterest, name='personalinterest'),
-    url(r'^personalinterestsectordropdown/$', views.personalinterestsectordropdown,
-        name='personalinterestsectordropdown'),
     url(r'^interestinput/$', views.interestinput, name='interestinput'),
     url(r'^retrievestudentinterest/$', views.retrievestudentinterest, name='retrievestudentinterest'),
     url(r'^getstudentinterest/$', views.getstudentinterest, name='getstudentinterest'),

@@ -1,7 +1,15 @@
 {% block bar %}
     {% include "base.html" %}
 {% endblock %}
+<style>
+    .morecontent span {
+        display: none;
+    }
 
+    .morelink {
+        display: block;
+    }
+</style>
 <html>
 <head>
 
@@ -29,74 +37,16 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">Job Recommendations</h1>
-            <h4>Interests indicated are: </h4>
-            <h5 id="interestNames"></h5><hr>
+            <h4>Filter By Specific Interest: </h4>
+            <h5 id="interestNames"></h5>
+            <select class="js-example-basic-single">
+                <option> -- Select --</option>
+            </select>
+            <hr>
         </div>
     </div>
     <!-- /.row -->
-
-    <div id="job-cotnent"></div>
-
-    {#    <!-- Project One -->#}
-    {#    <div class="row">#}
-    {#        <div class="col-md-7">#}
-    {#            <a href="#">#}
-    {#                <img class="img-responsive"#}
-    {#                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/2000px-Microsoft_logo_%282012%29.svg.png"#}
-    {#                     alt="">#}
-    {#            </a>#}
-    {#        </div>#}
-    {#        <div class="col-md-5">#}
-    {#            <h3>Microsoft</h3>#}
-    {#            <h4>Software Engineer</h4>#}
-    {#            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium veniam exercitationem expedita#}
-    {#                laborum at voluptate. Labore, voluptates totam at aut nemo deserunt rem magni pariatur quos perspiciatis#}
-    {#                atque eveniet unde.</p>#}
-    {#            <a class="btn btn-primary" href="#">Apply Now <span class="glyphicon glyphicon-chevron-right"></span></a>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    <!-- /.row -->#}
-    {##}
-    {#    <hr>#}
-    {##}
-    {#    <!-- Project Two -->#}
-    {#    <div class="row">#}
-    {#        <div class="col-md-7">#}
-    {#            <a href="#">#}
-    {#                <img class="img-responsive" src="http://photocdn.sohu.com/20151229/mp51210448_1451380271442_2.jpeg"#}
-    {#                     alt="">#}
-    {#            </a>#}
-    {#        </div>#}
-    {#        <div class="col-md-5">#}
-    {#            <h3>Apple</h3>#}
-    {#            <h4>Research & Development</h4>#}
-    {#            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, odit velit cumque vero doloremque#}
-    {#                repellendus distinctio maiores rem expedita a nam vitae modi quidem similique ducimus! Velit, esse totam#}
-    {#                tempore.</p>#}
-    {#            <a class="btn btn-primary" href="#">Apply Now <span class="glyphicon glyphicon-chevron-right"></span></a>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    <!-- /.row -->#}
-    {##}
-    {#    <hr>#}
-    {##}
-    {#    <!-- Project Three -->#}
-    {#    <div class="row">#}
-    {#        <div class="col-md-7">#}
-    {#            <a href="#">#}
-    {#                <img class="img-responsive"#}
-    {#                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgN9nD2Hu6uC7XuvbWQG2HTX-IWFoHaOEl82ZyByae2AxhOLmO"#}
-    {#                     alt="">#}
-    {#            </a>#}
-    {#        </div>#}
-    {#        <div class="col-md-5">#}
-    {#            <h3>Uber</h3>#}
-    {#            <h4>Digital Marketer</h4>#}
-    {#            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis, temporibus, dolores, at, praesentium ut#}
-    {#                unde repudiandae voluptatum sit ab debitis suscipit fugiat natus velit excepturi amet commodi deleniti#}
-    {#                alias possimus!</p>#}
-    {#            <a class="btn btn-primary" href="#">Apply Now<span class="glyphicon glyphicon-chevron-right"></span></a>#}
-    {#        </div>#}
+    <div id="job-content"></div>
 
 </div>
 <!-- /.row -->
@@ -155,26 +105,9 @@
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 <script>
     $(function () {
-        {#initialize multiselect#}
-        $('select').select2();
-        $.ajax({
-            type: 'GET',
-            url: '/personalinterestsectordropdown/',
-            dataType: 'json',
-            success: function (data) {
-                var fields = data.results;
-                var htmlToAppend = "";
-                for (var i = 0; i < fields.length; i++) {
-                    htmlToAppend += '<option value="' + fields[i] + '">' + fields[i] + '</option>'
-                }
-                $('.js-example-basic-multiple').append(htmlToAppend);
-            }
-        });
-
-        $(".js-example-basic-multiple").select2();
 
         $.get("/getstudentinterest/", function (data) {
-            $('#interestNames').html("<strong>"+data+"</strong>");
+            $('.js-example-basic-single').append(data);
         });
 
         $.ajax({
@@ -183,27 +116,100 @@
             dataType: 'json',
             success: function (data) {
                 var arrayJobs = $.parseJSON(data.results);
-
-                for (var i = 0; i < arrayJobs.length; i++) {
-                    var interestjobs = arrayJobs[i];
-                    for (var i = 0; i < interestjobs.length; i++) {
-                        var j = interestjobs[i];
-                        var company = j.job_company;
-                        var pos = j.job_position;
-                        var desc = j.job_description;
-{#                        desc = desc.split(".").join("<br />")#}
-                        var url = j.job_url;
-
-                        var htmlAppend = "<h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p>" + desc + "</p>" + "<a href='" + url + "'>More Info</a><br /><hr>";
-                        $('#job-cotnent').append(htmlAppend);
-                    }
-
-
-                }
-
-
+                var htmlAppend = displayJob(arrayJobs);
+                $('#job-content').append(htmlAppend);
             }
         });
 
+        var showChar = 500;  // How many characters are shown by default
+        var ellipsestext = "...";
+        var moretext = "Show more >";
+        var lesstext = "Show less";
+
+
+        $('.expandable').each(function () {
+            var content = $(this).html();
+            console.log('entered expandable' + content);
+            if (content.length > showChar) {
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar, content.length - showChar);
+
+                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+                $(this).html(html);
+            }
+        });
+
+        $(".morelink").click(function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
+
+        $('.js-example-basic-single').change(function () {
+            var dataString = '&interestFilter=' + encodeURIComponent($(this).val());
+            $.ajax({
+                type: 'GET',
+                url: '/retrievestudentinterest/',
+                data: dataString,
+                dataType: 'json',
+                success: function (data) {
+                    var arrayJobs = $.parseJSON(data.results);
+                    var htmlAppend = displayJob(arrayJobs);
+                    $('#job-content').html(htmlAppend);
+                }
+            });
+        });
+
     });
+
+    function displayJob(arrayJobs) {
+        console.log(arrayJobs);
+        for (var i = 0; i < arrayJobs.length; i++) {
+            var interestjobs = arrayJobs[i];
+            var htmlAppend = '';
+            for (var i = 0; i < interestjobs.length; i++) {
+                var j = interestjobs[i];
+                var company = j.job_company;
+                var pos = j.job_position;
+                var desc = j.job_description;
+
+                var desc = desc.split(/[;:\.•]+\s|[\r\n]|[\.](?=[A-Z])/g)
+
+                {# Ensure every new line starts with uppercase#}
+                for (var k = 0; k < desc.length; k++) {
+                    var splitted = desc[k];
+                    desc[k] = splitted.charAt(0).toUpperCase() + splitted.slice(1);
+                }
+
+                {# handle when words stick together egThis #}
+                desc = desc.join("<br />");
+                var matched = desc.match(/[a-z][A-Z]/g);
+                if (matched) {
+                    desc = desc.split(/[a-z][A-Z]/g);
+                    for (var k = 0; k < matched.length; k++) {
+                        var match = matched[k];
+                        desc[k] = desc[k] + match.charAt(0);
+                        desc[k + 1] = match.charAt(1) + desc[k + 1];
+                    }
+                    desc = desc.join("<br />");
+                }
+
+                var url = j.job_url;
+{#                htmlAppend += "<p class='expandable'>" + desc + "</p>";#}
+                htmlAppend += "<div class='well'><h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p class='expandable'>" + desc + "</p>" + "<a href='" + url + "'>More Info</a><br /></div><hr>";
+
+            }
+        }
+        return htmlAppend;
+    }
+
+
+
 </script>
