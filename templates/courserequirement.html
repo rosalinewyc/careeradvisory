@@ -23,10 +23,13 @@
 
           </ul>
         </div>
-
+{#        <button class="btn btn-primary" style="margin-left: 10px" id="save-spec-btn">Submit</button>#}
     </div>
     <div id="interestelectives" style="display: none;">Possible electives to take:</div>
     <div id="specialmods" style="display: none; margin-top:3px; font-size:18px"></div>
+
+
+
 <br/>
 
 	<div class="row col-list">
@@ -37,24 +40,16 @@
 			</div>
 			<ul class="list-unstyled">
                 <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "11" %}
-                            <li class="toggleContent">
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                {% for modid, modname in module11.items%}
+                    <li class="toggleContent">
+                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                    </li>
                 {% endfor %}
                 <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "12" %}
-                            <li class="toggleContent">
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                {% for modid, modname in module12.items%}
+                    <li class="toggleContent">
+                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                    </li>
                 {% endfor %}
 			</ul>
 		</div>
@@ -65,24 +60,16 @@
 			</div>
 			<ul class="list-unstyled">
                 <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "21" %}
-                            <li>
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                {% for modid, modname in module21.items%}
+                    <li class="toggleContent">
+                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                    </li>
                 {% endfor %}
                 <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "22" %}
-                            <li>
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                {% for modid, modname in module22.items%}
+                    <li class="toggleContent">
+                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                    </li>
                 {% endfor %}
 			</ul>
 		</div>
@@ -93,23 +80,27 @@
 			</div>
 			<ul class="list-unstyled">
                 <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "31" %}
-                            <li>
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
+                {% for modid, modname in module31.items%}
+                    <li class="toggleContent">
+                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                    </li>
+                {% endfor %}
+                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                {% for modid, modname in module32.items%}
+                    <li class="toggleContent">
+                        {% if modid is 90 %}
+                            <p style="cursor: pointer;" id="Internship" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
+                            </p></li>
+
+                            <li class="toggleContent">
+                                <p style="cursor: pointer;" id="Project" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
+                            </p></li>
+                        {% else %}
+                            <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
                         {% endif %}
-                    {% endfor %}
-                {% endfor %}<li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for coursemapid, modlist in module.items%}
-                    {% for mod, year in modlist.items%}
-                        {% if year == "32" %}
-                            <li>
-                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                    </li>
                 {% endfor %}
 			</ul>
 		</div>
@@ -124,6 +115,8 @@
 </div>
 <div class="container todolist" id="descontainer" style="display:none; margin-bottom:50px; padding:30px; font-size:18px;">
     <div class="row col-list modDescription"></div>
+    <hr/>
+    <div class="row col-list specials"></div>
 </div>
 </body>
 </html>
@@ -131,8 +124,9 @@
 {% load static %}
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 <script>
+
     function mod_click(clicked_id) {
-        //alert(clicked_id);
+        $('.specials').empty();
         var dataString = '&modname=' + encodeURIComponent(clicked_id);
         $.ajax({
             type: 'GET',
@@ -140,12 +134,16 @@
             data: dataString,
             dataType: 'json',
             success: function (data) {
-                //alert(data.results[0].mod_description);
                 document.getElementById("descontainer").style.display = 'block';
-                $('.modDescription').html('<p>' + String(data.results[0].mod_description).split(".").join(".<br />") + '</p>');
-                $('html,body').animate({
-                    scrollTop: $("#descontainer").offset().top},
-                    'slow');
+                $('.modDescription').html('<h4><b>' + clicked_id + '</h4></b><p>' + String(data.des).split(".").join(".<br />") + '</p>');
+                $('html,body').animate({scrollTop: $("#descontainer").offset().top},'slow');
+
+                if (data.specialise_mods.length != 0) {
+                    for (mod in data.specialise_mods) {
+                        //alert(data.specialise_mods[mod].module_name);
+                        $('.specials').append(data.specialise_mods[mod].module_name + '<br/>');
+                    }
+                }
             }
         });
     }
@@ -168,32 +166,41 @@
 
     $(document).on('click', '#specialisedropdown li a', function () {
         $("#selected").text($(this).parent().attr('value'));
-        var dataString = '&specialise=' + $(this).parent().attr('value');
-        $('#specialmods').empty();
-        $.ajax({
-            type: 'GET',
-            url: '/specialisechoice/',
-            data: dataString,
-            success: function (data) {
-                var resultsSize = Object.keys(data.results).length;
-                if (resultsSize != 0) {
-                    for (i = 0 ; i < resultsSize; i++) {
-                        //alert(data.results[mod])
-                        document.getElementById("specialmods").style.display = 'block';
-                        document.getElementById("interestelectives").style.display = 'block';
-                        if (i == resultsSize - 1) {
-                            $('#specialmods').append(data.results[i]);
-                        } else {
-                            $('#specialmods').append(data.results[i] + ", ");
-                        }
-                    }
-                } else {
-                    document.getElementById("specialmods").style.display = 'block';
-                    document.getElementById("interestelectives").style.display = 'none';
-                    $('#specialmods').html("No additional modules for this specialization.");
-                }
-            }
-        });
+        var dataString = '&specialisechoice=' + $(this).parent().attr('value');
+        //alert(dataString)
+        document.getElementById("specialmods").style.display = 'block';
+        $('#specialmods').html($(this).parent().attr('value') + " is selected");
+
+
     });
 
+{#    $(document).on('click', '#specialisedropdown li a', function () {#}
+{#        $("#selected").text($(this).parent().attr('value'));#}
+{#        var dataString = '&specialise=' + $(this).parent().attr('value');#}
+{#        $('#specialmods').empty();#}
+{#        $.ajax({#}
+{#            type: 'GET',#}
+{#            url: '/specialisechoice/',#}
+{#            data: dataString,#}
+{#            success: function (data) {#}
+{#                var resultsSize = Object.keys(data.results).length;#}
+{#                if (resultsSize != 0) {#}
+{#                    for (i = 0 ; i < resultsSize; i++) {#}
+{#                        //alert(data.results[mod])#}
+{#                        document.getElementById("specialmods").style.display = 'block';#}
+{#                        document.getElementById("interestelectives").style.display = 'block';#}
+{#                        if (i == resultsSize - 1) {#}
+{#                            $('#specialmods').append(data.results[i]);#}
+{#                        } else {#}
+{#                            $('#specialmods').append(data.results[i] + ", ");#}
+{#                        }#}
+{#                    }#}
+{#                } else {#}
+{#                    document.getElementById("specialmods").style.display = 'block';#}
+{#                    document.getElementById("interestelectives").style.display = 'none';#}
+{#                    $('#specialmods').html("No additional modules for this specialization.");#}
+{#                }#}
+{#            }#}
+{#        });#}
+{#    });#}
 </script>
