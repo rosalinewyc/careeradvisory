@@ -78,22 +78,22 @@ WSGI_APPLICATION = 'account.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ecg_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'CHARSET': 'utf8_general_ci',
-        'COLLATION': 'utf8_general_ci',
         # 'ENGINE': 'django.db.backends.mysql',
         # 'NAME': 'ecg_db',
-        # 'USER': 'is480firestorm',
-        # 'PASSWORD': 'is480npfirestorm',
-        # 'HOST': 'ecg.c7z3osufzsph.ap-southeast-1.rds.amazonaws.com',
+        # 'USER': 'root',
+        # 'PASSWORD': '',
+        # 'HOST': 'localhost',
         # 'PORT': '3306',
         # 'CHARSET': 'utf8_general_ci',
         # 'COLLATION': 'utf8_general_ci',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecg_db',
+        'USER': 'is480firestorm',
+        'PASSWORD': 'is480npfirestorm',
+        'HOST': 'ecg.c7z3osufzsph.ap-southeast-1.rds.amazonaws.com',
+        'PORT': '3306',
+        'CHARSET': 'utf8_general_ci',
+        'COLLATION': 'utf8_general_ci',
     }
 }
 

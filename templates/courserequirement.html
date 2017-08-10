@@ -2,131 +2,135 @@
    {% include "base.html" %}
 {% endblock %}
 <html>
-<head>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/courserequirement-css.css' %}"/>
-    <script src={% static 'js/courserequirement-js.js' %}></script>
-</head>
-<body>
-<div class="container todolist">
-    <div>
-        <h2>Course Requirements for {{ course.course_name }}</h2>
-    </div>
-    <hr/>
-    <div style="width:100%; float:left">
-        <div class="dropdown" style="float:left">
-          <button style="width:220px" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span id="selected">Select Interest</span>
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="specialisedropdown">
+    <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/courserequirement-css.css' %}"/>
+        <script src={% static 'js/courserequirement-js.js' %}></script>
+    </head>
+    <body>
+        <div class="container todolist">
+            <div>
+                <h2>Course Requirements for {{ course.course_name }}</h2>
+            </div>
+            <hr/>
+            <div style="width:100%; float:left">
+                <div class="dropdown" id="specialdropdown" style="float:left; margin-right:10px">
+                  <button style="" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span id="selected">Select Specialization</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="specialisedropdown">
 
-          </ul>
-        </div>
-{#        <button class="btn btn-primary" style="margin-left: 10px" id="save-spec-btn">Submit</button>#}
-    </div>
-    <div id="interestelectives" style="display: none;">Possible electives to take:</div>
-    <div id="specialmods" style="display: none; margin-top:3px; font-size:18px"></div>
+                  </ul>
+                </div>
+        {#        <button class="btn btn-primary" style="margin-left: 10px" id="save-spec-btn">Submit</button>#}
+                <div id="success" style="display: none; margin-top:3px; font-size:18px; color:#3c763d"></div>
 
+            </div>
+        {#    <div id="interestelectives" style="display: none;">Possible electives to take:</div>#}
 
+        <br/>
 
-<br/>
-
-	<div class="row col-list">
-		<div class="col-md-4 t1">
-			<div class="col-head text-center">
-				<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
-				<h2>Year 1</h2>
-			</div>
-			<ul class="list-unstyled">
-                <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for modid, modname in module11.items%}
-                    <li class="toggleContent">
-                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                    </li>
-                {% endfor %}
-                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for modid, modname in module12.items%}
-                    <li class="toggleContent">
-                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                    </li>
-                {% endfor %}
-			</ul>
-		</div>
-		<div class="col-md-4 t2">
-			<div class="col-head text-center">
-				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-				<h2>Year 2</h2>
-			</div>
-			<ul class="list-unstyled">
-                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for modid, modname in module21.items%}
-                    <li class="toggleContent">
-                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                    </li>
-                {% endfor %}
-                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for modid, modname in module22.items%}
-                    <li class="toggleContent">
-                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                    </li>
-                {% endfor %}
-			</ul>
-		</div>
-		<div class="col-md-4 t3">
-			<div class="col-head text-center">
-				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-				<h2>Year 3</h2>
-			</div>
-			<ul class="list-unstyled">
-                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
-                {% for modid, modname in module31.items%}
-                    <li class="toggleContent">
-                        <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                    </li>
-                {% endfor %}
-                <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
-                {% for modid, modname in module32.items%}
-                    <li class="toggleContent">
-                        {% if modid is 90 %}
-                            <p style="cursor: pointer;" id="Internship" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
-                            </p></li>
-
+            <div class="row col-list">
+                <div class="col-md-4 t1">
+                    <div class="col-head text-center">
+                        <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+                        <h2>Year 1</h2>
+                    </div>
+                    <ul class="list-unstyled">
+                        <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        {% for modid, modname in module11.items%}
                             <li class="toggleContent">
-                                <p style="cursor: pointer;" id="Project" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
-                            </p></li>
-                        {% else %}
-                            <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-			</ul>
-		</div>
-	</div>
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                            </li>
+                        {% endfor %}
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        {% for modid, modname in module12.items%}
+                            <li class="toggleContent">
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-4 t2">
+                    <div class="col-head text-center">
+                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                        <h2>Year 2</h2>
+                    </div>
+                    <ul class="list-unstyled">
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        {% for modid, modname in module21.items%}
+                            <li class="toggleContent">
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                            </li>
+                        {% endfor %}
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        {% for modid, modname in module22.items%}
+                            <li class="toggleContent">
+                                <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-4 t3">
+                    <div class="col-head text-center">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        <h2>Year 3</h2>
+                    </div>
+                    <ul class="list-unstyled">
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        {% for modid, modname in module31.items%}
+                            <li class="toggleContent">
+                                {% if modid is 90 %}
+                                    <p style="cursor: pointer;" id="Internship" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
+                                    </p></li>
 
-  	<div class="text-right">
-		<!-- Button trigger modal -->
-{#		<button type="button" id="btn-reset" class="btn btn-primary btn-lg">#}
-{#		  Back#}
-{#		</button>#}
-    </div>
-</div>
-<div class="container todolist" id="descontainer" style="display:none; margin-bottom:50px; padding:30px; font-size:18px;">
-    <div class="row col-list modDescription"></div>
-    <hr/>
-    <div class="row col-list specials"></div>
-</div>
-</body>
+                                    <li class="toggleContent">
+                                        <p style="cursor: pointer;" id="Project" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
+                                    </p></li>
+                                {% else %}
+                                    <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        {% for modid, modname in module32.items%}
+                            <li class="toggleContent">
+                                {% if modid is 90 %}
+                                    <p style="cursor: pointer;" id="Internship" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
+                                    </p></li>
+
+                                    <li class="toggleContent">
+                                        <p style="cursor: pointer;" id="Project" onClick="mod_click(this.id)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
+                                    </p></li>
+                                {% else %}
+                                    <p style="cursor: pointer;" onClick="mod_click(this.id)" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container todolist" id="descontainer" style="display:none; margin-bottom:50px; padding:30px; font-size:18px;">
+            <div class="row col-list modDescription"></div>
+            <hr/>
+            <div id="interestelectives" class="row col-list" style="font-weight:bold"></div>
+            <div class="row col-list specials"></div>
+        </div>
+    </body>
 </html>
 
 {% load static %}
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 <script>
-
     function mod_click(clicked_id) {
         $('.specials').empty();
+        $('#interestelectives').empty();
         var dataString = '&modname=' + encodeURIComponent(clicked_id);
         $.ajax({
             type: 'GET',
@@ -141,7 +145,8 @@
                 if (data.specialise_mods.length != 0) {
                     for (mod in data.specialise_mods) {
                         //alert(data.specialise_mods[mod].module_name);
-                        $('.specials').append(data.specialise_mods[mod].module_name + '<br/>');
+                        $('#interestelectives').html('Possible electives to take:');
+                        $('.specials').append('- ' + data.specialise_mods[mod].module_name + '<br/>');
                     }
                 }
             }
@@ -155,23 +160,34 @@
             dataType: 'json',
             success: function (data) {
                 var fields = data.results;
-                var htmlToAppend = "";
-                for (var i = 0; i < fields.length; i++) {
-                    htmlToAppend += '<li value="' + fields[i].course_specialization  + '"><a id="link" href="#">' + fields[i].course_specialization + '</a></li>'
+                if (fields.length != 0) {
+                    var htmlToAppend = "";
+                    for (var i = 0; i < fields.length; i++) {
+                        htmlToAppend += '<li value="' + fields[i]  + '"><a id="link" href="#">' + fields[i] + '</a></li>'
+                    }
+                    $('#specialisedropdown').append(htmlToAppend);
+                } else {
+                    document.getElementById("specialdropdown").style.display = 'none';
                 }
-                $('#specialisedropdown').append(htmlToAppend);
+
             }
         });
     });
 
     $(document).on('click', '#specialisedropdown li a', function () {
         $("#selected").text($(this).parent().attr('value'));
-        var dataString = '&specialisechoice=' + $(this).parent().attr('value');
+        var dataString = '&specialisechoice=' + encodeURIComponent($(this).parent().attr('value'));
         //alert(dataString)
-        document.getElementById("specialmods").style.display = 'block';
-        $('#specialmods').html($(this).parent().attr('value') + " is selected");
-
-
+        document.getElementById("success").style.display = 'block';
+        $('#success').html('<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> ' + $(this).parent().attr('value') + " is selected.");
+        $.ajax({
+            type: 'POST',
+            url: '/modcompare/',
+            data: dataString,
+            success: function (data) {
+                //alert(data)
+            }
+        });
     });
 
 {#    $(document).on('click', '#specialisedropdown li a', function () {#}

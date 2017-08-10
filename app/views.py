@@ -142,6 +142,8 @@ def admin_bootstrap(request):
                                     files_hash['10'] = listing
                                 if listing == 'specializationmodule.csv':
                                     files_hash['11'] = listing
+                                if listing == 'electivemodule.csv':
+                                    files_hash['12'] = listing
 
                             if '03' in key_files_hash:
                                 # Check for user.csv
@@ -182,7 +184,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(Course)
+                                            # clear_database(Course)
                                             Course.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -215,7 +217,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(Module)
+                                            # clear_database(Module)
                                             Module.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -232,7 +234,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(Prerequisite)
+                                            # clear_database(Prerequisite)
                                             Prerequisite.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -249,7 +251,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(CourseMapping)
+                                            # clear_database(CourseMapping)
                                             CourseMapping.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -266,7 +268,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(CourseSpecialization)
+                                            # clear_database(CourseSpecialization)
                                             CourseSpecialization.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -283,7 +285,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(Mbti)
+                                            # clear_database(Mbti)
                                             Mbti.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -300,7 +302,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(JobCategory)
+                                            # clear_database(JobCategory)
                                             JobCategory.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -317,7 +319,7 @@ def admin_bootstrap(request):
 
                                         if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
                                             # No errors found. Proceed to add contents to database
-                                            clear_database(InterestSector)
+                                            # clear_database(InterestSector)
                                             InterestSector.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
@@ -336,6 +338,23 @@ def admin_bootstrap(request):
                                             # No errors found. Proceed to add contents to database
                                             clear_database(SpecializationModule)
                                             SpecializationModule.objects.bulk_create(get_content)
+                                        else:
+                                            if len(get_duplicate_error) != 0:
+                                                duplicate_error_message[file] = get_duplicate_error
+                                            if len(get_validation_error) != 0:
+                                                validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [electivemodule.csv]
+                                    if file == 'electivemodule.csv':
+                                        status = bootstrap_elective_module(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+                                        get_content = status['content']
+
+                                        if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
+                                            # No errors found. Proceed to add contents to database
+                                            # clear_database(ElectiveModule)
+                                            ElectiveModule.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
                                                 duplicate_error_message[file] = get_duplicate_error
@@ -386,7 +405,7 @@ def bootstrap_user(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -420,7 +439,7 @@ def bootstrap_course(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -453,7 +472,7 @@ def bootstrap_student(z_file, file):
     validation_error = []
 
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -496,7 +515,7 @@ def bootstrap_module(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -531,7 +550,7 @@ def bootstrap_prerequisite(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -571,7 +590,7 @@ def bootstrap_course_mapping(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -616,7 +635,7 @@ def bootstrap_course_specialization(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -655,7 +674,7 @@ def bootstrap_mbti(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -691,7 +710,7 @@ def bootstrap_jobcategory(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -730,7 +749,7 @@ def bootstrap_interest_sector(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -789,7 +808,7 @@ def bootstrap_specialization_module(z_file, file):
     duplicates_error = []
     validation_error = []
     with z_file.open(file, 'r') as csv_file:
-        csv_file = io.TextIOWrapper(csv_file)
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
         contents = csv.reader(csv_file)
 
         line_num = 0
@@ -828,6 +847,53 @@ def bootstrap_specialization_module(z_file, file):
                         validation_error.append("Line " + str(line_num) + ": no such module")
 
     status = {'duplicate': duplicates_error, 'validation': validation_error, 'content': specialization_module_array}
+    return status
+
+
+def bootstrap_elective_module(z_file, file):
+    elective_module_array = []
+    duplicates_error = []
+    validation_error = []
+    with z_file.open(file, 'r') as csv_file:
+        csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
+        contents = csv.reader(csv_file)
+
+        line_num = 0
+        for row in contents:
+            line_num += 1
+            if len(row) != 0 and row[0].lower() != 'elective_code':
+                # Logical Validation - Check if id is integer
+                elective_module_id = row[0]
+                a_course = models_get(Course, course_code=row[1])
+                a_module = models_get(Module, module_code=row[2])
+
+                if elective_module_id.isdigit() and a_course is not None and a_module is not None:
+                    # Check for duplicate entry
+                    existing_elective_module_database_id = models_get(ElectiveModule, elective_code=elective_module_id)
+                    existing_elective_module_database_other = models_get(ElectiveModule, course_code=row[1], module_code=row[2])
+                    existing_elective_module_csv = False
+                    for elective_module_object in elective_module_array:
+                        elective_module_object_id = elective_module_object.elective_code
+                        elective_module_object_course = elective_module_object.course_code
+                        elective_module_object_module = elective_module_object.module_code
+                        if elective_module_object_id == elective_module_id or (elective_module_object_course == row[1] and elective_module_object_module == row[2]):
+                            existing_specialization_module_csv = True
+
+                    if existing_elective_module_csv is False and existing_elective_module_database_id is None and existing_elective_module_database_other is None:
+                        # Elective Module ID is unique. No duplicates for the other columns.
+                        new_elective_module = ElectiveModule(elective_code=elective_module_id, course_code=a_course, module_code=a_module)
+                        elective_module_array.append(new_elective_module)
+                    else:
+                        duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
+                else:
+                    if elective_module_id.isdigit() is False:
+                        validation_error.append("Line " + str(line_num) + ": elective module ID is not an integer")
+                    if a_course is None:
+                        validation_error.append("Line " + str(line_num) + ": no such course")
+                    if a_module is None:
+                        validation_error.append("Line " + str(line_num) + ": no such module")
+
+    status = {'duplicate': duplicates_error, 'validation': validation_error, 'content': elective_module_array}
     return status
 
 
@@ -935,33 +1001,52 @@ def modcompare(request):
     response = {}
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
-    modname = request.GET.get('modname')
-    module = Module.objects.get(module_name=modname)
     specialise_mods_id = []
     specialise_mods = []
 
-    if module.module_code is 139:
-        coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
-        for special in coursespecialization:
-            cc = special.course_specialization_id
-            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+    if request.method == 'POST':
+        specialise = request.POST.get('specialisechoice')
+        request.session['specialisechoice'] = specialise
 
-    for special in specialise_mods_id:
-        for item in special:
-            specialmod = Module.objects.get(module_code=item.module_code_id)
-            specialise_mods.append(model_to_dict(specialmod))
+    if request.method == 'GET':
+        modname = request.GET.get('modname')
+        module = Module.objects.get(module_name=modname)
 
+        if 'specialisechoice' in request.session:
+            chosen_specialise = request.session['specialisechoice']
+            if module.module_code is 139:
+                coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+                if coursespecialization is not None:
+                    special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
+                    for special in coursespecialization:
+                        cc = special.course_specialization_id
+                        if cc == special_course.course_specialization_id:
+                            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
 
-    response['des'] = module.mod_description
-    response['specialise_mods'] = specialise_mods
+        for special in specialise_mods_id:
+            for item in special:
+                specialmod = Module.objects.get(module_code=item.module_code_id)
+                specialise_mods.append(model_to_dict(specialmod))
+
+        response['des'] = module.mod_description
+        response['specialise_mods'] = specialise_mods
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 def specialisedropdown(request):
     response = {}
-    course_specialise = CourseSpecialization.objects.values('course_specialization')
-    response['results'] = list(course_specialise)
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    course = Course.objects.get(course_code=student.course_code_id)
+
+    course_specialise = []
+    coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+    if len(coursespecialization) is not 0:
+        for special in coursespecialization:
+            cc = special.course_specialization
+            course_specialise.append(cc)
+
+    response['results'] = course_specialise
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
