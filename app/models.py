@@ -96,7 +96,8 @@ class Student(models.Model):
 
 
 class StudentInterestSector(models.Model):
-    studentInterestSector_id = models.CharField(max_length=4, primary_key=True)
+    #studentInterestSector_id = models.CharField(max_length=4, primary_key=True)
+    studentInterestSector_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     personal_interest_sector = models.ForeignKey(InterestSector, on_delete=models.CASCADE, null=False)
 

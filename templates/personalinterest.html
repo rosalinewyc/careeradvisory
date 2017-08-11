@@ -17,10 +17,10 @@
 </head>
 <body>
 <div id="updatedbox" style="display:none;">
-<div class="alert alert-info alert-dismissable">
-    <button type="button" class="close" aria-hidden="true">&times;</button>
-    <p id="alertmsgtext"></p>
-</div>
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" aria-hidden="true">&times;</button>
+        <p id="alertmsgtext"></p>
+    </div>
 </div>
 
 <header class="intro-header">
@@ -31,9 +31,14 @@
                 Interest!</h1>
             <hr class="small">
 
-            <select class="col-md-12 js-example-basic-multiple" multiple="multiple"
-                    style="padding: 5px 5px 5px 5px!important;">
+            <select class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 js-example-basic-single" id="sectordropdown">
+                <option> -- Select --</option>
             </select>
+            <br />
+            <select class="col-md-12 js-example-basic-multiple" multiple="multiple"
+                    style="padding: 5px 5px 5px 5px!important;" id="course-specialization-dropdown">
+            </select>
+
         </div>
     </div>
     <div class="row" style="text-align:center;z-index:100;position: relative">
@@ -55,34 +60,62 @@
             url: '/personalinterestsectordropdown/',
             dataType: 'json',
             success: function (data) {
-                console.log(data);
                 var fields = data.results;
                 var htmlToAppend = "";
                 for (var i = 0; i < fields.length; i++) {
                     htmlToAppend += '<option value="' + fields[i] + '">' + fields[i] + '</option>'
                 }
-                $('.js-example-basic-multiple').append(htmlToAppend);
+                $('#sectordropdown').append(htmlToAppend);
             }
         });
 
         $(".js-example-basic-multiple").select2();
 
+        $('#sectordropdown').change(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/getcoursespecialization/',
+                dataType: 'json',
+                data: {'sector': $('#sectordropdown').val()},
+                success: function (data) {
+                    console.log(data);
+                    var specializations = data.results;
+                    console.log(specializations);
+                    var htmlToAppend = '';
+                    for (var i = 0; i < specializations.length; i++) {
+                        htmlToAppend += '<option value="' + specializations[i] + '">' + specializations[i] + '</option>'
+                    }
+                    $('#course-specialization-dropdown').append(htmlToAppend);
+                }
+            });
+
+        });
+
         $("#save-interest-btn").click(function () {
             var dataString = '&interestinput=' + $(".js-example-basic-multiple").val();
-            console.log(dataString);
-
             var interestarray = [];
-            $(".js-example-basic-multiple option:selected").each(function () {
-                interestarray.push($(this).val());
-            });
-            console.log(interestarray);
+
+            var interest = $("#sectordropdown").val();
+            if ($(".js-example-basic-multiple").val() != null) {
+                $(".js-example-basic-multiple option:selected").each(function () {
+                    var hash = {};
+                    special = $(this).val().toString();
+                    hash[special] = interest;
+                    var myJSON = JSON.stringify(hash)
+                    interestarray.push(myJSON);
+                });
+            } else {
+                interestarray.push(interest);
+            }
+            //console.log(interestarray);
+            var interest = $("#sectordropdown").val();
             $.ajax({
                 type: 'POST',
                 url: '/interestinput/',
                 data: {'interestarray[]': interestarray},
                 success: function (data) {
                     if (data.status == 'success') {
-{#                        alert(data.message);#}
+                        {#                        alert(data.message);#}
                         document.getElementById("updatedbox").style.display = 'block';
                         $('#alertmsgtext').html(data.message);
                     } else {

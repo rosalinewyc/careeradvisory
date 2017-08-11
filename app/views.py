@@ -1070,20 +1070,36 @@ def interestinput(request):
         user_id = request.session.get('user')
         interest_input = request.POST.getlist('interestarray[]')
         student_interest_array = []
+
         if len(interest_input) == 0:
             response['status'] = 'fail'
             response['message'] = 'Empty input'
         else:
-            # Save it to database
-            for interest in interest_input:
+            try:
+                InterestSector.objects.get(personal_interest_sector=interest_input[0])
+                # Save it to database
                 # Check if student and interest is in student and personal interest database
                 existing_user = models_get(User, user_id=user_id)
-                existing_interest = models_get(InterestSector, personal_interest_sector=interest)
+                existing_interest = models_get(InterestSector, personal_interest_sector=interest_input[0])
                 if existing_user is not None and existing_interest is not None:
                     # Delete all existing interests under the student
                     StudentInterestSector.objects.filter(user_id=existing_user).delete()
                     new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector=existing_interest)
                     student_interest_array.append(new_student_interest)
+            except:
+                # Save it to database
+                for interest in interest_input:
+                    interestchoice = json.loads(interest)
+                    for sector in interestchoice:
+                        # Check if student and interest is in student and personal interest database
+                        existing_user = models_get(User, user_id=user_id)
+                        interest_code = CourseSpecialization.objects.get(course_specialization=sector)
+                        existing_interest = models_get(InterestSector, course_specialization_id_id=interest_code.course_specialization_id)
+                        if existing_user is not None and existing_interest is not None:
+                            # Delete all existing interests under the student
+                            StudentInterestSector.objects.filter(user_id=existing_user).delete()
+                            new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector_id=existing_interest.interest_sector_id)
+                            student_interest_array.append(new_student_interest)
 
             StudentInterestSector.objects.bulk_create(student_interest_array)
             response['status'] = 'success'
@@ -1129,3 +1145,32 @@ def getstudentinterest(request):
         sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
     print(sector)
     return HttpResponse(json.dumps(sector), content_type="application/json")
+
+
+def personalinterestsectordropdown(request):
+    response = {}
+    data = []
+    sectors_array = InterestSector.objects.values('personal_interest_sector')
+    for sector in sectors_array:
+        if sector not in data:
+            data.append(sector['personal_interest_sector'])
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def getcoursespecialization(request):
+    response = {}
+    data = []
+    sector = request.GET.get('sector')
+    specializationidsbysector = InterestSector.objects.filter(personal_interest_sector=sector).values('course_specialization_id')
+    if specializationidsbysector is None:
+        data.append(sector)
+    else:
+        for specializationid in specializationidsbysector:
+            coursespecialization = CourseSpecialization.objects.filter(course_specialization_id=specializationid['course_specialization_id']).values('course_specialization')
+            if len(coursespecialization) is not 0:
+                name = coursespecialization[0]['course_specialization']
+                if name not in data:
+                    data.append(name)
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")

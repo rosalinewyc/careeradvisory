@@ -26,4 +26,8 @@ urlpatterns = [
     url(r'^modcompare/$', views.modcompare, name='modcompare'),
     url(r'^specialisedropdown/$', views.specialisedropdown, name='specialisedropdown'),
     url(r'^specialisechoice/$', views.specialisechoice, name='specialisechoice'),
+    url(r'^personalinterestsectordropdown/$', views.personalinterestsectordropdown, name='personalinterestsectordropdown'),
+    url(r'^getcoursespecialization/$', views.getcoursespecialization, name='getcoursespecialization'),
+
+
 ]
