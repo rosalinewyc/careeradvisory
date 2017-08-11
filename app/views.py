@@ -991,7 +991,9 @@ def modsearch(request):
             # results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
             #         Module.objects.filter(specialisation__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
             #         Module.objects.filter(mod_description__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description')
-            results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description')
+            results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name',
+                                                                                        'school', 'has_prerequiste',
+                                                                                        'mod_description')
             response['results'] = list(results)
             response['searchinput'] = search_input
     return HttpResponse(json.dumps(response), content_type="application/json")
