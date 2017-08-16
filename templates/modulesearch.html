@@ -11,15 +11,28 @@
     </head>
     <body>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/car.jpg); padding: 0 0;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                        <div class="site-heading">
+                            <h1>Module Search</h1>
+                            <hr class="small">
+                            <span class="subheading">Search for a module to view its description.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="todolist not-done">
-                        <h1 style="text-align:left">Module Search</h1>
+                    <div class="todolist">
+                        <h3 style="text-align:left">Search for a Module</h3>
                         <form method="post" action="/modsearch/">
                         {% csrf_token %}
                             <div class="input-group">
-                            <input type="text" class="form-control add-todo" id="searchinput" placeholder="Add modules to planner">
+                            <input type="text" class="form-control add-todo" id="searchinput" placeholder="Search for a Module">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary searchbutton" id="searchbtn" name="searchbtn">Search</button>
                             </span>
@@ -33,7 +46,6 @@
                             <table class="table table-bordered table-responsive" id="loaded-rows" class="display" cellspacing="5px" width="100%">
                                 <thead>
                                 <tr>
-                                    <th>Select</th>
                                     <th>Module Name</th>
                                     <th>School</th>
                                     <th>Description</th>
@@ -81,8 +93,7 @@
                         var $resultTable=$('#loaded-rows').dataTable({
                             "bAutoWidth": false ,
                             aoColumns : [
-                                  {"sWidth": "5%"},
-                                  {"sWidth": "25%"},
+                                  {"sWidth": "30%"},
                                   {"sWidth": "10%"},
                                   {"sWidth": "60%"}
                                 ],
@@ -90,7 +101,6 @@
                             });
                         for (i = 0; i < resultsSize; i++){
                             $resultTable.fnAddData([ //datatable's drawing of rows
-                                "<div class='checkbox'><label><input type='checkbox' value='' /></label>",
                                 data.results[i]['module_name'],
                                 data.results[i]['school'],
                                 String(data.results[i]['mod_description']).split(".").join(".<br />")

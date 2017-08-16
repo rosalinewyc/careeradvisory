@@ -1,12 +1,4 @@
 /*Home Page*/
-body {
-    height: 100%;
-    background-repeat: no-repeat;
-    background-image: url("https://s3-ap-southeast-1.amazonaws.com/is480firestorm/discover.jpeg");
-    background-position: center center;
-    background-attachment: fixed;
-    background-size:  cover;
-}
 
 .home {
     background: #f6f7fa;
@@ -175,19 +167,19 @@ body {
     color: #8492af;
 }
 
-header {
-    background: #ffffff none repeat scroll 0 0;
-    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
-    display: inline-block !important;
-    line-height: 23px;
-    padding: 15px;
-    transition: all 0.5s ease 0s;
-    width: 100%;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
+/*header {*/
+    /*background: #ffffff none repeat scroll 0 0;*/
+    /*box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);*/
+    /*display: inline-block !important;*/
+    /*line-height: 23px;*/
+    /*padding: 15px;*/
+    /*transition: all 0.5s ease 0s;*/
+    /*width: 100%;*/
+    /*-webkit-transition: all 0.5s ease;*/
+    /*-moz-transition: all 0.5s ease;*/
+    /*-o-transition: all 0.5s ease;*/
+    /*transition: all 0.5s ease;*/
+/*}*/
 
 .logo {
     text-align: center;
@@ -397,4 +389,8 @@ header {
 
 .b2{
     background-color: #000000;
+}
+
+.select2-container--default .select2-selection--single{
+    height:32px !important;
 }

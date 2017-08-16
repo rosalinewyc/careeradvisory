@@ -930,7 +930,12 @@ def personalinterest(request):
 
 def transitionjobpage(request):
     if check_session(request) is not None:
-        return render(request, 'transitionjobpage.html')
+        student = Student.objects.get(user_id_id=request.session.get('user'))
+        interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+        if interest is None:
+            return render(request, 'transitionjobpage.html')
+        else:
+            return render(request, 'index.html')
     return render(request, 'login.html')
 
 
@@ -1024,6 +1029,9 @@ def modcompare(request):
                         cc = special.course_specialization_id
                         if cc == special_course.course_specialization_id:
                             specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+            # else:
+            #     if 'specialisechoice' in request.session:
+            #         del request.session['specialisechoice']
 
         for special in specialise_mods_id:
             for item in special:
@@ -1061,7 +1069,7 @@ def specialisechoice(request):
     #     special_mod_year.update({mod.module_name:CourseMapping.objects.filter(module_code_id=mod.module_code).values('year')})
 
     response['results'] = list(special_mod_year)
-    print(response['results'])
+    #print(response['results'])
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
@@ -1117,6 +1125,7 @@ def retrievestudentinterest(request):
     existing_user = models_get(User, user_id=user_id)
     jobs = []
     interestFilter = request.GET.get('interestFilter')
+
     if interestFilter is not None:
         job = Job.objects.filter(job_interest=interestFilter).values()
         jobs.append(list(job))
@@ -1124,8 +1133,11 @@ def retrievestudentinterest(request):
         indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
         for interest in indicated_interests_id:
             indicated_id = interest['personal_interest_sector_id']
-            sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
-            print(sector)
+            try:
+                sector_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
+                sector = models_get(CourseSpecialization, course_specialization_id=sector_id).course_specialization
+            except:
+                sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
             job = Job.objects.filter(job_interest=sector).values()
             jobs.append(list(job))
             # print(jobs)
@@ -1144,8 +1156,11 @@ def getstudentinterest(request):
     for interest in indicated_interests_id:
         indicated_id = interest['personal_interest_sector_id']
         interest_name = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
+        specialise_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
+        if specialise_id is not None:
+            interest_name = models_get(CourseSpecialization, course_specialization_id=specialise_id).course_specialization
         sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
-    print(sector)
+    # print(sector)
     return HttpResponse(json.dumps(sector), content_type="application/json")
 
 
@@ -1154,7 +1169,7 @@ def personalinterestsectordropdown(request):
     data = []
     sectors_array = InterestSector.objects.values('personal_interest_sector')
     for sector in sectors_array:
-        if sector not in data:
+        if sector['personal_interest_sector'] not in data:
             data.append(sector['personal_interest_sector'])
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")

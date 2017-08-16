@@ -23,28 +23,47 @@
             </div>
         </div>
 
-        <header class="intro-header">
-            <div class="transbox"></div>
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <h1 style="color:white;text-align: center;text-shadow: #d3d3d3 0px 0px 1px;">Pick Your Own
-                        Interest!</h1>
-                    <hr class="small">
-
-                    <select class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 js-example-basic-single" id="sectordropdown">
-                        <option> -- Select --</option>
-                    </select>
-                    <br />
-                    <select class="col-md-12 js-example-basic-multiple" multiple="multiple"
-                            style="padding: 5px 5px 5px 5px!important;" id="course-specialization-dropdown">
-                    </select>
-
+        <header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/painting.jpg); padding: 0 0;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                        <div class="site-heading">
+                            <h1>Select a job field that interests you!</h1>
+                            <hr class="small">
+                            <span class="subheading">A list of recommended prospective jobs will be made available once you have select a job field.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row" style="text-align:center;z-index:100;position: relative">
-                <button class="btn btn-primary" style="width:15%;margin-top:30px;" id="save-interest-btn"> Save</button>
-            </div>
         </header>
+        <div class="container todolist">
+            <div>
+                <h3>Pick Your Own Interest!</h3>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-lg-12">
+                    <label>Select Course:</label>
+                    <br/>
+                    <select class="col-lg-12 col-md-10 col-sm-1 js-example-basic-single" id="sectordropdown">
+                        <option>-- Select --</option>
+                    </select>
+                    <br/>
+                    <hr/>
+                    <label>Select Specialization (If Any):</label>
+                    <br/>
+                    <select class="col-lg-12 col-md-10 col-sm-1 js-example-basic-multiple" multiple="multiple"
+                             id="course-specialization-dropdown">
+
+                    </select>
+
+                    <div class="row" style="text-align:center;z-index:100;position: relative">
+                        <button class="btn btn-primary" style="width:15%;margin-top:30px;" id="save-interest-btn"> Save</button>
+                    </div>
+                    <br/>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 
@@ -54,6 +73,7 @@
     $(function () {
         {#initialize multiselect#}
         $('select').select2();
+
         $.ajax({
             type: 'GET',
             url: '/personalinterestsectordropdown/',
@@ -71,6 +91,7 @@
         $(".js-example-basic-multiple").select2();
 
         $('#sectordropdown').change(function () {
+            $('#course-specialization-dropdown').empty();
             $.ajax({
                 type: 'GET',
                 url: '/getcoursespecialization/',
@@ -87,7 +108,6 @@
                     $('#course-specialization-dropdown').append(htmlToAppend);
                 }
             });
-
         });
 
         $("#save-interest-btn").click(function () {
@@ -119,7 +139,7 @@
                         $('#alertmsgtext').html(data.message);
                         window.setTimeout(function(){
                             window.location.href = "/recommendjob";
-                        }, 500);
+                        }, 800);
                     } else {
                         document.getElementById("updatedbox").style.display = 'block';
                         $('#alertmsgtext').html(data.message);

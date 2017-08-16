@@ -1,33 +1,52 @@
 {% block bar %}
    {% include "base.html" %}
 {% endblock %}
-<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/admin-bootstrap.css' %}"/>
 
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+</head>
 <html>
 <body>
 <div id="">
-    <div class="container-fluid todolist" style="margin: 20px 60px 40px 40px">
+    <header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/build2.jpg); padding: 0 0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="site-heading">
+                        <h1>Bootstrap Application</h1>
+                        <hr class="small">
+                        <span class="subheading">Upload student, course & module information into the database.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container todolist">
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-8">
                     <div class="row">
-                        <h2>Bootstrap Application</h2><br>
+{#                        <h2>Bootstrap Application</h2><br>#}
                     </div>
                 </div>
             </div>
-
+            <br/>
             <!-- Main content -->
             <section class="content">
                 <!-- Your Page Content Here -->
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-8 col-md-offset-2">
                         <div class="row">
                             <div class="box box-info">
                                 <div class="btn-block">
+                                    <!-- Upload  -->
+
                                     <form id="bootstrapForm" name="bootstrapForm" action="/bootstrap/" method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <div class="form-group">
-                                            <label for="upload">Upload Zip files here</label>
+                                            <label for="upload">Upload Zip files here</label for="upload">
 
                                             <p id="fileUploadError" class="text-danger hide"></p>
 
@@ -43,12 +62,25 @@
                                                 <div class="alert alert-warning" id="alert-box" role="alert" style="display: none;"></div>
                                                 <div class="alert alert-success" id="success" role="alert" style="display: none"></div>
                                             </div><!-- /.box-body -->
-
-                                            <input type="file" class="form-control btn-primary" id="bootstrap_input" name="bootstrap_input" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
-                                                   onchange="$('#upload-file-info').html(this.files[0].name)"/>
-                                            <br/>
+{#                                                <input type="file" class="form-control" id="bootstrap_input" name="bootstrap_input" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"#}
+{#                                                   onchange="$('#upload-file-info').html(this.files[0].name)"/>#}
                                         </div>
-                                        <button class="btn btn-primary" id="bootstrapBtn" name="bootstrapBtn">Bootstrap</button>
+                                        <div class="input-group image-preview">
+                                            <input placeholder="" type="text" class="form-control image-preview-filename" disabled="disabled">
+                                            <span class="input-group-btn">
+                                            <!-- image-preview-clear button -->
+                                            <button type="button" class="btn btn-default image-preview-clear" style="display:none;"> <span class="glyphicon glyphicon-remove"></span> Clear </button>
+                                            <!-- image-preview-input -->
+                                            <div class="btn btn-default image-preview-input"> <span class="glyphicon glyphicon-folder-open"></span> <span class="image-preview-input-title">Browse</span>
+
+                                            <input type="file" class="form-control" id="bootstrap_input" name="bootstrap_input" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
+                                               onchange="$('#upload-file-info').html(this.files[0].name)"/>
+                                                <!-- rename it -->
+                                            </div>
+                                            <button type="button" class="btn btn-labeled btn-primary" id="bootstrapBtn" name="bootstrapBtn"> <span class="btn-label"><i class="glyphicon glyphicon-upload"></i> </span>Bootstrap</button>
+                                            </span>
+                                        </div>
+{#                                        <button class="btn btn-primary" id="bootstrapBtn" name="bootstrapBtn">Bootstrap</button>#}
                                     </form>
                                 </div><!-- /.box-body -->
                             </div><!-- /.box box-info -->
@@ -110,6 +142,13 @@
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 
 <script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $('input[type="file"]').change(function(e){
+            var fileName = e.target.files[0].name;
+            //alert('The file "' + fileName +  '" has been selected.');
+            $('.image-preview-filename').val(fileName);
+        });
+    });
 
     $("#bootstrapBtn").click(function (event) {
         event.preventDefault();

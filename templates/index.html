@@ -5,10 +5,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% url 'login' as login %}
+    {% url 'recommendjob' as recommendjob %}
+    {% url 'modulesearch' as modulesearch %}
+    {% url 'courseplanner' as courseplanner %}
+    {% url 'admin_index' as admin_index %}
+    {% url 'userprofile' as userprofile %}
+    {% url 'transitionjobpage' as transitionjobpage %}
+    {% url 'courserequirement' as courserequirement %}
+    {% url 'personalinterest' as personalinterest %}
+    {% url 'logout' as logout %}
 </head>
 
 <body>
-<header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/fog2.jpg">
+<header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/fog2.jpg)">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -41,7 +51,7 @@
                     <h3>Explore for jobs of your interest</h3>
                     <p>Real-time job offers available here</p>
                     <p>
-                        <a href="recommendjob" class="btn btn-primary">Explore</a>
+                        <a href="{{ recommendjob }}" class="btn btn-primary">Explore</a>
                     </p>
                 </div>
             </div>
@@ -51,10 +61,23 @@
             <div class="thumbnail">
                 <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/coursemap.jpg" alt="">
                 <div class="caption_featurecard">
-                    <h3>Module Recommendation</h3>
-                    <p>Bringing you closer to jobs you dream to explore</p>
+                    <h3>Module Planner</h3>
+                    <p>Look at your prescribed modules!</p>
                     <p>
-                        <a href="modulesearch" class="btn btn-primary">Explore</a>
+                        <a href="{{ courserequirement }}" class="btn btn-primary">Start Planning</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6 feature_card">
+            <div class="thumbnail">
+                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/coursemap.jpg" alt="">
+                <div class="caption_featurecard">
+                    <h3>Module Search</h3>
+                    <p>Search for a module to view more details.</p>
+                    <p>
+                        <a href="{{ modulesearch }}" class="btn btn-primary">Explore</a>
                     </p>
                 </div>
             </div>
@@ -64,11 +87,22 @@
             <div class="thumbnail">
                 <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/collaborate.jpg" alt="">
                 <div class="caption_featurecard">
-                    <h3>Change Personal Interest or <br/>
-                        Redo Personality Result</h3>
-                    <p>Update current personality test results or change personal interest</p>
+                    <h3>Update Personal Interest</h3>
+                    <p>Update current personal interest to view different prospective job recommendations.</p>
                     <p>
-                        <a href="transitionjobpage" class="btn btn-primary">Do Now</a>
+                        <a href="{{ personalinterest }}" class="btn btn-primary">Do Now</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 feature_card">
+            <div class="thumbnail">
+                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/collaborate.jpg" alt="">
+                <div class="caption_featurecard">
+                    <h3>Redo Personality Test</h3>
+                    <p>Different job recommendations will be displayed if your test results is different.</p>
+                    <p>
+                        <a href="" class="btn btn-primary">Coming Soon</a>
                     </p>
                 </div>
             </div>
