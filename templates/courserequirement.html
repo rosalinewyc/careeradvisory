@@ -24,7 +24,8 @@
 
         <div class="container todolist">
             <div>
-                <h3>Course Requirements for {{ course.course_name }}</h3>
+                <h3>Course Planning for {{ course.course_name }}</h3>
+                Click on the tabs in the table below to view the module's description.
             </div>
             <hr/>
             <div style="width:100%; float:left">
@@ -52,13 +53,13 @@
                         <h2>Year 1</h2>
                     </div>
                     <ul class="list-unstyled">
-                        <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        <li><p class="contentBox" style="background-color: #e8e8e8; font-weight:bold">Semester 1</p></li>
                         {% for modid, modname in module11.items%}
                             <li class="toggleContent">
                                 <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ modname }}" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
                             </li>
                         {% endfor %}
-                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Semester 2</p></li>
                         {% for modid, modname in module12.items%}
                             <li class="toggleContent">
                                 <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ modname }}" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
@@ -72,13 +73,13 @@
                         <h2>Year 2</h2>
                     </div>
                     <ul class="list-unstyled">
-                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Semester 1</p></li>
                         {% for modid, modname in module21.items%}
                             <li class="toggleContent">
                                 <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ modname }}" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
                             </li>
                         {% endfor %}
-                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Semester 2</p></li>
                         {% for modid, modname in module22.items%}
                             <li class="toggleContent">
                                 <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ modname }}" id="{{ modname }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ modname }}</p>
@@ -92,7 +93,7 @@
                         <h2>Year 3</h2>
                     </div>
                     <ul class="list-unstyled">
-                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 1</p></li>
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Semester 1</p></li>
                         {% for modid, modname in module31.items%}
                             <li class="toggleContent">
                                 {% if modid is 90 %}
@@ -109,7 +110,7 @@
                                 {% endif %}
                             </li>
                         {% endfor %}
-                        <li><p style="background-color: #e8e8e8; font-weight:bold">Term 2</p></li>
+                        <li><p style="background-color: #e8e8e8; font-weight:bold">Semester 2</p></li>
                         {% for modid, modname in module32.items%}
                             <li class="toggleContent">
                                 {% if modid is 90 %}
@@ -162,7 +163,7 @@
                 document.getElementById("descontainer").style.display = 'block';
                 $('.modDescription').html('<h4><b>' + clicked_id + '</h4></b><p>' + String(data.des).split(".").join(".<br />") + '</p>');
                 $('html,body').animate({scrollTop: $("#descontainer").offset().top},'slow');
-
+                //alert(data.specialise_mods.length)
                 if (data.specialise_mods.length != 0) {
                     for (mod = 0 ; mod < data.specialise_mods.length ; mod++) {
                         //alert(data.specialise_mods[mod].module_name);
@@ -182,6 +183,9 @@
                             $('.specialmodsdesc').append('<br/><p>' + data.des + '</p>');
                         });
                     });
+                } else {
+                    $('#interestelectives').empty();
+                    $('.specialmodsdesc').empty()
                 }
             }
         });

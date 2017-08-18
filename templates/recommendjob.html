@@ -55,14 +55,13 @@
             <br/><label>Filter By Specific Interest: </label>
             <h5 id="interestNames"></h5>
             <select class="js-example-basic-single">
-                <option> -- Select --</option>
             </select>
             <button style="float:right" class="btn btn-primary" onclick="location.href = '/courserequirement';">Proceed to Course Guidance</button>
             <hr>
         </div>
     </div>
     <!-- /.row -->
-    <div id="job-content"></div>
+    <div id="job-content"><h3>No results found.</h3></div>
 
 </div>
 <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
@@ -220,6 +219,7 @@
                     {#                htmlAppend += "<p class='expandable'>" + desc + "</p>";#}
                     htmlAppend += "<div class='well'><h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p class='expandable'>" + desc + "</p>" + "<a target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
                 }
+            } else {
             }
         }
 

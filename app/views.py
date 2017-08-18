@@ -372,7 +372,7 @@ def admin_bootstrap(request):
 
     if len(error_message) == 0:
         response['status'] = 'success'
-        response['message'] = 'Database updated'
+        response['message'] = 'Database is updated!'
         response['duplicate'] = duplicate_error_message
         response['validation'] = validation_error_message
     else:
@@ -1098,22 +1098,25 @@ def interestinput(request):
                     student_interest_array.append(new_student_interest)
             except:
                 # Save it to database
-                for interest in interest_input:
-                    interestchoice = json.loads(interest)
-                    for sector in interestchoice:
-                        # Check if student and interest is in student and personal interest database
-                        existing_user = models_get(User, user_id=user_id)
-                        interest_code = CourseSpecialization.objects.get(course_specialization=sector)
-                        existing_interest = models_get(InterestSector, course_specialization_id_id=interest_code.course_specialization_id)
-                        if existing_user is not None and existing_interest is not None:
-                            # Delete all existing interests under the student
-                            StudentInterestSector.objects.filter(user_id=existing_user).delete()
-                            new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector_id=existing_interest.interest_sector_id)
-                            student_interest_array.append(new_student_interest)
-
-            StudentInterestSector.objects.bulk_create(student_interest_array)
+                try:
+                    for interest in interest_input:
+                        interestchoice = json.loads(interest)
+                        for sector in interestchoice:
+                            # Check if student and interest is in student and personal interest database
+                            existing_user = models_get(User, user_id=user_id)
+                            interest_code = CourseSpecialization.objects.get(course_specialization=sector)
+                            existing_interest = models_get(InterestSector, course_specialization_id_id=interest_code.course_specialization_id)
+                            if existing_user is not None and existing_interest is not None:
+                                # Delete all existing interests under the student
+                                StudentInterestSector.objects.filter(user_id=existing_user).delete()
+                                new_student_interest = StudentInterestSector(user_id=existing_user, personal_interest_sector_id=existing_interest.interest_sector_id)
+                                student_interest_array.append(new_student_interest)
+                except:
+                    response['error'] = 'Please select a specialization.'
+            if 'error' not in response:
+                StudentInterestSector.objects.bulk_create(student_interest_array)
+            response['message'] = 'Interests updated! Please wait to be redirected...'
             response['status'] = 'success'
-            response['message'] = 'Interests updated'
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 

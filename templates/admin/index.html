@@ -181,7 +181,6 @@
             success: function(data) {
                 if (data.status == 'success') {
                     //alert(data.message);
-                    document.getElementById("resultchunk").style.display = 'block';
                     var duplicateErrorSize = Object.keys(data.duplicate).length;
                     var validationErrorSize = Object.keys(data.validation).length;
                     var trHTML = '';
@@ -191,7 +190,9 @@
                         //alert(data.message);
                         document.getElementById("success").style.display = 'block';
                         $("#success").append(data.message);
+
                     } else {
+                        document.getElementById("resultchunk").style.display = 'block';
                         if (duplicateErrorSize != 0) {
                             document.getElementById("alert-box").style.display = 'block';
                             $("#alert-box").append("Database is not updated with duplicated entries. Please rectify.");

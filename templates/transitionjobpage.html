@@ -38,7 +38,7 @@
 }
 .circle-tile-footer {
     background-color: rgba(0, 0, 0, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    color: #fff;
     display: block;
     padding: 5px;
     transition: all 0.3s ease-in-out 0s;
@@ -106,7 +106,7 @@
 }
 
 .text-faded {
-    color: rgba(255, 255, 255, 0.7);
+    color: #fff;
 }
 </style>
 
@@ -136,22 +136,22 @@
 
 <div class="container bootstrap snippet" style="margin-top:40px">
   <div class="col-md-12 col-sm-12 row">
-    <div class="col-sm-6">
-      <div class="circle-tile ">
-        <a href="#"><div class="circle-tile-heading dark-blue"><i class="fa fa-users fa-fw fa-3x"></i></div></a>
-        <div class="circle-tile-content dark-blue">
-          <div class="circle-tile-description text-faded"> Find out your personality result </div>
-          <div class="circle-tile-number text-faded "> Personality Quiz </div>
-          <a class="circle-tile-footer" href="javascript:void(0)" style="background-color:#d3d3d3!important">Coming Soon <i class="fa fa-chevron-circle-right"></i></a>
-        </div>
-      </div>
-    </div>
+{#    <div class="col-sm-6">#}
+{#      <div class="circle-tile ">#}
+{#        <a href="#"><div class="circle-tile-heading dark-blue"><i class="fa fa-users fa-fw fa-3x"></i></div></a>#}
+{#        <div class="circle-tile-content dark-blue">#}
+{#          <div class="circle-tile-description text-faded"> Find out your personality result </div>#}
+{#          <div class="circle-tile-number text-faded "> Personality Quiz </div>#}
+{#          <a class="circle-tile-footer" href="javascript:void(0)" style="background-color:#d3d3d3!important">Coming Soon <i class="fa fa-chevron-circle-right"></i></a>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
 
-    <div class="col-sm-6">
+    <div class="col-sm-12">
       <div class="circle-tile ">
         <a href="#"><div class="circle-tile-heading green"><i class="fa fa-users fa-fw fa-3x"></i></div></a>
         <div class="circle-tile-content green">
-          <div class="circle-tile-description text-faded"> Pick an industry and speciallization that interest you</div>
+          <div class="circle-tile-description text-faded">  As a first time user, we require you to indicate your personal interests.</div>
           <div class="circle-tile-number text-faded ">Select Personal Interest</div>
           <a class="circle-tile-footer" href="{{ personalinterest }}">Indicate Interest <i class="fa fa-chevron-circle-right"></i></a>
         </div>
