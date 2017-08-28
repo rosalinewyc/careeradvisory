@@ -32,6 +32,14 @@
         <div class="container todolist">
             <div>
                 <h3>Pick Your Own Interest!</h3>
+                <br />
+                Your current indicated interest:<br /><strong>
+                {% for interest in interestnames %}
+                    {% for i in interest %}
+                        <li>{{ i.course_specialization }}</li>
+                    {% endfor %}
+                {% endfor %}
+                </strong>
             </div>
             <hr/>
             <div class="row">
