@@ -47,28 +47,20 @@
 </header>
 <!-- Page Content -->
 <div class="container todolist">
-
     <!-- Page Heading -->
     <div class="row">
         <div class="col-lg-12">
-            <div>
-                {#                <h2>Job Recommendations</h2>#}
-            </div>
-            {#            <hr/>#}
             <br/><label>Filter By Specific Interest: </label>
+            <button class="btn btn-primary" onclick="location.href='{% url 'courserequirement' %}'" style="float:right;">Proceed to Course Guidance</button>
             <h5 id="interestNames"></h5>
-            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-6">
+            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8"  id="id_label_single">
             </select>
-
-            <p id="sectordesc"></p>
-            <button class="btn btn-primary" id="guidancebtn">Proceed to Course Guidance</button>
-
-
-            <hr>
+        <hr>
         </div>
     </div>
     <!-- /.row -->
-    <button type="button" class="b1 btn btn-default" id="gov-btn">Gov Sector</button><button type="button" class="b1 btn btn-default" id="private-btn">Private Sector</button>
+    <button type="button" class="b1 btn btn-default" id="gov-btn">Public Sector</button>
+    <button type="button" class="b1 btn btn-default" id="private-btn">Private Sector</button>
     <div id="job-content"></div>
 
 </div>
@@ -87,10 +79,6 @@
 
         $(".js-example-basic-single").select2();
 
-        $('#guidancebtn').click(function () {
-            window.location = '/courserequirement?jobinterest=' + $(".js-example-basic-single").val();
-        });
-
         $.get("/getstudentinterest/", function (data) {
             $('.js-example-basic-single').append(data);
         });
@@ -100,50 +88,50 @@
             url: '/retrievestudentinterest/',
             dataType: 'json',
             success: function (data) {
-                var arrayJobs = $.parseJSON(data.gov);//default display gov and private tgth upon load
-                arrayJobs = arrayJobs.concat($.parseJSON(data.private));
-                var htmlAppend = displayJob(arrayJobs);
-                $('#job-content').append(htmlAppend);
+{#                var arrayJobs = $.parseJSON(data.gov);//default display gov and private tgth upon load#}
+{#                arrayJobs = arrayJobs.concat($.parseJSON(data.private));#}
+{#                var htmlAppend = displayJob(arrayJobs);#}
+{#                $('#job-content').append(htmlAppend);#}
+                var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
+                getJobArray(dataString, 'gov');
             }
         });
 
         $('.js-example-basic-single').change(function () {
             var dataString = '&interestFilter=' + encodeURIComponent($(this).val());
             var arrayJobs = [];
-            if ($('#private-btn').is(':active'))  {
-                arrayJobs = getJobArray(dataString, 'private');
-           }else{
-                arrayJobs = getJobArray(dataString, 'gov');
+            if ($('#private-btn').is(':active')) {
+                getJobArray(dataString, 'private');
+            } else {
+                getJobArray(dataString, 'gov');
             }
-
-            $('#sectordesc').html("Like the jobs you see? Plan your electives related to <strong>" + $('.js-example-basic-single').val() + "</strong>.");
         });
 
-        $('#gov-btn').on('click', function(e) {
+        $('#gov-btn').on('click', function (e) {
             var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
             var arrayJobs = getJobArray(dataString, 'gov');
             var htmlAppend = displayJob(arrayJobs);
             $('#job-content').html(htmlAppend);
         });
 
-        $('#private-btn').on('click', function(e) {
+        $('#private-btn').on('click', function (e) {
             var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
             var arrayJobs = getJobArray(dataString, 'private');
         });
 
     });
 
-    function getJobArray(dataString, type){
+    function getJobArray(dataString, type) {
         $.ajax({
             type: 'GET',
             url: '/retrievestudentinterest/',
             data: dataString,
             dataType: 'json',
             success: function (data) {
-                var arrayJobs =  [];
-                if(type=='gov'){
+                var arrayJobs = [];
+                if (type == 'gov') {
                     arrayJobs = $.parseJSON(data.gov);
-                }else {
+                } else {
                     console.log(data.private);
                     arrayJobs = $.parseJSON(data.private);
                 }

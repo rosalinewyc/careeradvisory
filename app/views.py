@@ -930,7 +930,10 @@ def personalinterest(request):
         interestnames = []
         for interest in interests:
             specialise = models_get(InterestSector,interest_sector_id=interest.personal_interest_sector_id)
-            interestname = CourseSpecialization.objects.filter(course_specialization_id=specialise.course_specialization_id_id).values('course_specialization')
+            if specialise.course_specialization_id_id is None:
+                interestname =specialise.personal_interest_sector
+            else:
+                interestname = models_get(CourseSpecialization,course_specialization_id=specialise.course_specialization_id_id).course_specialization
             interestnames.append(interestname)
         return render(request, 'personalinterest.html',{'interestnames': interestnames})
     return render(request, 'login.html')
@@ -1147,7 +1150,6 @@ def retrievestudentinterest(request):
         gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
         # for diploma related jobs
         if len(private) == 0 and len(gov) == 0:
-            print('entered diploma')
             private = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='JS-').values()
             gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
     else:
@@ -1161,8 +1163,6 @@ def retrievestudentinterest(request):
                 sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
             private = Job.objects.filter(job_interest=sector, job_id__icontains='CG-').values()
             gov = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='JS-').values()
-    print(len(gov))
-    print(len(private))
     serialized_q1 = json.dumps(list(gov), cls=DjangoJSONEncoder)
     response['gov'] = serialized_q1
     serialized_q2 = json.dumps(list(private), cls=DjangoJSONEncoder)
@@ -1176,18 +1176,24 @@ def getstudentinterest(request):
     existing_student = models_get(Student, user_id=user_id)
     indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values(
         'personal_interest_sector_id')
-    sector = '<optgroup label="Potential Job Positions Based on Personal Interest">'
+    sector = '<label>Potential Job Positions Based on Personal Interest</label>'
+    # sector = '<optgroup label="Potential Job Positions Based on Personal Interest">'
+    count = 0
     for interest in indicated_interests_id:
         indicated_id = interest['personal_interest_sector_id']
         interest_name = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
         specialise_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
         if specialise_id is not None:
             interest_name = models_get(CourseSpecialization, course_specialization_id=specialise_id).course_specialization
-        sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
-    # print(sector)
+        if count == 0:
+            sector += '<option  selected="selected" value="' + interest_name + '">' + interest_name + '</option>'
+        else:
+            sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
+        count += 1
     sector += '<optgroup label="Potential Job Positions Based on Diploma">'
     jobsectors = JobCategory.objects.filter(course_code_id=existing_student.course_code_id).values(
         'job_category')
+
     for jobinterest in jobsectors:
         jobinterestname = jobinterest['job_category']
         sector += '<option value="' + jobinterestname + '">' + jobinterestname + '</option>'

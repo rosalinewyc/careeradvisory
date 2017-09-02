@@ -5,79 +5,98 @@
     .ul.select2-selection__rendered {
         padding: 5px 5px 5px 5px !important;
     }
+
+    .currentinterest{
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        float: left;
+        margin-right: 5px;
+        margin-top: 5px;
+        padding: 0 5px
+    }
+
+    @media screen and (max-width: 767px) {
+        .select2 {
+            width: 100% !important;
+        }
+    }
 </style>
 <!DOCTYPE html>
 <html>
-    <head>
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/personalinterest.css' %}"/>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-        <script src={% static 'js/personalinterest-js.js' %}></script>
-    </head>
-    <body>
-        <header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/painting.jpg); padding: 0 0;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                        <div class="site-heading">
-                            <h1>Select a job field that interests you!</h1>
-                            <hr class="small">
-                            <span class="subheading">A list of recommended prospective jobs will be made available once you have select a job field.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <div class="container todolist">
-            <div>
-                <h3>Pick Your Own Interest!</h3>
-                <br />
-                Your current indicated interest:<br /><strong>
-                {% for interest in interestnames %}
-                    {% for i in interest %}
-                        <li>{{ i.course_specialization }}</li>
-                    {% endfor %}
-                {% endfor %}
-                </strong>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div id="updatedbox" style="display:none;">
-                        <div class="alert alert-info alert-dismissable">
-                            <button type="button" class="close" aria-hidden="true">&times;</button>
-                            <p id="alertmsgtext"></p>
-                        </div>
-                    </div>
-                    <label>Select Field of Interest:</label>
-                    <br/>
-                    <select class="col-lg-12 col-md-10 col-sm-1 js-example-basic-single" id="sectordropdown">
-                        <option>-- Select --</option>
-                    </select>
-                    <br/>
-                    <hr/>
-                    <label>Select Specialization (If Any):</label>
-
-                    <div id="errorbox" style="display:none;">
-                        <div class="alert alert-warning alert-dismissable">
-                        <button type="button" class="close" aria-hidden="true">&times;</button>
-                        <p id="errormsgtext"></p>
-                        </div>
-                    </div>
-                    <select class="col-lg-12 col-md-10 col-sm-1 js-example-basic-multiple" multiple="multiple"
-                             id="course-specialization-dropdown">
-
-                    </select>
-
-                    <div class="row" style="text-align:center;z-index:100;position: relative">
-                        <button class="btn btn-primary" style="width:15%;margin-top:30px;" id="save-interest-btn"> Save</button>
-                    </div>
-                    <br/>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/personalinterest.css' %}"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src={% static 'js/personalinterest-js.js' %}></script>
+</head>
+<body>
+<header class="intro-header"
+        style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/painting.jpg); padding: 0 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>Select a job field that interests you!</h1>
+                    <hr class="small">
+                    <span class="subheading">A list of recommended prospective jobs will be made available once you have select a job field.</span>
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</header>
+<div class="container todolist">
+    <h3>Pick Your Own Interest!</h3>
+    <div id ='currentinterestdiv'>
+
+        {% if interestnames  %}
+            <br/>Your current indicated interest:<br/><strong>
+            {% for interest in interestnames %}
+                <div class="currentinterest"> {{ interest  }}</div>
+            {% endfor %}
+        {% endif %}
+        </strong>
+    </div>
+    <br />
+    <hr/>
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="updatedbox" style="display:none;">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <p id="alertmsgtext"></p>
+                </div>
+            </div>
+            <label>Select Field of Interest:</label>
+            <br/>
+            <select class="col-lg-12 col-md-10 col-sm-10 js-example-basic-single" id="sectordropdown">
+                <option>-- Select --</option>
+            </select>
+            <br/>
+            <hr/>
+            <label>Select Specialization (If Any):</label>
+
+            <div id="errorbox" style="display:none;">
+                <div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <p id="errormsgtext"></p>
+                </div>
+            </div>
+            <select class="col-lg-12 col-md-10 col-sm-10 js-example-basic-multiple" multiple="multiple"
+                    id="course-specialization-dropdown">
+
+            </select>
+
+            <div class="row" style="text-align:center;z-index:100;position: relative">
+                <button class="btn btn-primary" style="width:15%;margin-top:30px;" id="save-interest-btn"> Save</button>
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+</body>
 </html>
 
 {% load static %}
@@ -86,6 +105,7 @@
     $(function () {
         {#initialize multiselect#}
         $('select').select2();
+
 
         $.ajax({
             type: 'GET',
@@ -111,9 +131,7 @@
                 dataType: 'json',
                 data: {'sector': $('#sectordropdown').val()},
                 success: function (data) {
-                    console.log(data);
                     var specializations = data.results;
-                    console.log(specializations);
                     var htmlToAppend = '';
                     for (var i = 0; i < specializations.length; i++) {
                         htmlToAppend += '<option value="' + specializations[i] + '">' + specializations[i] + '</option>'
