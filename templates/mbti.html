@@ -1,0 +1,124 @@
+{% load static %}
+{% block bar %}
+    {% include "base.html" %}
+{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% url 'login' as login %}
+    {% url 'recommendjob' as recommendjob %}
+    {% url 'modulesearch' as modulesearch %}
+    {% url 'courseplanner' as courseplanner %}
+    {% url 'admin_index' as admin_index %}
+    {% url 'userprofile' as userprofile %}
+    {% url 'transitionjobpage' as transitionjobpage %}
+    {% url 'courserequirement' as courserequirement %}
+    {% url 'personalinterest' as personalinterest %}
+    {% url 'logout' as logout %}
+    {% load static %}
+</head>
+<style>
+    .btn-sq {
+        padding: 20px;
+        font-size: 14px;
+        border-radius: 8px;
+        width:100px;
+        margin-left:10px;
+        margin-bottom: 10px;
+    }
+
+    #mbti {
+        width:100%;
+        margin: 0 auto;
+    }
+    .mbtibox {
+        width:100%;
+    }
+
+    #message {
+        font-weight:normal; font-size:14px; color: #31708f;
+    }
+</style>
+<body>
+    <header class="intro-header" style="background-image: url(https://s3-ap-southeast-1.amazonaws.com/is480firestorm/hope.jpg); padding: 0 0;">
+        <div class="container" style="padding:0 0 0 0 !important;">
+            <div class="">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="site-heading">
+                        <h1>Personality Test</h1>
+                        <hr class="small">
+                        <span class="subheading">Get to know what possible career suits your current interest</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+<div class="container todolist">
+    <div>
+        <h3>Personality Test</h3>
+        Click on <b>'Do Test'</b> if you do not have your MBTI results on hand. Once done, <b>select your test result to proceed</b>.
+    </div>
+    <hr/>
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <br>
+{#            <button onclick="window.open('https://www.16personalities.com/free-personality-test')">Do test</button>#}
+{#            <button onclick="window.open('https://www.16personalities.com/free-personality-test')" class="btn btn-default orange-circle-button" href="">Do test</button>#}
+        </div>
+    </div>
+    <center>
+    <div class="mbtibox">
+        <a href="https://www.16personalities.com/free-personality-test" target="_blank" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-pencil"></span> Do Test</a>
+        <br/><br/>
+        <div id="message" class="mbti1"></div>
+        <div id="mbti" class="mbti1"></div>
+
+    </div>
+    </center>
+</div>
+<br/>
+</body>
+
+{% load static %}
+</html>
+<script src="{% static 'js/ajaxpost.js' %}"></script>
+<script>
+    $(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/mbtilist/',
+            dataType: 'json',
+            success: function (data) {
+                var fields = data.results.sort();
+                if (fields.length != 0) {
+                    var htmlToAppend = '<center>';
+                    for (var i = 0; i < fields.length; i++) {
+                        if (i % 8 == 0) {
+                            htmlToAppend += '<br/>'
+                        }
+                        htmlToAppend += '<a class="btn btn-sq btn-success" id="'+fields[i] +'" value="'+fields[i] +'" onClick="mod_click(this.id)">'+fields[i]+'</a>'
+                    }
+                    htmlToAppend += '</center>';
+                    $('#mbti').append(htmlToAppend);
+                } else {
+                    document.getElementById("mbti").style.display = 'none';
+                }
+            }
+        });
+    });
+
+        function mod_click(clicked_id) {
+            $.ajax({
+                 type:"POST",
+                 url:"/updateMbti/",
+                 data: {
+                        'mbti_code_id': clicked_id // from form
+                        },
+                 success: function(){
+                     $('#message').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> You are ' + clicked_id)
+                 }
+            });
+        }
+
+</script>

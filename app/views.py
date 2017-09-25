@@ -603,7 +603,7 @@ def bootstrap_course_mapping(z_file, file):
                 if a_course is not None and a_module is not None:
                     # Check for duplicate entry
                     existing_course_mapping_database_id = models_get(CourseMapping, course_mapping_id=row[0])
-                    existing_course_mapping_database_other = models_get(CourseMapping, course_code=a_course, module_code=a_module, year=row[3], semester=row[4])
+                    #existing_course_mapping_database_other = models_get(CourseMapping, course_code=a_course, module_code=a_module, year=row[3], semester=row[4])
                     existing_course_mapping_csv = False
                     for course_mapping_object in course_mapping_array:
                         course_mapping_object_id = course_mapping_object.course_mapping_id
@@ -611,10 +611,11 @@ def bootstrap_course_mapping(z_file, file):
                         course_mapping_object_module = course_mapping_object.module_code
                         course_mapping_object_year = course_mapping_object.year
                         course_mapping_object_semester = course_mapping_object.semester
-                        if course_mapping_object_id == row[0] or (course_mapping_object_course == a_course and course_mapping_object_module == a_module and course_mapping_object_year == row[3] and course_mapping_object_semester == row[4]):
-                            existing_course_mapping_csv = True
+                      #  if course_mapping_object_id == row[0] or (course_mapping_object_course == a_course and course_mapping_object_module == a_module and course_mapping_object_year == row[3] and course_mapping_object_semester == row[4]):
+                          #  existing_course_mapping_csv = True
 
-                    if existing_course_mapping_csv is False and existing_course_mapping_database_id is None and existing_course_mapping_database_other is None:
+                    if existing_course_mapping_csv is False and existing_course_mapping_database_id is None:
+                        # and existing_course_mapping_database_other is None:
                         # Course Mapping ID is unique. No duplicates for the other columns.
                         new_course_mapping = CourseMapping(course_mapping_id=row[0], course_code=a_course, module_code=a_module, year=row[3], semester=row[4])
                         course_mapping_array.append(new_course_mapping)
@@ -961,35 +962,49 @@ def student_info(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
     coursemapping = CourseMapping.objects.filter(course_code_id=student.course_code_id)
-    jobinterest = request.GET.get('jobinterest')
+    mapped = list(coursemapping)
+    module11 = []
+    module12 = []
+    module21 = []
+    module22 = []
+    module31 = []
+    module32 = []
 
-    module11 = {}
-    module12 = {}
-    module21 = {}
-    module22 = {}
-    module31 = {}
-    module32 = {}
+    selected_electives = []
+    mod_id = []
+    selected_electives.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+    for mod in selected_electives:
+        for moditem in mod:
+            mod_id.append(moditem.student_module_interest_id)
 
-    for mod in coursemapping:
+    if len(mod_id) is not 0:
+        for id in mod_id:
+            module = Module.objects.get(module_code=id)
+            for mod in mapped:
+                if mod.module_code_id is 139:
+                    mod.module_code_id = id
+                    break
+
+    for mod in mapped:
         module = Module.objects.get(module_code=mod.module_code_id)
         # module.update({CourseMapping.objects.filter(module_code_id=mod.module_code_id):{Module.objects.get(module_code=mod.module_code_id): str(mod.year) +  str(mod.semester)}})
+
         if mod.year is 1:
             if mod.semester is 1:
-                module11.update({module.module_code: module.module_name})
+                module11.append(model_to_dict(module))
             else:
-                module12.update({module.module_code: module.module_name})
+                module12.append(model_to_dict(module))
         elif mod.year is 2:
             if mod.semester is 1:
-                module21.update({module.module_code: module.module_name})
+                module21.append(model_to_dict(module))
             else:
-                module22.update({module.module_code: module.module_name})
+                module22.append(model_to_dict(module))
         elif mod.year is 3:
             if mod.semester is 1:
-                module31.update({module.module_code: module.module_name})
+                module31.append(model_to_dict(module))
             else:
-                module32.update({module.module_code: module.module_name})
+                module32.append(model_to_dict(module))
 
-    current_student['jobinterest'] = jobinterest
     current_student['student'] = student
     current_student['course'] = course
     current_student['module11'] = module11
@@ -1032,29 +1047,66 @@ def modcompare(request):
 
     if request.method == 'GET':
         modname = request.GET.get('modname')
-        module = Module.objects.get(module_name=modname)
+        if modname == 'Freely Chosen Module':
+            interest_sector = []
+            interest_special = []
+            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+            if student_interest is not None:
+                for si in student_interest:
+                    if si.user_id_id == student.user_id_id:
+                        interest_sector.append(InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+            free_mods = []
+            for sector in interest_sector:
+                spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
+                interest_special.append(model_to_dict(spec))
+                free_mods.append(SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
 
-        if 'specialisechoice' in request.session:
-            chosen_specialise = request.session['specialisechoice']
-            if module.module_code is 139:
-                coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
-                if coursespecialization is not None:
-                    special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
-                    for special in coursespecialization:
-                        cc = special.course_specialization_id
-                        if cc == special_course.course_specialization_id:
-                            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
-            # else:
-            #     if 'specialisechoice' in request.session:
-            #         del request.session['specialisechoice']
+            chosen_mods = []
+            mod_id = []
+            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+            for mod in chosen_mods:
+                for moditem in mod:
+                    mod_id.append(moditem.student_module_interest_id)
 
-        for special in specialise_mods_id:
-            for item in special:
-                specialmod = Module.objects.get(module_code=item.module_code_id)
-                specialise_mods.append(model_to_dict(specialmod))
+            mods_desc = []
+            for fm in free_mods:
+                for item in fm:
+                    if item.module_code_id not in mod_id:
+                        freemod = Module.objects.get(module_code=item.module_code_id)
+                        course = CourseSpecialization.objects.get(course_specialization_id=item.course_specialization_id_id)
+                        mods_desc.append(model_to_dict(freemod))
+            response['free'] = mods_desc
+            response['interest'] = interest_special
 
-        response['des'] = module.mod_description
-        response['specialise_mods'] = specialise_mods
+        else:
+            module = Module.objects.get(module_name=modname)
+
+            if 'specialisechoice' in request.session:
+                chosen_specialise = request.session['specialisechoice']
+                if module.module_code is 139:
+                    coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+                    if coursespecialization is not None:
+                        special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
+                        for special in coursespecialization:
+                            cc = special.course_specialization_id
+                            if cc == special_course.course_specialization_id:
+                                specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+
+            chosen_mods = []
+            mod_id = []
+            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+            for mod in chosen_mods:
+                for moditem in mod:
+                    mod_id.append(moditem.student_module_interest_id)
+
+            for special in specialise_mods_id:
+                for item in special:
+                    if item.module_code_id not in mod_id:
+                        specialmod = Module.objects.get(module_code=item.module_code_id)
+                        specialise_mods.append(model_to_dict(specialmod))
+
+            response['des'] = module.mod_description
+            response['specialise_mods'] = specialise_mods
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
@@ -1227,3 +1279,77 @@ def getcoursespecialization(request):
                     data.append(name)
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def savemodule(request):
+    response = {}
+    data = []
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    course = Course.objects.get(course_code=student.course_code_id)
+    module_select = request.POST.get('moduleselected')
+    chosen_mod = Module.objects.get(module_name=module_select)
+    new_student_chosen_mod = StudentChosenModule(user_id_id=student.user_id_id, student_module_interest_id=chosen_mod.module_code)
+    new_student_chosen_mod.save()
+
+    special_select = request.POST.get('specialselected')
+    specialchoice = Student.objects.get(user_id_id=student.user_id_id)
+
+    course = models_get(CourseSpecialization, course_specialization=special_select)
+    specialchoice.course_specialization_id = course.course_specialization_id
+    specialchoice.save()
+    response['status'] = 'success'
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def checkstudentspecialization(request):
+    response = {}
+    data = []
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    course = Course.objects.get(course_code=student.course_code_id)
+    if student.course_specialization_id is not None:
+        special = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+        data.append(special.course_specialization)
+    print(data)
+    response['status'] = 'success'
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def mbti(request):
+    if check_session(request) is not None:
+        return render(request, 'mbti.html', student_info(request))
+    return render(request, 'mbti.html')
+
+
+def mbtilist(request):
+    response = {}
+    mlist = []
+    mbti = Mbti.objects.all()
+    if len(mbti) is not 0:
+        for m in mbti:
+            cc = m.mbti_code
+            mlist.append(cc)
+    response['results'] = mlist
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def updateMbti(request):
+    response = {}
+    data = []
+    if request.method == 'POST':
+        user_id = request.session.get('user')
+        mbti_input = request.POST.get('mbti_code_id')
+        # print(mbti_input)
+        if mbti_input is None:
+            response['status'] = 'fail'
+            response['message'] = 'Empty input'
+        else:
+            student = {}
+            existing_student = Student.objects.filter(user_id_id=user_id).update(mbti_code_id=mbti_input)
+            # print(existing_student.course_code_id)
+            if 'error' not in response:
+                response['message'] = 'Interests updated! Please wait to be redirected...'
+                response['status'] = 'success'
+    return HttpResponse(json.dumps(response), content_type="application/json")
+

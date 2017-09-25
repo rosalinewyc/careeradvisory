@@ -14,6 +14,7 @@
     {% url 'transitionjobpage' as transitionjobpage %}
     {% url 'courserequirement' as courserequirement %}
     {% url 'personalinterest' as personalinterest %}
+    {% url 'mbti' as mbti %}
     {% url 'logout' as logout %}
 </head>
 
@@ -102,7 +103,7 @@
                     <h3>Redo Personality Test</h3>
                     <p>Different job recommendations will be displayed if your test results is different.</p>
                     <p>
-                        <a href="" class="btn btn-primary">Coming Soon</a>
+                        <a href="{{ mbti }}" class="btn btn-primary">Do Test</a>
                     </p>
                 </div>
             </div>

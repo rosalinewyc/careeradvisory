@@ -128,5 +128,17 @@ class Counselor(models.Model):
 
 class ElectiveModule(models.Model):
     elective_code = models.IntegerField(primary_key=True)
-    course_code = models.ForeignKey(Course, on_delete=models.CASCADE,null=False)
-    module_code = models.ForeignKey(Module, on_delete=models.CASCADE,null=False)
+    course_code = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
+    module_code = models.ForeignKey(Module, on_delete=models.CASCADE, null=False)
+
+
+class StudentChosenModule(models.Model):
+    student_chosen_module_id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    student_module_interest = models.ForeignKey(Module, on_delete=models.CASCADE, null=False)
+
+
+class JobAnalytics(models.Model):
+    job_title = models.CharField(max_length=128, null=False)
+    sector_type = models.CharField(max_length=128, null=False)
+    clicks = models.IntegerField(null=True)
