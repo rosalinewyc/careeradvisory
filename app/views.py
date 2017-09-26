@@ -1310,7 +1310,6 @@ def checkstudentspecialization(request):
     if student.course_specialization_id is not None:
         special = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
         data.append(special.course_specialization)
-    print(data)
     response['status'] = 'success'
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")

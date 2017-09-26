@@ -1,6 +1,18 @@
 {% block bar %}
    {% include "base.html" %}
 {% endblock %}
+<style>
+        .currentinterest{
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        float: left;
+        margin-right: 5px;
+        margin-top: 5px;
+        padding: 0 5px
+    }
+</style>
 <html>
     <head>
         {% load static %}
@@ -196,9 +208,9 @@
                     $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
                     for (var mod = 0; mod < data.free.length; mod++) {
 
-                        $('#interestelectives').html('<br/>You have expressed interest in: ');
+                        $('#interestelectives').html('<br/>You have expressed interest in: <br/>');
                         for (var spec = 0 ; spec < data.interest.length ; spec++) {
-                            $('#interestelectives').append(data.interest[spec].course_specialization + " ");
+                            $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                         }
                         $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.free[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.free[mod].module_name + '">' + data.free[mod].module_name + '</label></div>');
                     }
@@ -209,9 +221,9 @@
                         $('.specialmodsdesc').html('<br/><b>' + $("input[name=options]:checked").val() + '</b>')
                         var s = $("input[name=options]:checked").val().replace('&amp;', '&');
                         var specialmod = '&modname=' + encodeURIComponent(s);
-                        $('#interestelectives').append('<br/>You have expressed interest in:&nbsp;');
+                        $('#interestelectives').append('<br/>You have expressed interest in: <br/>');
                         for (var spec = 0 ; spec < data.interest.length ; spec++) {
-                            $('#interestelectives').append(data.interest[spec].course_specialization + " ");
+                            $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                         }
                         $('#interestelectives').append('<inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected." + '</inline>');
                         $.get("/modcompare/", specialmod, function (data) {
