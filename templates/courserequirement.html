@@ -150,7 +150,7 @@
 
             <div class="row col-list specials">
                 <div class="btn-group specialelectives" role="group" aria-label="..." data-toggle="buttons"></div>
-                <button class="btn btn-primary" style="width:15%; float: right;" id="save-module-btn"> Save</button>
+                <button class="btn btn-primary" style="width:15%; display:none; float: right;" id="save-module-btn"> Save</button>
             </div>
 
             <div class="row col-list specialmodsdesc"></div>
@@ -172,21 +172,24 @@
             $('#spec').html("Selected Specialization: <b>" + data.results + "</b>");
             document.getElementById("specialdropdown").style.display = 'none';
 
-            mod_click('Specialization Module', '');
             var special_class = document.getElementsByClassName('Specialization Module');
+            var free_class = document.getElementsByClassName('Freely Chosen Module');
+
             for (var i = 0 ; i < special_class.length ; i++) {
                 var s = special_class[i];
                 s.style.backgroundColor = "#d9edf7";
                 $(s).html('Specialization Module <span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
                 s.className += ' s' + i;
             }
-            var free_class = document.getElementsByClassName('Freely Chosen Module');
+
             for (var i = 0 ; i < free_class.length ; i++) {
                 var s = free_class[i];
                 s.style.backgroundColor = "#d9edf7";
                 $(s).html('Specialization Module <span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
                 s.className += ' s' + i;
             }
+
+            mod_click('Specialization Module', '');
         }
     });
 
@@ -194,11 +197,14 @@
         $('.specialelectives').empty();
         $('#interestelectives').empty();
         $('.specialmodsdesc').empty();
+        document.getElementById("save-module-btn").style.display = 'none';
         var dataString = '&modname=' + encodeURIComponent(clicked_id);
         var special_class = document.getElementsByClassName('Specialization Module');
         var div_class = clicked_class.split(' ')[2];
-        if (document.getElementById(clicked_id) != null && document.getElementById(clicked_id).innerText == "Freely Chosen Module") {
-            var dataStringFree = '&modname=' + encodeURIComponent(document.getElementById('Specialization Module').innerText);
+        //alert(document.getElementById(clicked_id).innerText);
+        if (document.getElementById(clicked_id) != null && typeof clicked_class.split(' ')[3] != 'undefined' && clicked_class.split(' ')[3].indexOf("free") != -1) {
+            var dataStringFree = '&modname=' + encodeURIComponent('Freely Chosen Module');
+            $('.modDescription').empty();
             $.ajax({
                 type: 'GET',
                 url: '/modcompare/',
@@ -207,14 +213,15 @@
                 success: function (data) {
                     $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
                     for (var mod = 0; mod < data.free.length; mod++) {
-
                         $('#interestelectives').html('<br/>You have expressed interest in: <br/>');
                         for (var spec = 0 ; spec < data.interest.length ; spec++) {
                             $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                         }
+
                         $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.free[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.free[mod].module_name + '">' + data.free[mod].module_name + '</label></div>');
                     }
                     $("input[name=options]").change(function () {
+                        document.getElementById("save-module-btn").style.display = 'block';
                         $('#interestelectives').empty();
                         var changediv = document.getElementsByClassName(div_class)[0];
                         $(changediv).html($("input[name=options]:checked").val());
@@ -226,22 +233,21 @@
                             $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                         }
                         $('#interestelectives').append('<inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected." + '</inline>');
-                        $.get("/modcompare/", specialmod, function (data) {
+                        $.get("/moddesc/", specialmod, function (data) {
                             $('.specialmodsdesc').append('<br/><p>' + data.des + '</p>');
                         });
                     });
                 }
-
             });
-        } else {
+        } else if (document.getElementById(clicked_id).id == "Specialization Module") {
             $.ajax({
                 type: 'GET',
                 url: '/modcompare/',
                 data: dataString,
                 dataType: 'json',
                 success: function (data) {
+                    $('.modDescription').empty();
                     document.getElementById("descontainer").style.display = 'block';
-                    $('.modDescription').html('<h4><b>' + clicked_id + '</h4></b><p>' + String(data.des).split(".").join(".<br />") + '</p>');
                     $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
                     if (special_class.length > data.specialise_mods.length) {
                         var extraMods = special_class.length - data.specialise_mods.length;
@@ -250,9 +256,10 @@
                             var s = special_class[special_class.length - num];
                             s.style.backgroundColor = "#d9edf7";
                             $(s).html('Freely Chosen Module <span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
-                            s.className += ' f' + i;
+                            s.className += ' free' + i;
                         }
                     }
+
                     for (var mod = 0; mod < data.specialise_mods.length; mod++) {
                         $('#interestelectives').html('<br/>Select an elective:');
                         $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.specialise_mods[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.specialise_mods[mod].module_name + '">' + data.specialise_mods[mod].module_name + '</label></div>');
@@ -260,6 +267,7 @@
 
 
                     $("input[name=options]").change(function () {
+                        document.getElementById("save-module-btn").style.display = 'block';
                         $('#interestelectives').empty();
                         var changediv = document.getElementsByClassName(div_class)[0];
                         $(changediv).html($("input[name=options]:checked").val());
@@ -267,11 +275,17 @@
                         var s = $("input[name=options]:checked").val().replace('&amp;', '&');
                         var specialmod = '&modname=' + encodeURIComponent(s);
                         $('#interestelectives').append('<br/>Select an elective:&nbsp; <inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected." + '</inline>');
-                        $.get("/modcompare/", specialmod, function (data) {
+                        $.get("/moddesc/", specialmod, function (data) {
                             $('.specialmodsdesc').append('<br/><p>' + data.des + '</p>');
                         });
                     });
                 }
+            });
+        } else {
+            document.getElementById("descontainer").style.display = 'block';
+            $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
+            $.get("/moddesc/", dataString, function (data) {
+                $('.modDescription').html('<h4><b>' + clicked_id + '</h4></b><p>' + String(data.des).split(".").join(".<br />") + '</p>');
             });
         }
     }
@@ -292,7 +306,6 @@
                 } else {
                     document.getElementById("specialdropdown").style.display = 'none';
                 }
-
             }
         });
     });

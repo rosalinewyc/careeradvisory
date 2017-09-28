@@ -33,5 +33,7 @@ urlpatterns = [
     url(r'^mbti/$', views.mbti, name='mbti'),
     url(r'^mbtilist/$', views.mbtilist, name='mbtilist'),
     url(r'^updateMbti/$', views.updateMbti, name='updateMbti'),
+    url(r'^updateClickCount/$', views.updateClickCount, name='updateClickCount'),
+    url(r'^moddesc/$', views.moddesc, name='moddesc'),
 
 ]

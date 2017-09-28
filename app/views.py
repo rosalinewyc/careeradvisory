@@ -124,17 +124,17 @@ def admin_bootstrap(request):
                                     files_hash['01'] = listing
                                 if listing == 'course.csv':
                                     files_hash['02'] = listing
-                                if listing == 'student.csv':
-                                    files_hash['03'] = listing
                                 if listing == 'module.csv':
-                                    files_hash['04'] = listing
+                                    files_hash['03'] = listing
                                 if listing == 'prerequisite.csv':
-                                    files_hash['05'] = listing
+                                    files_hash['04'] = listing
                                 if listing == 'coursemapping.csv':
-                                    files_hash['06'] = listing
+                                    files_hash['05'] = listing
                                 if listing == 'coursespecialization.csv':
-                                    files_hash['07'] = listing
+                                    files_hash['06'] = listing
                                 if listing == 'mbti.csv':
+                                    files_hash['07'] = listing
+                                if listing == 'student.csv':
                                     files_hash['08'] = listing
                                 if listing == 'jobcategory.csv':
                                     files_hash['09'] = listing
@@ -186,22 +186,6 @@ def admin_bootstrap(request):
                                             # No errors found. Proceed to add contents to database
                                             # clear_database(Course)
                                             Course.objects.bulk_create(get_content)
-                                        else:
-                                            if len(get_duplicate_error) != 0:
-                                                duplicate_error_message[file] = get_duplicate_error
-                                            if len(get_validation_error) != 0:
-                                                validation_error_message[file] = get_validation_error
-
-                                    # Bootstrap [student.csv]
-                                    if file == 'student.csv':
-                                        status = bootstrap_student(z_file, file)
-                                        get_duplicate_error = status['duplicate']
-                                        get_validation_error = status['validation']
-                                        get_content = status['content']
-
-                                        if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
-                                            # No errors found. Proceed to add contents to database
-                                            Student.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
                                                 duplicate_error_message[file] = get_duplicate_error
@@ -355,6 +339,22 @@ def admin_bootstrap(request):
                                             # No errors found. Proceed to add contents to database
                                             # clear_database(ElectiveModule)
                                             ElectiveModule.objects.bulk_create(get_content)
+                                        else:
+                                            if len(get_duplicate_error) != 0:
+                                                duplicate_error_message[file] = get_duplicate_error
+                                            if len(get_validation_error) != 0:
+                                                validation_error_message[file] = get_validation_error
+
+                                    # Bootstrap [student.csv]
+                                    if file == 'student.csv':
+                                        status = bootstrap_student(z_file, file)
+                                        get_duplicate_error = status['duplicate']
+                                        get_validation_error = status['validation']
+                                        get_content = status['content']
+
+                                        if len(get_duplicate_error) == 0 and len(get_validation_error) == 0:
+                                            # No errors found. Proceed to add contents to database
+                                            Student.objects.bulk_create(get_content)
                                         else:
                                             if len(get_duplicate_error) != 0:
                                                 duplicate_error_message[file] = get_duplicate_error
@@ -984,6 +984,9 @@ def student_info(request):
                 if mod.module_code_id is 139:
                     mod.module_code_id = id
                     break
+                elif mod.module_code_id is 142:
+                    mod.module_code_id = id
+                    break
 
     for mod in mapped:
         module = Module.objects.get(module_code=mod.module_code_id)
@@ -1081,8 +1084,12 @@ def modcompare(request):
         else:
             module = Module.objects.get(module_name=modname)
 
-            if 'specialisechoice' in request.session:
-                chosen_specialise = request.session['specialisechoice']
+            if 'specialisechoice' in request.session or student.course_specialization_id is not None:
+                if 'specialisechoice' in request.session:
+                    chosen_specialise = request.session['specialisechoice']
+                else:
+                    chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+                    chosen_specialise = chosen.course_specialization
                 if module.module_code is 139:
                     coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
                     if coursespecialization is not None:
@@ -1105,17 +1112,22 @@ def modcompare(request):
                         specialmod = Module.objects.get(module_code=item.module_code_id)
                         specialise_mods.append(model_to_dict(specialmod))
 
-            response['des'] = module.mod_description
             response['specialise_mods'] = specialise_mods
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+def moddesc(request):
+    response = {}
+    modname = request.GET.get('modname')
+    module = Module.objects.get(module_name=modname)
+    response['des'] = module.mod_description
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
 def specialisedropdown(request):
     response = {}
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
-
     course_specialise = []
     coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
     if len(coursespecialization) is not 0:
@@ -1203,7 +1215,7 @@ def retrievestudentinterest(request):
         # for diploma related jobs
         if len(private) == 0 and len(gov) == 0:
             private = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='JS-').values()
-            gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
+            gov = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='CG-').values()
     else:
         indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
         for interest in indicated_interests_id:
@@ -1213,12 +1225,16 @@ def retrievestudentinterest(request):
                 sector = models_get(CourseSpecialization, course_specialization_id=sector_id).course_specialization
             except:
                 sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
-            private = Job.objects.filter(job_interest=sector, job_id__icontains='CG-').values()
-            gov = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='JS-').values()
+
+            private = Job.objects.filter(job_interest=sector, job_id__icontains='JS-').values()
+            gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
+
     serialized_q1 = json.dumps(list(gov), cls=DjangoJSONEncoder)
     response['gov'] = serialized_q1
     serialized_q2 = json.dumps(list(private), cls=DjangoJSONEncoder)
     response['private'] = serialized_q2
+    # print(gov)
+    # print(private)
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
@@ -1308,8 +1324,11 @@ def checkstudentspecialization(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
     if student.course_specialization_id is not None:
-        special = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
-        data.append(special.course_specialization)
+        try:
+            special = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+            data.append(special.course_specialization)
+        except:
+            response['status'] = 'fail'
     response['status'] = 'success'
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")
@@ -1352,3 +1371,28 @@ def updateMbti(request):
                 response['status'] = 'success'
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+
+def updateClickCount(request):
+    response = {}
+    if request.method == 'POST':
+        joburl = request.POST.get('joburl')
+        job = Job.objects.filter(job_url=joburl)[0]
+        if job is not None:
+            position = job.job_position
+            job_id_substring = job.job_id[:2]
+            sector = ''
+            if  job_id_substring == 'CG':
+                sector = 'public'
+            elif job_id_substring == 'JS':
+                sector = 'private'
+            existing_analytics = models_get(JobAnalytics, job_title= position, sector_type = sector)
+
+            if existing_analytics is not None:
+                newclicks = existing_analytics.clicks + 1
+                existing_analytics.clicks = newclicks
+                existing_analytics.save()
+            else:
+                ja = JobAnalytics(job_title= position, sector_type=sector, clicks=1)
+                ja.save()
+                response['data'] = 'success'
+    return HttpResponse(json.dumps(response), content_type="application/json")

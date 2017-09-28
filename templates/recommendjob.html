@@ -75,7 +75,7 @@
 </html>
 <script src="{% static 'js/ajaxpost.js' %}"></script>
 <script>
-    $(function () {
+    $( document ).ready(function() {
 
         $(".js-example-basic-single").select2();
 
@@ -93,6 +93,7 @@
 {#                var htmlAppend = displayJob(arrayJobs);#}
 {#                $('#job-content').append(htmlAppend);#}
                 var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
+{#                alert(dataString);#}
                 getJobArray(dataString, 'gov');
             }
         });
@@ -175,7 +176,7 @@
 
                 var url = j.job_url;
 
-                htmlAppend += "<div class='well'><h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p class='expandable'>" + desc + "</p>" + "<a target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
+                htmlAppend += "<div class='well'><h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p class='expandable'>" + desc + "</p>" + "<a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
 
             }
         } else {
@@ -206,6 +207,19 @@
         $('#back-to-top').tooltip('show');
 
     });
+
+    function clickLinkFunc(link){
+        console.log(link);
+        var dataString = '&joburl=' + encodeURIComponent(link);
+        $.ajax({
+            type: 'POST',
+            url: '/updateClickCount/',
+            data: dataString,
+            dataType: 'json',
+            success: function (data) {
+            }
+        });
+    }
 
 
 </script>

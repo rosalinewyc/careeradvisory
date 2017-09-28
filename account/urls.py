@@ -28,6 +28,5 @@ urlpatterns = [
     url(r'^specialisechoice/$', views.specialisechoice, name='specialisechoice'),
     url(r'^personalinterestsectordropdown/$', views.personalinterestsectordropdown, name='personalinterestsectordropdown'),
     url(r'^getcoursespecialization/$', views.getcoursespecialization, name='getcoursespecialization'),
-    url(r'^savemodule/$', views.savemodule, name='savemodule'),
 
 ]
