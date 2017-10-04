@@ -24,6 +24,8 @@
     {% url 'personalinterest' as personalinterest %}
     {% url 'mbti' as mbti %}
     {% url 'logout' as logout %}
+    {% url 'dashboard' as dashboard %}
+
 </head>
 <nav class="navbar-static-top homepage-nav gradientNav">
     <div class="container-fluid">
@@ -57,7 +59,7 @@
 
                 {% if request.session.role == 3 %}
                 <li><a href="{{ admin_index }}" class="whitetext">Bootstrap</a></li>
-                <li><a href="{{ admin_index }}" class="whitetext">Dashboard</a></li>
+                <li><a href="{{ dashboard }}" class="whitetext">Dashboard</a></li>
                 {% endif %}
 
             </ul>

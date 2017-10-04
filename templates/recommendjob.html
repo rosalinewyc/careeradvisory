@@ -37,7 +37,7 @@
                 <div class="site-heading">
                     <h1>Job Preview</h1>
                     <hr class="small">
-                    <span class="subheading">List of jobs in current market based on selected job fields.</span>
+                    <span class="subheading">List of potential jobs in current market based on selected job fields.</span>
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@
 
                 var url = j.job_url;
 
-                htmlAppend += "<div class='well'><h4>" + company + "</h4><br /><h5>" + pos + "</h5><br /><p class='expandable'>" + desc + "</p>" + "<a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
+                htmlAppend += "<div class='well'><h4><b>" + company + "</b></h4><h5><b>" + pos + "</b></h5><br /><p class='expandable'>" + desc + "</p>" + "<a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
 
             }
         } else {

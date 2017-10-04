@@ -8,6 +8,7 @@ from django.views.decorators import csrf
 from app.models import *
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
+from django.db.models import Count
 
 
 def check_session(request):
@@ -1258,7 +1259,7 @@ def getstudentinterest(request):
         else:
             sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
         count += 1
-    sector += '<optgroup label="Potential Job Positions Based on Diploma">'
+    sector += '<optgroup label="Job Positions Based on Diploma">'
     jobsectors = JobCategory.objects.filter(course_code_id=existing_student.course_code_id).values(
         'job_category')
 
@@ -1396,3 +1397,355 @@ def updateClickCount(request):
                 ja.save()
                 response['data'] = 'success'
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+# analytics
+def dashboard(request):
+    if request.session.get('role') is 3:
+        diplomas = []
+        # population
+        population = Student.objects.all().count
+
+        # dropdown
+        all_courses = Course.objects.all()
+        for course in all_courses:
+            diplomas.append(course.course_name)
+        cp = CourseSpecialization.objects.all().values('course_specialization')
+        courseSpecialisation = list(cp)
+
+        # CareerInterest
+        mostPopInterestCount = getMostPopularInterest()
+        leastPopInterestCount = getLeastPopularInterest()
+        allInterestCount = getAllCareerInterest()
+        diplomaSameAsInterestCount = diplomaSameAsInterest()
+
+        # course planning
+        allSpecialisation = getAllSpecialisation()
+        popularSpecialisation = getMostPopularSpecialisation()
+        leastPopSecialisation = getLeastPopularSpecialisation()
+        studentsSpecialisation = getNumberOfStudentsFromSpecialisation()
+        ratioFYPIntern = ratioIntern()
+        ratioCourseworkElec = ratioCapstone()
+
+        #mbti
+        mbtis = MbtiCount()
+
+        #jobs
+        popjobs = getMostPopularJob()
+        pubcount = pubclicks()
+        privatecount = privateclicks()
+
+        return render(request, 'api/dashboard.html', {'population': population, 'mostPopInterestCount': mostPopInterestCount, 'leastPopInterestCount': leastPopInterestCount, 'allInterestCount': allInterestCount, 'courseSpecialisation': courseSpecialisation,'allSpecialisation': allSpecialisation, 'popularSpecialisation': popularSpecialisation, 'leastPopSpecialisation': leastPopSecialisation ,'diplomaSameAsInterestCount':diplomaSameAsInterestCount,'studentsSpecialisation':studentsSpecialisation, 'ratioFYPIntern':ratioFYPIntern, 'ratioCourseworkElec':ratioCourseworkElec, 'mbtis': mbtis, 'popjobs':popjobs, 'pubcount':pubcount, 'privatecount':privatecount})
+    return render(request, 'login.html')
+
+
+def applyfilter(request):
+    response = {}
+    filters = {}
+    if request.method == 'GET':
+        school = request.GET.get('school')
+        diploma = request.GET.get('diploma')
+        year = request.GET.get('year')
+        interest = request.GET.get('interest')
+
+        # add to filters hash
+        filters['school'] = school
+        filters['diploma'] = diploma
+        filters['year'] = year
+        filters['interest'] = interest
+        print(school,diploma,year,interest)
+        response['population'] = getNumberOfStudentsByDiploma(filters)
+    # response['allSpecialisation'] = getAllSpecialisation(reqeuest)
+    # response['popularSpecialisation'] = getMostPopularSpecialisation(diploma)
+    # response['leastPopSecialisation'] = getLeastPopularSpecialisation(reqeuest)
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+def getNumberOfStudentsByDiploma(filters):
+        diploma = filters['diploma']
+        year = filters['year']
+        result = 0
+        if diploma == 'Diploma' and year == 'Year':
+            result = Student.objects.all().count
+        else:
+            if diploma != 'diploma':
+                dip_obj = models_get(Course, course_name=diploma)
+                if year != 'Year':
+                    year = int(year)
+                    result = Student.objects.filter(course_code_id=dip_obj.course_code, current_year=year).count()
+                else:
+                    result = Student.objects.filter(course_code_id=dip_obj.course_code).count()
+            else: #year filter
+                year = int(year)
+                result = Student.objects.filter(current_year=year).count()
+        return result
+
+
+def getMostPopularInterest():
+    sortedresult = StudentInterestSector.objects.exclude(personal_interest_sector__isnull=True).values('personal_interest_sector').\
+        annotate(user_count=Count('user_id_id')).order_by('-user_count') # group the student by course_specialisation_id
+    if len(sortedresult) != 0:
+        value = sortedresult[0].get('user_count')
+        interest = sortedresult[0].get('personal_interest_sector')
+        current = models_get(InterestSector, interest_sector_id=interest)
+        interest_spec = current.course_specialization_id_id
+        current_name = current.personal_interest_sector
+        if interest_spec is not None:
+            c_spec = models_get(CourseSpecialization, course_specialization_id=interest_spec).course_specialization
+            current_name = current_name + ' (' + c_spec + ')'
+        returnlist = []
+        interests = [current_name]
+        # check if there is any same max count
+        for j in range(1, sortedresult.count()):
+            checkvalue = sortedresult[j].get('user_count')
+            if checkvalue == value:
+                checkinterest_id = sortedresult[j].get('personal_interest_sector')
+                i = models_get(InterestSector, interest_sector_id=checkinterest_id)
+                i_name = i.personal_interest_sector
+                i_spec = i.course_specialization_id_id
+                if i_spec is not None:
+                    i_name = i_name + ' (' + models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization + ')'
+                interests.append(i_name)
+        returnlist.append([value, interests])
+    return returnlist
+
+
+def getLeastPopularInterest():
+    # diploma = filters['diploma']
+    sortedresult = StudentInterestSector.objects.exclude(personal_interest_sector__isnull=True).values('personal_interest_sector').\
+        annotate(user_count=Count('user_id_id')).order_by('user_count') # group the student by course_specialisation_id
+    if len(sortedresult) != 0:
+        value = sortedresult[0].get('user_count')
+        interest = sortedresult[0].get('personal_interest_sector')
+        current = models_get(InterestSector, interest_sector_id=interest)
+        interest_spec = current.course_specialization_id_id
+        current_name = current.personal_interest_sector
+        if interest_spec is not None:
+            c_spec = models_get(CourseSpecialization, course_specialization_id=interest_spec).course_specialization
+            current_name = current_name + ' (' + c_spec + ')'
+        returnlist = []
+        interests = [current_name]
+        # check if there is any same max count
+        for j in range(1, sortedresult.count()):
+            checkvalue = sortedresult[j].get('user_count')
+            if checkvalue == value:
+                checkinterest_id = sortedresult[j].get('personal_interest_sector')
+                i = models_get(InterestSector, interest_sector_id=checkinterest_id)
+                i_name = i.personal_interest_sector
+                i_spec = i.course_specialization_id_id
+                if i_spec is not None:
+                    print(models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization)
+                    i_name = i_name + ' (' + models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization + ')'
+                print(i_name)
+                interests.append(i_name)
+        returnlist.append([value, interests])
+    return returnlist
+
+
+
+def getAllCareerInterest():
+    sortedresult = StudentInterestSector.objects.exclude(personal_interest_sector__isnull=True).values('personal_interest_sector').\
+        annotate(user_count= Count('user_id_id')).order_by('-user_count')
+    if sortedresult is not None:
+        result = {}
+        for ps in sortedresult:
+            name = models_get(InterestSector, interest_sector_id=ps.get('personal_interest_sector')).personal_interest_sector
+            count = ps.get('user_count')
+
+            if name not in result:
+                result[name] = count
+            else:
+                newcount = result[name] + count
+                result[name] = newcount
+        return result
+    return
+
+
+def applycareerfilter(request):
+    response = {}
+    if request.method == 'GET':
+        diploma = request.GET.get('diploma')
+        count = diplomaSameAsInterest(diploma)
+        response['count'] = count
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+def diplomaSameAsInterest(diploma='all'):
+    count = 0
+    if diploma != 'all' and diploma !='Diploma':
+        print(diploma)
+        course_id = (Course.objects.get(course_name=diploma)).course_code #get the diploma name
+        studentlist = Student.objects.filter(course_code_id = course_id )
+        for s in studentlist:
+            iS =StudentInterestSector.objects.filter(user_id = s.user_id_id) #get this students' interest
+            for i in iS:
+                i_name = models_get(InterestSector, interest_sector_id = i.personal_interest_sector_id).personal_interest_sector
+                if i_name == diploma:
+                    count += 1
+    else:
+        count = -1
+    return count
+
+
+#course planning
+def getdiplomasp(request):
+    response = {}
+    sps = []
+    if request.method == 'GET':
+        diploma = request.GET.get('diploma')
+        course_id = (Course.objects.get(course_name=diploma)).course_code
+        sps = CourseSpecialization.objects.filter(course_code_id = course_id).values('course_specialization')
+        sps_id = CourseSpecialization.objects.filter(course_code_id=course_id).values('course_specialization_id')
+        serialized_sps = json.dumps(list(sps), cls=DjangoJSONEncoder)
+        response['sps'] = serialized_sps
+        serialized_spsid = json.dumps(list(sps_id), cls=DjangoJSONEncoder)
+        response['spsid'] = serialized_spsid
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def applyspfilter(request):
+    response = {}
+    if request.method == 'GET':
+        yearoptions = request.GET.getlist("yearoptions[]")
+        splabels = request.GET.getlist('splabels[]')
+        splabelsid = request.GET.getlist('splabelsid[]')
+        response['result'] = getSpecialisationByFilter(splabels, splabelsid, yearoptions)
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def getSpecialisationByFilter(sps,spid, year):
+    label = ''
+    datasets = {}
+    for index in range(len(sps)):
+        sp = sps[index]
+        if len(year) != 0:
+            year = [1,2,3]
+        for y in year:
+            label = y
+            y = int(y)
+            id = spid[index]
+            count = Student.objects.filter(current_year = y, course_specialization_id = id).values('course_specialization__course_specialization').count()
+            if label not in datasets:
+                datasets[label] = []
+                datasets[label].append([sp,count])
+            else:
+                datasets[label].append([sp,count])
+    return datasets
+
+
+def getMostPopularSpecialisation(diploma='all'):
+    sortedresult = Student.objects.exclude(course_specialization_id__isnull=True).values('course_specialization__course_specialization').\
+        annotate(user_count=Count('user_id_id')).order_by('-user_count') # group the student by course_specialisation_id
+    if len(sortedresult) != 0:
+        return getTop(sortedresult)
+    return
+
+
+def getLeastPopularSpecialisation():
+    sortedresult = Student.objects.exclude(course_specialization_id__isnull=True).values('course_specialization__course_specialization').\
+        annotate(user_count=Count('user_id_id')).order_by('user_count') # group the student by course_specialisation_id
+    # returnlist = getFiveValues(sortedresult)
+    if len(sortedresult) != 0:
+        return getTop(sortedresult)
+    return
+
+
+def getAllSpecialisation():
+    sortedresult = Student.objects.exclude(course_specialization_id__isnull=True).values('course_specialization__course_specialization').\
+        annotate(user_count=Count('user_id_id')).order_by('-user_count')
+    return sortedresult
+
+
+#common method for get top 5 and least 5
+def getTop(sortedresult):
+    value = sortedresult[0].get('user_count')
+    specialisation = sortedresult[0].get('course_specialization__course_specialization')
+    returnlist = []
+    specializations = [specialisation]
+    # check if there is any same max count
+    for j in range(1, sortedresult.count()):
+        checkvalue = sortedresult[j].get('user_count')
+        checkspec = sortedresult[j].get('course_specialization__course_specialization')
+        if checkvalue == value:
+            specializations.append(checkspec)
+    returnlist.append([value, specializations])
+    return returnlist
+
+
+def getNumberOfStudentsFromSpecialisation():
+    result = Student.objects.values('course_specialization__course_specialization').exclude(course_specialization_id__isnull=True). \
+        annotate(user_count=Count('user_id_id'))
+    return result
+
+
+def ratioIntern():
+    internCount = Student.objects.filter(choose_internship = 1).count()
+    fypCount = Student.objects.filter(choose_internship= 0).count()
+    return str(internCount) + ":" + str(fypCount)
+
+
+def ratioCapstone():
+    capCount = Student.objects.filter(choose_capstone = 1).count()
+    electiveCount = Student.objects.filter(choose_internship= 0).count()
+    return str(capCount) + ":" + str(electiveCount)
+
+
+def MbtiCount():
+    result = []
+    mbtis = ['ENFJ','ENFP','ENTJ','ENTP','ESFJ','ESFP','ESTJ','ESTP','INFJ','INFP','INTJ','INTP','ISFJ','ISFP','ISTJ','ISTP']
+    for Mbti in mbtis:
+        count = Student.objects.filter(mbti_code_id = Mbti).count()
+        result.append([Mbti, count])
+    return result
+
+
+def updateClickCount(request):
+    response = {}
+    if request.method == 'POST':
+        joburl = request.POST.get('joburl')
+        job = Job.objects.filter(job_url=joburl)[0]
+        if job is not None:
+            position = job.job_position
+            job_id_substring = job.job_id[:2]
+            sector = ''
+            if job_id_substring == 'CG':
+                sector = 'public'
+            elif job_id_substring == 'JS':
+                sector = 'private'
+            existing_analytics = models_get(JobAnalytics, job_title= position, sector_type = sector)
+
+            if existing_analytics is not None:
+                newclicks = existing_analytics.clicks + 1
+                existing_analytics.clicks = newclicks
+                existing_analytics.save()
+            else:
+                ja = JobAnalytics(job_title= position, sector_type=sector, clicks=1)
+                ja.save()
+                response['data'] = 'success'
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def getMostPopularJob():
+    sortedresult = JobAnalytics.objects.order_by('-clicks')
+    result = []
+    if len(sortedresult) != 0:
+        for r in sortedresult:
+            title = r.job_title
+            count = r.clicks
+            result.append([title, count])
+    return result
+
+
+def pubclicks():
+    pub = JobAnalytics.objects.filter(sector_type='public')
+    sumpub = 0
+    for p in pub:
+        sumpub = sumpub + p.clicks
+    return sumpub
+
+
+def privateclicks():
+    private = JobAnalytics.objects.filter(sector_type='private')
+    sumprivate = 0
+    for p in private:
+        sumprivate = sumprivate + p.clicks
+    return sumprivate

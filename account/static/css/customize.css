@@ -166,6 +166,7 @@ footer {
     border-bottom: solid 5px #2aabd2;
     -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.50);
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.50);
+    position:fixed; top:0px; margin:auto; z-index:100000; width:100%;
 }
 
 .site-heading{

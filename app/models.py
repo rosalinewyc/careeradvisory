@@ -66,6 +66,7 @@ class Job(models.Model):
     job_date = models.DateField(null=False)
     job_keyword = models.CharField(max_length=255, null=True)
     job_interest = models.CharField(max_length=255, null=True)
+    job_mbti = models.CharField(max_length=255, null=True)
 
 
 class Mbti(models.Model):

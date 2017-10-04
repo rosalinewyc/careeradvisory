@@ -36,4 +36,10 @@ urlpatterns = [
     url(r'^updateClickCount/$', views.updateClickCount, name='updateClickCount'),
     url(r'^moddesc/$', views.moddesc, name='moddesc'),
 
+    url(r'^dashboard/$', views.dashboard, name='dashboard'),
+    url(r'^applyfilter/$', views.applyfilter, name='applyfilter'),
+    url(r'^applycareerfilter/$', views.applycareerfilter, name='applycareerfilter'),
+    url(r'^getdiplomasp', views.getdiplomasp, name='getdiplomasp'),
+    url(r'^applyspfilter/$', views.applyspfilter, name='applyspfilter'),
+
 ]
