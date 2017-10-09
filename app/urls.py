@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^bootstrap/$', views.admin_bootstrap, name='bootstrap'),
 
     # Student
-    url(r'^courseplanner/$', views.courseplanner, name='courseplanner'),
     url(r'^recommendjob/$', views.recommendjob, name='recommendjob'),
     url(r'^modulesearch/$', views.modulesearch, name='modulesearch'),
     url(r'^modsearch/$', views.modsearch, name='modsearch'),

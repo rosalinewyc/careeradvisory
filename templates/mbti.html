@@ -8,7 +8,6 @@
     {% url 'login' as login %}
     {% url 'recommendjob' as recommendjob %}
     {% url 'modulesearch' as modulesearch %}
-    {% url 'courseplanner' as courseplanner %}
     {% url 'admin_index' as admin_index %}
     {% url 'userprofile' as userprofile %}
     {% url 'transitionjobpage' as transitionjobpage %}
@@ -115,8 +114,17 @@
                  data: {
                         'mbti_code_id': clicked_id // from form
                         },
-                 success: function(){
-                     $('#message').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Results saved. You are ' + clicked_id + '.')
+                 success: function(data){
+                     if(data.status == 'success'){
+                         $('#message').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Results saved. You are ' + clicked_id + '. Please wait to be redirected...')
+                         window.setTimeout(function () {
+                            window.location.href = "/recommendjob";
+                        }, 1200);
+                     }else{
+                        $('#message').html('Error!'+ data.message);
+
+                     }
+
                  }
             });
         }

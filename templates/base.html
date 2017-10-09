@@ -16,7 +16,6 @@
     {% url 'login' as login %}
     {% url 'recommendjob' as recommendjob %}
     {% url 'modulesearch' as modulesearch %}
-    {% url 'courseplanner' as courseplanner %}
     {% url 'admin_index' as admin_index %}
     {% url 'userprofile' as userprofile %}
     {% url 'transitionjobpage' as transitionjobpage %}
@@ -50,9 +49,8 @@
                     <a href="#" class="dropdown-toggle whitetext" data-toggle="dropdown" role="button"
                        aria-haspopup="true" aria-expanded="false"> Course Guidance<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-{#                        <li><a href="{{ courseplanner }}">Course Planner</a></li>#}
                         <li><a href="{{ courserequirement }}">Course Planner</a></li>
-                        <li><a href="{{ modulesearch }}">Module Search</a></li>
+{#                        <li><a href="{{ modulesearch }}">Module Search</a></li>#}
                     </ul>
                 </li>
                 {% endif %}

@@ -2,13 +2,17 @@
     {% include "base.html" %}
 {% endblock %}
 <style>
-    .morecontent span {
+    .morecontent{
         display: none;
     }
 
     .morelink {
         display: block;
     }
+    .btn-link:focus,.btn-link:active {
+       outline: none !important;
+    }
+
 </style>
 <html>
 <head>
@@ -38,6 +42,7 @@
                     <h1>Job Preview</h1>
                     <hr class="small">
                     <span class="subheading">List of potential jobs in current market based on selected job fields.</span>
+
                 </div>
             </div>
         </div>
@@ -48,13 +53,25 @@
 <!-- Page Content -->
 <div class="container todolist">
     <!-- Page Heading -->
-    <div class="row">
-        <div class="col-lg-12">
-            <br/><label>Filter By Specific Interest: </label>
-            <button class="btn btn-primary" onclick="location.href='{% url 'courserequirement' %}'" style="float:right;">Proceed to Course Guidance</button>
+    <div class="row" style="padding:10px 10px 0 0;">
+    <button class="btn btn-primary" onclick="location.href='{% url 'courserequirement' %}'" style="float:right;">Proceed to Course Guidance</button>
+        <div class="col-lg-8 col-md-8">
+            <br/><label>Filter Based On: </label>
+            <h5 id="filterCatName"></h5>
+            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8" id="filterCat">
+                <option>-- SELECT --</option>
+                <option value="Interest">Personal Interest</option>
+                <option value="Diploma">Diploma</option>
+                {% if mbti %}
+                <option value="MBTI">MBTI ({{ mbti }})</option>
+                {% endif %}
+            </select>
             <h5 id="interestNames"></h5>
             <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8"  id="id_label_single">
             </select>
+            <span style="text-align:center;z-index:100;position: relative">
+                <button class="btn btn-info" style="width:15%;margin:0px 0 0 30px;" id="filter-btn">Apply Filter</button>
+            </span>
         <hr>
         </div>
     </div>
@@ -79,48 +96,54 @@
 
         $(".js-example-basic-single").select2();
 
-        $.get("/getstudentinterest/", function (data) {
-            $('.js-example-basic-single').append(data);
+        $('#id_label_single').empty();
+
+        $('#filterCat').change(function(){
+            $('#id_label_single').empty();
+            $.ajax({
+                type: 'GET',
+                url: '/getstudentinterest/',
+                dataType: 'json',
+                data: {"filterCat": encodeURIComponent($('#filterCat').val())},
+                success: function (data) {
+                    $('#id_label_single').append(data);
+                }
+            });
         });
 
-        $.ajax({
-            type: 'GET',
-            url: '/retrievestudentinterest/',
-            dataType: 'json',
-            success: function (data) {
-{#                var arrayJobs = $.parseJSON(data.gov);//default display gov and private tgth upon load#}
-{#                arrayJobs = arrayJobs.concat($.parseJSON(data.private));#}
-{#                var htmlAppend = displayJob(arrayJobs);#}
-{#                $('#job-content').append(htmlAppend);#}
-                var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
-{#                alert(dataString);#}
-                getJobArray(dataString, 'gov');
-            }
+
+        $('#filter-btn').click(function(){
+            $.ajax({
+                type: 'GET',
+                url: '/retrievestudentinterest/',
+                dataType: 'json',
+                success: function (data) {
+                    var dataString = '&interestFilter=' + encodeURIComponent($('#id_label_single').val());
+                    if ($('#private-btn').is(':active')) {
+                        getJobArray(dataString, 'private');
+                    } else {
+                        getJobArray(dataString, 'gov');
+                    }
+                        }
+            });
         });
 
-        $('.js-example-basic-single').change(function () {
-            var dataString = '&interestFilter=' + encodeURIComponent($(this).val());
-            var arrayJobs = [];
-            if ($('#private-btn').is(':active')) {
-                getJobArray(dataString, 'private');
-            } else {
-                getJobArray(dataString, 'gov');
-            }
-        });
 
         $('#gov-btn').on('click', function (e) {
-            var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
+            var dataString = '&interestFilter=' + encodeURIComponent($('#id_label_single').val());
             var arrayJobs = getJobArray(dataString, 'gov');
             var htmlAppend = displayJob(arrayJobs);
             $('#job-content').html(htmlAppend);
         });
 
         $('#private-btn').on('click', function (e) {
-            var dataString = '&interestFilter=' + encodeURIComponent($('.js-example-basic-single').val());
+            var dataString = '&interestFilter=' + encodeURIComponent($('#id_label_single').val());
             var arrayJobs = getJobArray(dataString, 'private');
         });
 
+
     });
+
 
     function getJobArray(dataString, type) {
         $.ajax({
@@ -133,11 +156,9 @@
                 if (type == 'gov') {
                     arrayJobs = $.parseJSON(data.gov);
                 } else {
-                    console.log(data.private);
                     arrayJobs = $.parseJSON(data.private);
                 }
                 var htmlAppend = displayJob(arrayJobs);
-                console.log(htmlAppend);
                 $('#job-content').html(htmlAppend);
             }
         });
@@ -145,14 +166,13 @@
 
     function displayJob(arrayJobs) {
         var htmlAppend = '';
-        console.log(arrayJobs);
         if (arrayJobs.length != 0) {
             for (var i = 0; i < arrayJobs.length; i++) {
                 var j = arrayJobs[i];
                 var company = j.job_company;
                 var pos = j.job_position;
                 var desc = j.job_description;
-
+                var id = j.job_id;
                 var desc = desc.split(/[;:\.•]+\s|[\r\n]|[\.](?=[A-Z])/g)
 
                 {# Ensure every new line starts with uppercase#}
@@ -176,17 +196,23 @@
 
                 var url = j.job_url;
 
-                htmlAppend += "<div class='well'><h4><b>" + company + "</b></h4><h5><b>" + pos + "</b></h5><br /><p class='expandable'>" + desc + "</p>" + "<a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>More Info</a><br /></div><hr>";
+                if (desc.length > 500) {
+                    var showntext = desc.substr(0, 500);
+                    var hidetext = desc.substr(500, desc.length - 500);
+                    desc = showntext + '<span class="moreelipses">' + "..." + '</span><span class="morecontent">' + hidetext + '</span>&nbsp;&nbsp;<button type="button" class="morelink btn btn-link" id="'+ id + '" onclick="clickshowmore(this.id);" style="padding-left:0!important;">' + "Show More" + '</button>';
+                }
+
+                htmlAppend += "<div class='well'><h4><b>" + company + "<br />" + pos + "</b></h4><a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>View Full Job Listing</a><br /><br /><p class ='desccontent'>" + desc + "</p><br /></div><hr>";
 
             }
         } else {
-            console.log('entered no results');
             htmlAppend += "<div class='well'><h3>No results found.</h3></div>"
         }
         return htmlAppend;
     }
 
     $(document).ready(function () {
+
         $('#back-to-top').fadeOut();
         $(window).scroll(function () {
             if ($(this).scrollTop() > 50) {
@@ -206,10 +232,10 @@
 
         $('#back-to-top').tooltip('show');
 
+
     });
 
     function clickLinkFunc(link){
-        console.log(link);
         var dataString = '&joburl=' + encodeURIComponent(link);
         $.ajax({
             type: 'POST',
@@ -221,5 +247,20 @@
         });
     }
 
+    function clickshowmore(id){
+        var idselect = '#'+id;
+        if ($(idselect).hasClass("less")) {
+            $(idselect).closest(".desccontent").find(".moreelipses").show();
+            $(idselect).removeClass("less");
+            $(idselect).html("Show More");
+        } else {
+            $(idselect).addClass("less");
+            $(idselect).closest(".desccontent").find(".moreelipses").hide();
+            $(idselect).text("Show Less");
+        }
+        $(idselect).parent().prev().toggle();
+        $(idselect).prev().toggle();
+
+    }
 
 </script>

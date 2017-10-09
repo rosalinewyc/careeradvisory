@@ -8,7 +8,6 @@
     {% url 'login' as login %}
     {% url 'recommendjob' as recommendjob %}
     {% url 'modulesearch' as modulesearch %}
-    {% url 'courseplanner' as courseplanner %}
     {% url 'admin_index' as admin_index %}
     {% url 'userprofile' as userprofile %}
     {% url 'transitionjobpage' as transitionjobpage %}
@@ -37,19 +36,19 @@
     <!-- Title -->
     <div class="row featurerow">
         <div class="col-lg-12">
-            <h3>Latest Features</h3>
+            <h3>Features</h3>
         </div>
     </div>
     <!-- /.row -->
 
     <!-- Page Features -->
     <div class="row featurerow text-center">
-
-        <div class="col-md-4 col-sm-6 feature_card">
+        <a href="{{ recommendjob }}">
+        <div class="col-md-3 col-sm-6 feature_card">
             <div class="thumbnail">
                 <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/lookout.jpg" alt="">
                 <div class="caption_featurecard">
-                    <h3>Explore for jobs of your interest</h3>
+                    <h3>Explore Job Interest</h3>
                     <p>Real-time job offers available here</p>
                     <p>
                         <a href="{{ recommendjob }}" class="btn btn-primary">Explore</a>
@@ -57,8 +56,9 @@
                 </div>
             </div>
         </div>
+        </a>
 
-        <div class="col-md-4 col-sm-6 feature_card">
+        <div class="col-md-3 col-sm-6 feature_card"><a href="{{ courserequirement }}">
             <div class="thumbnail">
                 <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/coursemap.jpg" alt="">
                 <div class="caption_featurecard">
@@ -69,45 +69,45 @@
                     </p>
                 </div>
             </div>
-        </div>
+        </a></div>
 
-        <div class="col-md-4 col-sm-6 feature_card">
-            <div class="thumbnail">
-                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/coursemap.jpg" alt="">
-                <div class="caption_featurecard">
-                    <h3>Module Search</h3>
-                    <p>Search for a module to view more details.</p>
-                    <p>
-                        <a href="{{ modulesearch }}" class="btn btn-primary">Explore</a>
-                    </p>
-                </div>
-            </div>
-        </div>
+{#        <div class="col-md-3 col-sm-6 feature_card">#}
+{#            <div class="thumbnail">#}
+{#                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/coursemap.jpg" alt="">#}
+{#                <div class="caption_featurecard">#}
+{#                    <h3>Module Search</h3>#}
+{#                    <p>Search for a module to view more details.</p>#}
+{#                    <p>#}
+{#                        <a href="{{ modulesearch }}" class="btn btn-primary">Explore</a>#}
+{#                    </p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
 
-        <div class="col-md-4 col-sm-6 feature_card">
+        <div class="col-md-3 col-sm-6 feature_card"><a href="{{ personalinterest }}">
             <div class="thumbnail">
                 <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/collaborate.jpg" alt="">
                 <div class="caption_featurecard">
                     <h3>Update Personal Interest</h3>
-                    <p>Update current personal interest to view different prospective job recommendations.</p>
+                    <p>Update current personal interest</p>
                     <p>
-                        <a href="{{ personalinterest }}" class="btn btn-primary">Do Now</a>
+                        <a href="{{ personalinterest }}" class="btn btn-primary">Update Now</a>
                     </p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 col-sm-6 feature_card">
+        </a></div>
+        <div class="col-md-3 col-sm-6 feature_card"><a href="{{ mbti }}">
             <div class="thumbnail">
-                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/collaborate.jpg" alt="">
+                <img src="https://s3-ap-southeast-1.amazonaws.com/is480firestorm/personalityimg.jpg" alt="">
                 <div class="caption_featurecard">
-                    <h3>Redo Personality Test</h3>
-                    <p>Different job recommendations will be displayed if your test results is different.</p>
+                    <h3>Do Personality Test</h3>
+                    <p>Discover your personality type</p>
                     <p>
                         <a href="{{ mbti }}" class="btn btn-primary">Do Test</a>
                     </p>
                 </div>
             </div>
-        </div>
+        </a></div>
     </div>
 </div><!-- /.container -->
 <!-- /.row -->

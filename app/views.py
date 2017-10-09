@@ -899,16 +899,12 @@ def bootstrap_elective_module(z_file, file):
     return status
 
 
-# Student
-def courseplanner(request):
-    if check_session(request) is not None:
-        return render(request, 'courseplanner.html')
-    return render(request, 'login.html')
-
-
 def recommendjob(request):
     if check_session(request) is not None:
-        return render(request, 'recommendjob.html')
+        user_id = request.session.get('user')
+        existing_student = models_get(Student, user_id=user_id)
+        mbti = existing_student.mbti_code_id
+        return render(request, 'recommendjob.html',{'mbti':mbti})
     return render(request, 'login.html')
 
 
@@ -1201,7 +1197,6 @@ def interestinput(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-# have repeated code from getstudentinterest
 def retrievestudentinterest(request):
     response = {}
     user_id = request.session.get('user')
@@ -1209,7 +1204,6 @@ def retrievestudentinterest(request):
     interestFilter = request.GET.get('interestFilter')
     gov = []
     private = []
-
     if interestFilter is not None:
         private = Job.objects.filter(job_interest=interestFilter, job_id__icontains='JS-').values()
         gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
@@ -1217,18 +1211,10 @@ def retrievestudentinterest(request):
         if len(private) == 0 and len(gov) == 0:
             private = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='JS-').values()
             gov = Job.objects.filter(job_keyword=interestFilter, job_id__icontains='CG-').values()
-    else:
-        indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values('personal_interest_sector_id')
-        for interest in indicated_interests_id:
-            indicated_id = interest['personal_interest_sector_id']
-            try:
-                sector_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
-                sector = models_get(CourseSpecialization, course_specialization_id=sector_id).course_specialization
-            except:
-                sector = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
-
-            private = Job.objects.filter(job_interest=sector, job_id__icontains='JS-').values()
-            gov = Job.objects.filter(job_interest=interestFilter, job_id__icontains='CG-').values()
+        # for mbti related jobs
+        if len(private) == 0 and len(gov) == 0:
+            private = Job.objects.filter(job_mbti=interestFilter, job_id__icontains='JSMBTI-').values()
+            gov = Job.objects.filter(job_mbti=interestFilter, job_id__icontains='CGMBTI-').values()
 
     serialized_q1 = json.dumps(list(gov), cls=DjangoJSONEncoder)
     response['gov'] = serialized_q1
@@ -1245,27 +1231,48 @@ def getstudentinterest(request):
     existing_student = models_get(Student, user_id=user_id)
     indicated_interests_id = StudentInterestSector.objects.filter(user_id_id=existing_user).values(
         'personal_interest_sector_id')
-    sector = '<label>Potential Job Positions Based on Personal Interest</label>'
-    # sector = '<optgroup label="Potential Job Positions Based on Personal Interest">'
-    count = 0
-    for interest in indicated_interests_id:
-        indicated_id = interest['personal_interest_sector_id']
-        interest_name = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
-        specialise_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
-        if specialise_id is not None:
-            interest_name = models_get(CourseSpecialization, course_specialization_id=specialise_id).course_specialization
-        if count == 0:
-            sector += '<option  selected="selected" value="' + interest_name + '">' + interest_name + '</option>'
-        else:
-            sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
-        count += 1
-    sector += '<optgroup label="Job Positions Based on Diploma">'
-    jobsectors = JobCategory.objects.filter(course_code_id=existing_student.course_code_id).values(
-        'job_category')
+    filterCat = request.GET.get("filterCat")
+    sector = ""
+    if filterCat == 'Interest':
+        sector = '<option label="Potential Job Positions Based on Personal Interest">'
+        count = 0
+        for interest in indicated_interests_id:
+            indicated_id = interest['personal_interest_sector_id']
+            interest_name = models_get(InterestSector, interest_sector_id=indicated_id).personal_interest_sector
+            specialise_id = models_get(InterestSector, interest_sector_id=indicated_id).course_specialization_id_id
+            if specialise_id is not None:
+                interest_name = models_get(CourseSpecialization, course_specialization_id=specialise_id).course_specialization
+            if count == 0:
+                sector += '<option  selected="selected" value="' + interest_name + '">' + interest_name + '</option>'
+            else:
+                sector += '<option value="' + interest_name + '">' + interest_name + '</option>'
+            count += 1
+    elif filterCat == 'Diploma':
+        sector = '<option label="Job Positions Based on Diploma">'
+        jobsectors = JobCategory.objects.filter(course_code_id=existing_student.course_code_id).values(
+            'job_category')
+        count = 0
+        for jobinterest in jobsectors:
+            jobinterestname = jobinterest['job_category']
+            if count == 0:
+                sector += '<option  selected="selected" value="' + jobinterestname + '">' + jobinterestname + '</option>'
+            else:
+                sector += '<option value="' + jobinterestname + '">' + jobinterestname + '</option>'
+            count += 1
 
-    for jobinterest in jobsectors:
-        jobinterestname = jobinterest['job_category']
-        sector += '<option value="' + jobinterestname + '">' + jobinterestname + '</option>'
+    elif filterCat == 'MBTI':
+        mbti_code = existing_student.mbti_code_id
+        sector = ''
+        possiblejobsec = models_get(Mbti,mbti_code=mbti_code).possible_job_sector
+        jobsectors = possiblejobsec.split(', ')
+        count = 0
+        for s in jobsectors:
+            s = s.strip()
+            if count == 0:
+                sector += '<option  selected="selected" value="' + s + '">' + s + '</option>'
+            else:
+                sector += '<option value="' + s + '">' + s + '</option>'
+            count += 1
     return HttpResponse(json.dumps(sector), content_type="application/json")
 
 
@@ -1418,6 +1425,7 @@ def dashboard(request):
         leastPopInterestCount = getLeastPopularInterest()
         allInterestCount = getAllCareerInterest()
         diplomaSameAsInterestCount = diplomaSameAsInterest()
+        interestclick = personalinterestclick()
 
         # course planning
         allSpecialisation = getAllSpecialisation()
@@ -1426,6 +1434,7 @@ def dashboard(request):
         studentsSpecialisation = getNumberOfStudentsFromSpecialisation()
         ratioFYPIntern = ratioIntern()
         ratioCourseworkElec = ratioCapstone()
+        cpclick = courseplannersclick()
 
         #mbti
         mbtis = MbtiCount()
@@ -1434,8 +1443,9 @@ def dashboard(request):
         popjobs = getMostPopularJob()
         pubcount = pubclicks()
         privatecount = privateclicks()
+        totaljobs = jobstotal()
 
-        return render(request, 'api/dashboard.html', {'population': population, 'mostPopInterestCount': mostPopInterestCount, 'leastPopInterestCount': leastPopInterestCount, 'allInterestCount': allInterestCount, 'courseSpecialisation': courseSpecialisation,'allSpecialisation': allSpecialisation, 'popularSpecialisation': popularSpecialisation, 'leastPopSpecialisation': leastPopSecialisation ,'diplomaSameAsInterestCount':diplomaSameAsInterestCount,'studentsSpecialisation':studentsSpecialisation, 'ratioFYPIntern':ratioFYPIntern, 'ratioCourseworkElec':ratioCourseworkElec, 'mbtis': mbtis, 'popjobs':popjobs, 'pubcount':pubcount, 'privatecount':privatecount})
+        return render(request, 'api/dashboard.html', {'population': population, 'interestclick':interestclick, 'cpclick':cpclick, 'mostPopInterestCount': mostPopInterestCount, 'leastPopInterestCount': leastPopInterestCount, 'allInterestCount': allInterestCount, 'courseSpecialisation': courseSpecialisation,'allSpecialisation': allSpecialisation, 'popularSpecialisation': popularSpecialisation, 'leastPopSpecialisation': leastPopSecialisation ,'diplomaSameAsInterestCount':diplomaSameAsInterestCount,'studentsSpecialisation':studentsSpecialisation, 'ratioFYPIntern':ratioFYPIntern, 'ratioCourseworkElec':ratioCourseworkElec, 'mbtis': mbtis, 'popjobs':popjobs, 'pubcount':pubcount, 'privatecount':privatecount, 'totaljobs': totaljobs})
     return render(request, 'login.html')
 
 
@@ -1453,11 +1463,8 @@ def applyfilter(request):
         filters['diploma'] = diploma
         filters['year'] = year
         filters['interest'] = interest
-        print(school,diploma,year,interest)
-        response['population'] = getNumberOfStudentsByDiploma(filters)
-    # response['allSpecialisation'] = getAllSpecialisation(reqeuest)
-    # response['popularSpecialisation'] = getMostPopularSpecialisation(diploma)
-    # response['leastPopSecialisation'] = getLeastPopularSpecialisation(reqeuest)
+        response ={'population': getNumberOfStudentsByDiploma(filters)}
+        # response['population'] = getNumberOfStudentsByDiploma(filters)
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 def getNumberOfStudentsByDiploma(filters):
@@ -1465,7 +1472,7 @@ def getNumberOfStudentsByDiploma(filters):
         year = filters['year']
         result = 0
         if diploma == 'Diploma' and year == 'Year':
-            result = Student.objects.all().count
+            result = Student.objects.count()
         else:
             if diploma != 'diploma':
                 dip_obj = models_get(Course, course_name=diploma)
@@ -1533,9 +1540,8 @@ def getLeastPopularInterest():
                 i_name = i.personal_interest_sector
                 i_spec = i.course_specialization_id_id
                 if i_spec is not None:
-                    print(models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization)
+                    # print(models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization)
                     i_name = i_name + ' (' + models_get(CourseSpecialization, course_specialization_id=i_spec).course_specialization + ')'
-                print(i_name)
                 interests.append(i_name)
         returnlist.append([value, interests])
     return returnlist
@@ -1571,7 +1577,6 @@ def applycareerfilter(request):
 def diplomaSameAsInterest(diploma='all'):
     count = 0
     if diploma != 'all' and diploma !='Diploma':
-        print(diploma)
         course_id = (Course.objects.get(course_name=diploma)).course_code #get the diploma name
         studentlist = Student.objects.filter(course_code_id = course_id )
         for s in studentlist:
@@ -1728,10 +1733,12 @@ def getMostPopularJob():
     sortedresult = JobAnalytics.objects.order_by('-clicks')
     result = []
     if len(sortedresult) != 0:
+        maxCount = sortedresult[0].clicks
         for r in sortedresult:
             title = r.job_title
             count = r.clicks
-            result.append([title, count])
+            if count == maxCount:
+                result.append([title, count])
     return result
 
 
@@ -1749,3 +1756,18 @@ def privateclicks():
     for p in private:
         sumprivate = sumprivate + p.clicks
     return sumprivate
+
+
+def personalinterestclick():
+    piclick = StudentInterestSector.objects.values('user_id_id').distinct().count()
+    return piclick
+
+
+def courseplannersclick():
+    cpclick = StudentChosenModule.objects.values('user_id_id').distinct().count()
+    return cpclick
+
+
+def jobstotal():
+    total = Job.objects.values('job_id').distinct().count()
+    return total
