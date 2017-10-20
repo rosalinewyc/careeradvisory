@@ -1,7 +1,19 @@
+{% load static %}
 {% block bar %}
     {% include "base.html" %}
 {% endblock %}
 <style>
+    .bmbtn{float:right;}
+    .fa {
+        font-size: 50px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .fa:hover {
+      color: rgba(54, 144, 240, 1);
+    }
+
     .morecontent{
         display: none;
     }
@@ -11,6 +23,17 @@
     }
     .btn-link:focus,.btn-link:active {
        outline: none !important;
+    }
+    .only-mobile {
+        display: none;
+     }
+    @media screen and (max-width: 767px) {
+        .select2 {
+            width: 100% !important;
+        }
+         .only-mobile {
+            display: block;
+         }
     }
 
 </style>
@@ -26,6 +49,7 @@
     {% load static %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src={% static 'js/personalinterest-js.js' %}></script>
 
     <title>Job Preview</title>
@@ -58,7 +82,7 @@
         <div class="col-lg-8 col-md-8">
             <br/><label>Filter Based On: </label>
             <h5 id="filterCatName"></h5>
-            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8" id="filterCat">
+            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8 col-xs-offset-1 " id="filterCat">
                 <option>-- SELECT --</option>
                 <option value="Interest">Personal Interest</option>
                 <option value="Diploma">Diploma</option>
@@ -67,10 +91,10 @@
                 {% endif %}
             </select>
             <h5 id="interestNames"></h5>
-            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8"  id="id_label_single">
+            <select class="js-example-basic-single col-lg-8 col-md-8 col-sm-8 col-xs-offset-1"  id="id_label_single">
             </select>
             <span style="text-align:center;z-index:100;position: relative">
-                <button class="btn btn-info" style="width:15%;margin:0px 0 0 30px;" id="filter-btn">Apply Filter</button>
+                <br class="only-mobile"/><button class="btn btn-info" style="margin:0px 0 0 30px;" id="filter-btn">Apply Filter</button>
             </span>
         <hr>
         </div>
@@ -144,7 +168,6 @@
 
     });
 
-
     function getJobArray(dataString, type) {
         $.ajax({
             type: 'GET',
@@ -195,6 +218,18 @@
                 }
 
                 var url = j.job_url;
+                var bookmarkhtml = '';
+                {% for bmslink in bms %}
+                    var isSame = '{{ bmslink }}' == url;
+                    if(isSame){
+                        bookmarkhtml = '<a href="' + url +'" class="bmbtn btn btn-success" onclick="event.preventDefault();bmbtnclick(this.href);"><span class="glyphicon glyphicon-check"></span> Bookmarked </a>';
+                    }
+
+                {% endfor %}
+
+                if(bookmarkhtml == ''){
+                    bookmarkhtml = '<a href="' + url +'" class="bmbtn btn btn-default" onclick="event.preventDefault();bmbtnclick(this.href);"><span class="glyphicon glyphicon-bookmark"></span> Bookmark This </a>';
+                }
 
                 if (desc.length > 500) {
                     var showntext = desc.substr(0, 500);
@@ -202,7 +237,7 @@
                     desc = showntext + '<span class="moreelipses">' + "..." + '</span><span class="morecontent">' + hidetext + '</span>&nbsp;&nbsp;<button type="button" class="morelink btn btn-link" id="'+ id + '" onclick="clickshowmore(this.id);" style="padding-left:0!important;">' + "Show More" + '</button>';
                 }
 
-                htmlAppend += "<div class='well'><h4><b>" + company + "<br />" + pos + "</b></h4><a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>View Full Job Listing</a><br /><br /><p class ='desccontent'>" + desc + "</p><br /></div><hr>";
+                htmlAppend += "<div class='well'>"+bookmarkhtml+"<h4><b>" + company + "<br />" + pos + "</b></h4><a onclick='clickLinkFunc(this.href);' target='_blank' href='" + url + "'>View Full Job Listing</a><br /><br /><p class ='desccontent'>" + desc + "</p><br /></div><hr>";
 
             }
         } else {
@@ -262,5 +297,67 @@
         $(idselect).prev().toggle();
 
     }
+
+    function bmbtnclick(link){
+        var ele = $(".bmbtn[href='"+ link+ "']");
+        console.log(ele);
+        var bClass = ele.attr('class');
+        var status = bClass.split("-")[1];
+        if(status == 'success'){
+            removebmark(link);
+            ele.html('<span class="glyphicon glyphicon-bookmark"></span> Bookmark');
+        }else{
+            bmark(link);
+            ele.html('<span class="glyphicon glyphicon-check"></span> Bookmarked');
+        }
+
+    }
+{#        $(".bmbtn").click(function(e){#}
+{#            e.preventDefault();#}
+{#            var bId = this.href;#}
+{#            var bClass = this.className;#}
+{#            var status = bClass.split("-")[1];#}
+{#            console.log(bId);#}
+{#            console.log(status);#}
+{#            if(status == 'success'){#}
+{#                removebmark(bId);#}
+{#                $(this).html('<span class="glyphicon glyphicon-bookmark"></span> Bookmark');#}
+{#            }else{#}
+{#                bmark(bId);#}
+{#                $(this).html('<span class="glyphicon glyphicon-check"></span> Bookmarked');#}
+{#            }#}
+{##}
+{#        });#}
+
+    function bmark(bId) {
+        var elelink = "'" + bId + "'";
+        var dataString = '&joburl=' + encodeURIComponent(bId);
+        $('.bmbtn[href=' +elelink+ ']').attr('class', 'bmbtn btn btn-success');
+        $.ajax({
+          type: "POST",
+          url: '/addBookmark/',
+          data: dataString,
+          dataType: 'json',
+          success: function (data) {
+          }
+        });
+    }
+
+    function removebmark(bId) {
+      var elelink = "'" + bId + "'";
+      $('.bmbtn[href=' +elelink+ ']').attr('class', 'bmbtn btn btn-default');
+      var dataString = '&joburl=' + encodeURIComponent(bId);
+      $.ajax({
+          type: "POST",
+          url: '/removeBookmark/',
+          data: dataString,
+          dataType: 'json',
+          success: function (data) {
+          }
+        });
+    }
+
+
+
 
 </script>

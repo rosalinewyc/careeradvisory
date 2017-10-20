@@ -143,3 +143,21 @@ class JobAnalytics(models.Model):
     job_title = models.CharField(max_length=128, null=False)
     sector_type = models.CharField(max_length=128, null=False)
     clicks = models.IntegerField(null=True)
+
+
+class BookmarkJob(models.Model):
+    bm_job_id = models.AutoField(max_length=255, primary_key=True)
+    job_id = models.TextField(max_length=255, null=False)
+    job_url = models.TextField(null=True)
+    job_position = models.TextField(null=True)
+    job_company = models.TextField(null=True)
+    job_category = models.TextField(null=True)
+    job_description = models.TextField(null=True)
+    job_date = models.DateField(null=False)
+    job_keyword = models.CharField(max_length=255, null=True)
+    job_interest = models.CharField(max_length=255, null=True)
+    job_mbti = models.CharField(max_length=255, null=True)
+
+
+
+

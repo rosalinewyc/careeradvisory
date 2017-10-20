@@ -41,4 +41,7 @@ urlpatterns = [
     url(r'^getdiplomasp', views.getdiplomasp, name='getdiplomasp'),
     url(r'^applyspfilter/$', views.applyspfilter, name='applyspfilter'),
 
+    url(r'^addBookmark/', views.addBookmark, name='addBookmark'),
+    url(r'^removeBookmark/', views.removeBookmark, name='removeBookmark'),
+
 ]

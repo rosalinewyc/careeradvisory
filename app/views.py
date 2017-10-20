@@ -904,7 +904,8 @@ def recommendjob(request):
         user_id = request.session.get('user')
         existing_student = models_get(Student, user_id=user_id)
         mbti = existing_student.mbti_code_id
-        return render(request, 'recommendjob.html',{'mbti':mbti})
+        bms = getAllBM();
+        return render(request, 'recommendjob.html',{'mbti':mbti, 'bms':bms})
     return render(request, 'login.html')
 
 
@@ -1771,3 +1772,41 @@ def courseplannersclick():
 def jobstotal():
     total = Job.objects.values('job_id').distinct().count()
     return total
+
+
+def addBookmark(request):
+    response = {}
+    if request.method == 'POST':
+        job_url = request.POST.get('joburl')
+        job = Job.objects.filter(job_url=job_url)[0]
+        existing_bm = BookmarkJob.objects.filter(job_url=job_url)
+        if job is not None and len(existing_bm) == 0:
+            bm = BookmarkJob(job_id=job.job_id, job_url=job_url, job_position=job.job_position, job_company=job.job_company, job_category=job.job_category, job_description=job.job_description, job_date=job.job_date, job_keyword=job.job_keyword, job_interest=job.job_interest, job_mbti=job.job_mbti)
+            bm.save()
+            print('after bulk create')
+            response['status_code'] = "success"
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def removeBookmark(request):
+    response = {}
+    if request.method == 'POST':
+        job_url = request.POST.get('joburl')
+        job = BookmarkJob.objects.filter(job_url=job_url)[0]
+        if job is not None:
+            job.delete()
+            print('after delete')
+            response['status_code'] = "success"
+        else:
+            response['status_code'] = "error"
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def getAllBM():
+    response = {}
+    url_array = BookmarkJob.objects.values('job_url')
+    bms = []
+    for url in url_array:
+        bms.append(url['job_url'])
+    return bms
+
