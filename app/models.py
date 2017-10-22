@@ -135,6 +135,7 @@ class ElectiveModule(models.Model):
 
 class StudentChosenModule(models.Model):
     student_chosen_module_id = models.AutoField(primary_key=True)
+    position = models.IntegerField(null=False)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     student_module_interest = models.ForeignKey(Module, on_delete=models.CASCADE, null=False)
 
@@ -157,7 +158,3 @@ class BookmarkJob(models.Model):
     job_keyword = models.CharField(max_length=255, null=True)
     job_interest = models.CharField(max_length=255, null=True)
     job_mbti = models.CharField(max_length=255, null=True)
-
-
-
-

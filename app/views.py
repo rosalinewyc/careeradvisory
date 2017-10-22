@@ -961,50 +961,44 @@ def student_info(request):
     course = Course.objects.get(course_code=student.course_code_id)
     coursemapping = CourseMapping.objects.filter(course_code_id=student.course_code_id)
     mapped = list(coursemapping)
-    module11 = []
-    module12 = []
-    module21 = []
-    module22 = []
-    module31 = []
-    module32 = []
+    module11 = {}
+    module12 = {}
+    module21 = {}
+    module22 = {}
+    module31 = {}
+    module32 = {}
 
     selected_electives = []
-    mod_id = []
+    mod_id = {}
     selected_electives.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
     for mod in selected_electives:
         for moditem in mod:
-            mod_id.append(moditem.student_module_interest_id)
-
+            mod_id.update({moditem.position: moditem.student_module_interest_id})
     if len(mod_id) is not 0:
-        for id in mod_id:
-            module = Module.objects.get(module_code=id)
-            for mod in mapped:
-                if mod.module_code_id is 139:
-                    mod.module_code_id = id
-                    break
-                elif mod.module_code_id is 142:
+        for count, id in mod_id.items():
+            for i, mod in enumerate(mapped):
+                if count != "NaN" and int(i) == int(count):
                     mod.module_code_id = id
                     break
 
-    for mod in mapped:
+    for i, mod in enumerate(mapped):
         module = Module.objects.get(module_code=mod.module_code_id)
-        # module.update({CourseMapping.objects.filter(module_code_id=mod.module_code_id):{Module.objects.get(module_code=mod.module_code_id): str(mod.year) +  str(mod.semester)}})
 
         if mod.year is 1:
             if mod.semester is 1:
-                module11.append(model_to_dict(module))
+                module11.update({i: model_to_dict(module)})
             else:
-                module12.append(model_to_dict(module))
+                module12.update({i: model_to_dict(module)})
         elif mod.year is 2:
             if mod.semester is 1:
-                module21.append(model_to_dict(module))
+                module21.update({i: model_to_dict(module)})
             else:
-                module22.append(model_to_dict(module))
+                module22.update({i: model_to_dict(module)})
         elif mod.year is 3:
             if mod.semester is 1:
-                module31.append(model_to_dict(module))
+                module31.update({i: model_to_dict(module)})
             else:
-                module32.append(model_to_dict(module))
+                module32.update({i: model_to_dict(module)})
 
     current_student['student'] = student
     current_student['course'] = course
@@ -1080,8 +1074,9 @@ def modcompare(request):
             response['interest'] = interest_special
 
         else:
+            count = request.GET.get('count');
+            # print(count)
             module = Module.objects.get(module_name=modname)
-
             if 'specialisechoice' in request.session or student.course_specialization_id is not None:
                 if 'specialisechoice' in request.session:
                     chosen_specialise = request.session['specialisechoice']
@@ -1306,14 +1301,62 @@ def getcoursespecialization(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
+def specialisemodulesforstudent(request):
+    response = {}
+    modules = []
+    all_free_mods = []
+    interest_sector = []
+    interest_special = []
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    if student.course_specialization_id is not None:
+        specialization_mods = SpecializationModule.objects.filter(course_specialization_id_id=student.course_specialization_id)
+        for mod in specialization_mods:
+            retrieve_mod = models_get(Module, module_code=mod.module_code_id)
+            modules.append(model_to_dict(retrieve_mod))
+
+        student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+        if student_interest is not None:
+            for si in student_interest:
+                if si.user_id_id == student.user_id_id:
+                    interest_sector.append(InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+
+            if len(interest_sector) is not 0:
+                free_mods = []
+                for sector in interest_sector:
+                    spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
+                    interest_special.append(model_to_dict(spec))
+                    free_mods.append(SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+                for mod in free_mods:
+                    for item in mod:
+                        retrieve_mod = models_get(Module, module_code=item.module_code_id)
+                        all_free_mods.append(model_to_dict(retrieve_mod))
+
+
+    response['status'] = 'success'
+    response['specialise'] = modules
+    response['free'] = all_free_mods
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
 def savemodule(request):
     response = {}
     data = []
     student = Student.objects.get(user_id_id=request.session.get('user'))
-    course = Course.objects.get(course_code=student.course_code_id)
     module_select = request.POST.get('moduleselected')
     chosen_mod = Module.objects.get(module_name=module_select)
-    new_student_chosen_mod = StudentChosenModule(user_id_id=student.user_id_id, student_module_interest_id=chosen_mod.module_code)
+
+    count = request.POST.get('count')
+    try:
+        module = models_get(Module, module_name=module_select)
+        existing_chosen_mod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=count)
+        print(existing_chosen_mod.student_module_interest_id)
+        if existing_chosen_mod is not None:
+            # Delete all existing interests under the student
+            StudentChosenModule.objects.get(position=existing_chosen_mod.position).delete()
+    except:
+        response['status'] = 'failed'
+
+    new_student_chosen_mod = StudentChosenModule(user_id_id=student.user_id_id, position=count, student_module_interest_id=chosen_mod.module_code)
     new_student_chosen_mod.save()
 
     special_select = request.POST.get('specialselected')
@@ -1323,6 +1366,85 @@ def savemodule(request):
     specialchoice.course_specialization_id = course.course_specialization_id
     specialchoice.save()
     response['status'] = 'success'
+    response['results'] = data
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def data_edit_check(request):
+    response = {}
+    data = []
+    specialise_mods_id = []
+    specialise_mods = []
+    student = Student.objects.get(user_id_id=request.session.get('user'))
+    course = Course.objects.get(course_code=student.course_code_id)
+    mod_clicked = request.GET.get('moduleselected')
+    if mod_clicked != "NaN":
+        studentmod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+        module = Module.objects.get(module_code=studentmod.student_module_interest_id)
+        if module.school != "ICT":
+            interest_sector = []
+            interest_special = []
+            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+            if student_interest is not None:
+                for si in student_interest:
+                    if si.user_id_id == student.user_id_id:
+                        interest_sector.append(
+                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+            free_mods = []
+            for sector in interest_sector:
+                spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
+                interest_special.append(model_to_dict(spec))
+                free_mods.append(
+                    SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+
+            chosen_mods = []
+            mod_id = []
+            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+            for mod in chosen_mods:
+                for moditem in mod:
+                    mod_id.append(moditem.student_module_interest_id)
+
+            mods_desc = []
+            for fm in free_mods:
+                for item in fm:
+                    if item.module_code_id not in mod_id:
+                        freemod = Module.objects.get(module_code=item.module_code_id)
+                        course = CourseSpecialization.objects.get(
+                            course_specialization_id=item.course_specialization_id_id)
+                        mods_desc.append(model_to_dict(freemod))
+            response['specialise_mods'] = mods_desc
+            response['interest'] = interest_special
+            response['status'] = 'success'
+        else:
+            try:
+                check_present = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+                chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+                chosen_specialise = chosen.course_specialization
+                coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+                if coursespecialization is not None:
+                    special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
+                    for special in coursespecialization:
+                        cc = special.course_specialization_id
+                        if cc == special_course.course_specialization_id:
+                            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+
+                chosen_mods = []
+                mod_id = []
+                chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+                for mod in chosen_mods:
+                    for moditem in mod:
+                        mod_id.append(moditem.student_module_interest_id)
+
+                for special in specialise_mods_id:
+                    for item in special:
+                        specialmod = Module.objects.get(module_code=item.module_code_id)
+                        specialise_mods.append(model_to_dict(specialmod))
+
+                response['specialise_mods'] = specialise_mods
+                response['status'] = 'success'
+            except:
+                response['status'] = "failed"
+
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")
 

@@ -34,6 +34,8 @@ urlpatterns = [
     url(r'^updateMbti/$', views.updateMbti, name='updateMbti'),
     url(r'^updateClickCount/$', views.updateClickCount, name='updateClickCount'),
     url(r'^moddesc/$', views.moddesc, name='moddesc'),
+    url(r'^specialisemodulesforstudent/$', views.specialisemodulesforstudent, name='specialisemodulesforstudent'),
+    url(r'^data_edit_check/$', views.data_edit_check, name='data_edit_check'),
 
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^applyfilter/$', views.applyfilter, name='applyfilter'),
