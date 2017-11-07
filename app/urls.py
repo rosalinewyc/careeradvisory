@@ -46,4 +46,5 @@ urlpatterns = [
     url(r'^addBookmark/', views.addBookmark, name='addBookmark'),
     url(r'^removeBookmark/', views.removeBookmark, name='removeBookmark'),
 
+    url(r'^uploadphoto/$', views.uploadphoto, name='uploadphoto'),
 ]

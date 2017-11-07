@@ -1,6 +1,8 @@
 import json
 import csv
 import io
+import boto3
+from botocore.client import Config
 from zipfile import *
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
@@ -9,7 +11,7 @@ from app.models import *
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.db.models import Count
-
+from django.db.models import Q
 
 def check_session(request):
     return request.session.get('user', None)
@@ -483,8 +485,8 @@ def bootstrap_student(z_file, file):
                 # Validations Required. <For Email>
                 user = models_get(User, user_id=row[0])
                 course = models_get(Course, course_code=row[3])
-                mbti = models_get(Mbti, mbti_code=row[9])
-                courseSpecialization = models_get(CourseSpecialization, course_specialization_id=row[10])
+                mbti = models_get(Mbti, mbti_code=row[8])
+                courseSpecialization = models_get(CourseSpecialization, course_specialization_id=row[9])
 
                 if user is not None:
                     if course is None:
@@ -500,7 +502,7 @@ def bootstrap_student(z_file, file):
 
                         if existing_student_csv is False and existing_student_database is None:
                             # Student User ID is unique
-                            new_student = Student(user_id=user, name=row[1], email=row[2], course_code=course, current_year=row[4], current_semester=row[5], choose_capstone=row[6], choose_internship=row[7], profile_picture=row[8], mbti_code=mbti, course_specialization=courseSpecialization)
+                            new_student = Student(user_id=user, name=row[1], email=row[2], course_code=course, current_year=row[4], current_semester=row[5], choose_capstone=row[6], choose_internship=row[7], mbti_code=mbti, course_specialization=courseSpecialization)
                             student_array.append(new_student)
                         else:
                             duplicates_error.append("Line " + str(line_num) + ": duplicate entry")
@@ -1013,6 +1015,7 @@ def student_info(request):
 
 def modsearch(request):
     response = {}
+    searchresult = []
     if request.method == 'POST':
         search_input = request.POST.get('modsearch')
         if not search_input:
@@ -1021,10 +1024,12 @@ def modsearch(request):
             # results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
             #         Module.objects.filter(specialisation__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description') | \
             #         Module.objects.filter(mod_description__search=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'is_elective', 'specialisation', 'mod_description')
-            results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name',
-                                                                                        'school', 'has_prerequiste',
-                                                                                        'mod_description')
-            response['results'] = list(results)
+            # results = Module.objects.filter(module_name__icontains=search_input).values('module_code', 'module_name', 'school', 'has_prerequiste', 'mod_description')
+            query = Q(module_name__icontains=search_input) | Q(module_code__icontains=search_input) | Q(mod_description__icontains=search_input)
+            results = Module.objects.filter(query)
+            for mod in results:
+                searchresult.append(model_to_dict(mod))
+            response['searchresult'] = searchresult
             response['searchinput'] = search_input
     return HttpResponse(json.dumps(response), content_type="application/json")
 
@@ -1344,15 +1349,15 @@ def savemodule(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     module_select = request.POST.get('moduleselected')
     chosen_mod = Module.objects.get(module_name=module_select)
-
     count = request.POST.get('count')
     try:
-        module = models_get(Module, module_name=module_select)
         existing_chosen_mod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=count)
-        print(existing_chosen_mod.student_module_interest_id)
         if existing_chosen_mod is not None:
-            # Delete all existing interests under the student
             StudentChosenModule.objects.get(position=existing_chosen_mod.position).delete()
+            existing_mod = StudentChosenModule.objects.get(user_id_id=student.user_id_id,
+                                                           student_module_interest_id=chosen_mod.module_code)
+            if existing_mod is not None:
+                StudentChosenModule.objects.get(student_module_interest_id=existing_mod.student_module_interest_id).delete()
     except:
         response['status'] = 'failed'
 
@@ -1905,7 +1910,6 @@ def addBookmark(request):
         if job is not None and len(existing_bm) == 0:
             bm = BookmarkJob(job_id=job.job_id, job_url=job_url, job_position=job.job_position, job_company=job.job_company, job_category=job.job_category, job_description=job.job_description, job_date=job.job_date, job_keyword=job.job_keyword, job_interest=job.job_interest, job_mbti=job.job_mbti)
             bm.save()
-            print('after bulk create')
             response['status_code'] = "success"
     return HttpResponse(json.dumps(response), content_type="application/json")
 
@@ -1917,7 +1921,6 @@ def removeBookmark(request):
         job = BookmarkJob.objects.filter(job_url=job_url)[0]
         if job is not None:
             job.delete()
-            print('after delete')
             response['status_code'] = "success"
         else:
             response['status_code'] = "error"
@@ -1932,3 +1935,44 @@ def getAllBM():
         bms.append(url['job_url'])
     return bms
 
+
+def uploadphoto(request):
+    response = {}
+    error_message =[]
+
+    if request.method == 'POST':
+        if len(request.content_type) != 0:
+            # Retrieve uploaded file and token
+            token = csrf.get_token(request)
+            try:
+                file_uploaded = request.FILES['photo_input']
+            except KeyError:
+                error_message.append("No file selected")
+
+            if len(error_message) == 0:
+                # Validate token and file
+                file_uploaded_lower = str(file_uploaded).lower()
+                if len(token) != 0 and (file_uploaded_lower.find("jpeg") != -1 or file_uploaded_lower.find("jpg") != -1 or file_uploaded_lower.find("png") != -1):
+                    # Image type is correct. Proceed to upload photo to Amazon S3
+                    ACCESS_KEY_ID = 'AKIAJ4J6L6UYAB5UV64A'
+                    ACCESS_SECRET_KEY = '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'
+                    BUCKET_NAME = 'is480firestorm'
+                    FILE_NAME = request.session['user'] + ".png";
+
+                    # S3 Connect
+                    s3 = boto3.resource('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=ACCESS_SECRET_KEY,config=Config(signature_version='s3v4'))
+                    # Upload Image
+                    s3.Bucket(BUCKET_NAME).put_object(Key="profilephotos/" + FILE_NAME, Body=file_uploaded, ACL='public-read')
+                else:
+                    error_message.append("Only PNG or JPEG image types are accepted!")
+        else:
+            error_message.append("Invalid Content Type")
+
+    if len(error_message) == 0:
+        response['status'] = 'success'
+        response['message'] = 'Photo Uploaded!'
+    else:
+        response['status'] = 'fail'
+        response['message'] = error_message
+
+    return HttpResponse(json.dumps(response), content_type="application/json")

@@ -90,7 +90,6 @@ class Student(models.Model):
     current_year = models.IntegerField(null=False)
     current_semester = models.IntegerField(null=False)
     email = models.CharField(max_length=128, null=False)
-    profile_picture = models.FileField(null=True)
     course_specialization = models.ForeignKey(CourseSpecialization, on_delete=models.CASCADE, null=True)
     choose_capstone = models.BooleanField(default=True)
     choose_internship = models.BooleanField(default=True)
