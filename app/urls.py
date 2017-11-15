@@ -47,4 +47,7 @@ urlpatterns = [
     url(r'^removeBookmark/', views.removeBookmark, name='removeBookmark'),
 
     url(r'^uploadphoto/$', views.uploadphoto, name='uploadphoto'),
+    url(r'^setinternshipoption/', views.setinternshipoption, name='setinternshipoption'),
+    url(r'^setprojoption/', views.setprojoption, name='setprojoption'),
+
 ]

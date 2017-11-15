@@ -906,7 +906,7 @@ def recommendjob(request):
         user_id = request.session.get('user')
         existing_student = models_get(Student, user_id=user_id)
         mbti = existing_student.mbti_code_id
-        bms = getAllBM();
+        bms = getAllBM(user_id);
         return render(request, 'recommendjob.html',{'mbti':mbti, 'bms':bms})
     return render(request, 'login.html')
 
@@ -1001,7 +1001,7 @@ def student_info(request):
                 module31.update({i: model_to_dict(module)})
             else:
                 module32.update({i: model_to_dict(module)})
-
+    isInternship = student.choose_internship
     current_student['student'] = student
     current_student['course'] = course
     current_student['module11'] = module11
@@ -1010,6 +1010,7 @@ def student_info(request):
     current_student['module22'] = module22
     current_student['module31'] = module31
     current_student['module32'] = module32
+    current_student['isInternship'] = isInternship
     return current_student
 
 
@@ -1047,6 +1048,9 @@ def modcompare(request):
 
     if request.method == 'GET':
         modname = request.GET.get('modname')
+        student_interest = request.GET.get('studentinterest')
+        numfree = request.GET.get('numfree')
+
         if modname == 'Freely Chosen Module':
             interest_sector = []
             interest_special = []
@@ -1054,12 +1058,20 @@ def modcompare(request):
             if student_interest is not None:
                 for si in student_interest:
                     if si.user_id_id == student.user_id_id:
-                        interest_sector.append(InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+                        interest_sector.append(
+                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
             free_mods = []
+            interest_arr = []
             for sector in interest_sector:
                 spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
                 interest_special.append(model_to_dict(spec))
-                free_mods.append(SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+                free_mods.append(
+                    SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+                # return {efm1: 5, fm2: 2, fm3: 0}
+                mod_count_dict = popDynamicFreeMod(sector.course_specialization_id_id, numfree, student.user_id_id)
+                interest_arr.append([spec.course_specialization ,mod_count_dict])
+
+            response['fmarr'] = interest_arr
 
             chosen_mods = []
             mod_id = []
@@ -1073,10 +1085,14 @@ def modcompare(request):
                 for item in fm:
                     if item.module_code_id not in mod_id:
                         freemod = Module.objects.get(module_code=item.module_code_id)
-                        course = CourseSpecialization.objects.get(course_specialization_id=item.course_specialization_id_id)
+                        course = CourseSpecialization.objects.get(
+                            course_specialization_id=item.course_specialization_id_id)
                         mods_desc.append(model_to_dict(freemod))
+
+
             response['free'] = mods_desc
             response['interest'] = interest_special
+            #
 
         else:
             count = request.GET.get('count');
@@ -1112,7 +1128,42 @@ def modcompare(request):
 
             response['specialise_mods'] = specialise_mods
 
+
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def popDynamicFreeMod(csp_id, num, userid):
+    free_mods ={}
+    s_freemodules = SpecializationModule.objects.filter(course_specialization_id_id=csp_id).values(
+        'module_code_id')
+    chosen_mods = []
+    chosen_mods_id = []
+    chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=userid))
+    for mod in chosen_mods:
+        for moditem in mod:
+            chosen_mods_id.append(moditem.student_module_interest_id)
+    mod_info = []
+    for mod_id in s_freemodules:
+        mid = mod_id['module_code_id']
+        if mid not in chosen_mods_id:
+            result = StudentChosenModule.objects.filter(student_module_interest_id=mid).count()
+            fm = SpecializationModule.objects.filter(course_specialization_id=csp_id, module_code_id=mid)
+            mod = Module.objects.get(module_code = mid)
+            fm_name = mod.module_name
+            fm_name.replace('&amp;', ' ');
+            free_mods[fm] = result
+            mod_info.append([fm, fm_name])
+    intnum = int(num)+2
+    new_mods = []
+    for fm in sorted(free_mods, key=free_mods.__getitem__, reverse=True):
+        for checkfm in mod_info:
+            if checkfm[0] == fm:
+                value = free_mods[fm]
+                #mod_name, modstu_count
+                new_mods.append([checkfm[1], value])
+    if len(s_freemodules) > intnum:
+        new_mods = new_mods[:intnum]
+    return new_mods
 
 
 def moddesc(request):
@@ -1383,55 +1434,27 @@ def data_edit_check(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
     mod_clicked = request.GET.get('moduleselected')
+
     if mod_clicked != "NaN":
-        studentmod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
-        module = Module.objects.get(module_code=studentmod.student_module_interest_id)
-        if module.school != "ICT":
-            interest_sector = []
-            interest_special = []
-            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
-            if student_interest is not None:
-                for si in student_interest:
-                    if si.user_id_id == student.user_id_id:
-                        interest_sector.append(
-                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
-            free_mods = []
-            for sector in interest_sector:
-                spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
-                interest_special.append(model_to_dict(spec))
-                free_mods.append(
-                    SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+        try:
+            studentmod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+            module = Module.objects.get(module_code=studentmod.student_module_interest_id)
+            if module.school != "ICT":
+                interest_sector = []
+                interest_special = []
+                student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+                if student_interest is not None:
+                    for si in student_interest:
+                        if si.user_id_id == student.user_id_id:
+                            interest_sector.append(
+                                InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
 
-            chosen_mods = []
-            mod_id = []
-            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
-            for mod in chosen_mods:
-                for moditem in mod:
-                    mod_id.append(moditem.student_module_interest_id)
-
-            mods_desc = []
-            for fm in free_mods:
-                for item in fm:
-                    if item.module_code_id not in mod_id:
-                        freemod = Module.objects.get(module_code=item.module_code_id)
-                        course = CourseSpecialization.objects.get(
-                            course_specialization_id=item.course_specialization_id_id)
-                        mods_desc.append(model_to_dict(freemod))
-            response['specialise_mods'] = mods_desc
-            response['interest'] = interest_special
-            response['status'] = 'success'
-        else:
-            try:
-                check_present = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
-                chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
-                chosen_specialise = chosen.course_specialization
-                coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
-                if coursespecialization is not None:
-                    special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
-                    for special in coursespecialization:
-                        cc = special.course_specialization_id
-                        if cc == special_course.course_specialization_id:
-                            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+                free_mods = []
+                for sector in interest_sector:
+                    spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
+                    interest_special.append(model_to_dict(spec))
+                    free_mods.append(
+                        SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
 
                 chosen_mods = []
                 mod_id = []
@@ -1440,15 +1463,60 @@ def data_edit_check(request):
                     for moditem in mod:
                         mod_id.append(moditem.student_module_interest_id)
 
-                for special in specialise_mods_id:
-                    for item in special:
-                        specialmod = Module.objects.get(module_code=item.module_code_id)
-                        specialise_mods.append(model_to_dict(specialmod))
-
-                response['specialise_mods'] = specialise_mods
+                mods_desc = []
+                for fm in free_mods:
+                    for item in fm:
+                        if item.module_code_id not in mod_id:
+                            freemod = Module.objects.get(module_code=item.module_code_id)
+                            course = CourseSpecialization.objects.get(
+                                course_specialization_id=item.course_specialization_id_id)
+                            mods_desc.append(model_to_dict(freemod))
+                response['specialise_mods'] = mods_desc
+                response['interest'] = interest_special
                 response['status'] = 'success'
-            except:
-                response['status'] = "failed"
+        except:
+            response['status'] = "failed"
+    else:
+        try:
+            print('should enter check present mod click:', mod_clicked)
+            check_present = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+            chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+            chosen_specialise = chosen.course_specialization
+            coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+            if coursespecialization is not None:
+                special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
+                for special in coursespecialization:
+                    cc = special.course_specialization_id
+                    if cc == special_course.course_specialization_id:
+                        specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
+
+            chosen_mods = []
+            mod_id = []
+            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+            for mod in chosen_mods:
+                for moditem in mod:
+                    mod_id.append(moditem.student_module_interest_id)
+            #ade add to enable freely chosen mod editable
+            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+            if student_interest is not None:
+                for si in student_interest:
+                    if si.user_id_id == student.user_id_id:
+                        interest_sector.append(
+                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+            specmod
+            for sector in interest_sector:
+                specialise_mods_id.append(SpecializationModule.objects.filter(
+                        course_specialization_id=sector.course_specialization_id_id))
+
+            for special in specialise_mods_id:
+                for item in special:
+                    specialmod = Module.objects.get(module_code=item.module_code_id)
+                    specialise_mods.append(model_to_dict(specialmod))
+            print(specialise_mods)
+            response['specialise_mods'] = specialise_mods
+            response['status'] = 'success'
+        except:
+            response['status'] = "failed"
 
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")
@@ -1563,6 +1631,7 @@ def dashboard(request):
         ratioFYPIntern = ratioIntern()
         ratioCourseworkElec = ratioCapstone()
         cpclick = courseplannersclick()
+        fmcount = getfmcount()
 
         #mbti
         mbtis = MbtiCount()
@@ -1573,7 +1642,7 @@ def dashboard(request):
         privatecount = privateclicks()
         totaljobs = jobstotal()
 
-        return render(request, 'api/dashboard.html', {'population': population, 'interestclick':interestclick, 'cpclick':cpclick, 'mostPopInterestCount': mostPopInterestCount, 'leastPopInterestCount': leastPopInterestCount, 'allInterestCount': allInterestCount, 'courseSpecialisation': courseSpecialisation,'allSpecialisation': allSpecialisation, 'popularSpecialisation': popularSpecialisation, 'leastPopSpecialisation': leastPopSecialisation ,'diplomaSameAsInterestCount':diplomaSameAsInterestCount,'studentsSpecialisation':studentsSpecialisation, 'ratioFYPIntern':ratioFYPIntern, 'ratioCourseworkElec':ratioCourseworkElec, 'mbtis': mbtis, 'popjobs':popjobs, 'pubcount':pubcount, 'privatecount':privatecount, 'totaljobs': totaljobs})
+        return render(request, 'api/dashboard.html', {'population': population, 'interestclick':interestclick, 'cpclick':cpclick, 'mostPopInterestCount': mostPopInterestCount, 'leastPopInterestCount': leastPopInterestCount, 'allInterestCount': allInterestCount, 'courseSpecialisation': courseSpecialisation,'allSpecialisation': allSpecialisation, 'popularSpecialisation': popularSpecialisation, 'leastPopSpecialisation': leastPopSecialisation ,'diplomaSameAsInterestCount':diplomaSameAsInterestCount,'studentsSpecialisation':studentsSpecialisation, 'fmcount':fmcount, 'ratioFYPIntern':ratioFYPIntern, 'ratioCourseworkElec':ratioCourseworkElec, 'mbtis': mbtis, 'popjobs':popjobs, 'pubcount':pubcount, 'privatecount':privatecount, 'totaljobs': totaljobs})
     return render(request, 'login.html')
 
 
@@ -1927,9 +1996,9 @@ def removeBookmark(request):
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 
-def getAllBM():
+def getAllBM(userid):
     response = {}
-    url_array = BookmarkJob.objects.values('job_url')
+    url_array = BookmarkJob.objects.filter(user_id_id=userid).values('job_url')
     bms = []
     for url in url_array:
         bms.append(url['job_url'])
@@ -1976,3 +2045,41 @@ def uploadphoto(request):
         response['message'] = error_message
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def setinternshipoption(request):
+    response ={}
+    if request.method == 'POST':
+        userid =request.session.get('user')
+        Student.objects.filter(user_id_id = userid).update(choose_internship=1, choose_capstone = 0)
+        response['status'] = 'success'
+    else:
+        response['status'] = 'fail'
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def setprojoption(request):
+    response = {}
+    if request.method == 'POST':
+        userid = request.session.get('user')
+        Student.objects.filter(user_id_id=userid).update(choose_internship=0, choose_capstone = 1)
+        response['status'] = 'success'
+    else:
+        response['status'] = 'fail'
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def getfmcount():
+    getresult = StudentChosenModule.objects.values('student_module_interest_id'). \
+        annotate(user_count=Count('user_id_id')).order_by('-user_count')
+
+    result = []
+    if len(getresult) != 0:
+        max = getresult[0]['user_count']
+        for r in getresult:
+            mod = r['student_module_interest_id']
+            count = r['user_count']
+            if count == max:
+                modname = Module.objects.get(module_code=mod).module_name
+                result.append([modname, count])
+    return result

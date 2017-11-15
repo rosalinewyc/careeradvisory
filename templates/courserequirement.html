@@ -12,6 +12,11 @@
         margin-top: 5px;
         padding: 0 5px
     }
+
+    .Internship, p[class^='Project']{
+        background-color: rgb(217, 237, 247);
+    }
+
 </style>
 <html>
     <head>
@@ -109,14 +114,31 @@
                         {% for key, mod in module31.items%}
                             <li class="toggleContent">
                                 {% if mod.module_code is 90 %}
-                                    <p style="cursor: pointer;" id="Internship" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
+                                    {% if isInternship %}
+                                    <p style="cursor: pointer;" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </p></li>
-
                                     <li class="toggleContent">
-                                        <p style="cursor: pointer;" id="Project" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
+                                        <p style="cursor: pointer;" class="Project {{ key }}mod" onClick="mod_click(this.id, this.className);" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </p></li>
+                                    {% else %}
+                                        <p style="cursor: pointer;" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship"> Internship</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        {% if isInternship is None%}
+                                            <li class="toggleContent">
+                                        <p style="cursor: pointer;" class="Project {{ key }}mod"  onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </p></li>
+                                         {% else %}
+                                            <li class="toggleContent">
+                                        <p style="cursor: pointer;" class="Project {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project" checked> Project</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </p></li>
+                                         {% endif %}
+                                    </p></li>
+                                    {% endif %}
+
                                 {% else %}
                                     <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ mod.module_name }} {{ key }}mod" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
                                 {% endif %}
@@ -127,12 +149,12 @@
                             <li class="toggleContent">
                                 {% if mod.module_code is 90 %}
                                     <p style="cursor: pointer;" id="Internship" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Internship" checked> Internship</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </p></li>
 
                                     <li class="toggleContent">
-                                        <p style="cursor: pointer;" id="Project" class="{{ mod.module_name }} {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
-                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label>
+                                        <p style="cursor: pointer;" id="Project" class="Project {{ key }}mod" onClick="mod_click(this.id, this.className)" ><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>
+                                        <label style="cursor: pointer;"><input name="ci" type="radio" value="Capstone Project"> Project</label><span style="float:right; color:#30566e;" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </p></li>
                                 {% else %}
                                     <p style="cursor: pointer;" onClick="mod_click(this.id, this.className)" class="{{ mod.module_name }} {{ key }}mod" id="{{ mod.module_name }}"><span class="glyphicon glyphicon-ok inactive" aria-hidden="true"></span>{{ mod.module_name }}</p>
@@ -143,18 +165,28 @@
                 </div>
             </div>
         </div>
+
         <div class="container todolist" id="descontainer" style="display:none; margin-bottom:50px; padding:30px; font-size:18px; border-top: 5px solid #30566e;">
+            <div id="updatedbox">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <p id="alertmsgtext">Update successful!</p>
+                </div>
+            </div>
+            <div id="interestelectives" class="row col-list" style="font-weight:bold;"></div>
+            <div class = "modselecteddiv"></div>
             <div class="row col-list modDescription"></div>
 
-            <div id="interestelectives" class="row col-list" style="font-weight:bold"></div>
 
+            <div id ="modcountdesc"></div>
             <div class="row col-list specials">
                 <div class="btn-group specialelectives" role="group" aria-label="..." data-toggle="buttons"></div>
             </div>
-
+             <button class="btn btn-primary" style="width:15%; display:none; float: right;" id="save-module-btn"> Save</button>
             <div class="row col-list specialmodsdesc"></div>
 
-            <button class="btn btn-primary" style="width:15%; display:none; float: right;" id="save-module-btn"> Save</button>
+
+        </div>
         </div>
     <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
 
@@ -223,16 +255,22 @@
         }
     });
     var selected_special = "";
-    function mod_click(clicked_id, clicked_class) {
 
+    function mod_click(clicked_id, clicked_class) {
         $('.specialelectives').empty();
         $('#interestelectives').empty();
         $('.specialmodsdesc').empty();
+
+
         document.getElementById("save-module-btn").style.display = 'none';
+
         var dataString = '&modname=' + encodeURIComponent(clicked_id);
         var special_class = document.getElementsByClassName('Specialization Module');
         var div_class = clicked_class.split(' ')[2];
 
+        //only special_class not null is editable
+{#        if(clicked_class.indexOf("Specialization Module") != -1) {#}
+{#            console.log('enetered specialization');#}
         check_edit = parseInt(clicked_class.split(' ').pop());
         var data_edit_check = '&moduleselected=' + check_edit;
         $.ajax({
@@ -251,9 +289,10 @@
                                 $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                             }
                         }
-                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.specialise_mods[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.specialise_mods[mod].module_name + '">' + data.specialise_mods[mod].module_name + '</label></div>');
+                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.specialise_mods[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.specialise_mods[mod].module_name + '">' + data.specialise_mods[mod].module_name + '</label>');
                     }
                     $("input[name=options]").change(function () {
+
                         document.getElementById("save-module-btn").style.display = 'block';
                         $('#interestelectives').empty();
                         var changediv = document.getElementsByClassName(div_class)[0];
@@ -268,6 +307,7 @@
                                 $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
                             }
                         }
+
                         $('#interestelectives').append('<inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected." + '</inline>');
                         $.get("/moddesc/", specialmod, function (data) {
                             $('.modDescription').empty();
@@ -277,11 +317,24 @@
                 }
             }
         });
+{#        }#}
 
         //alert(document.getElementById(clicked_id).innerText);
         if (document.getElementById(clicked_id) != null && typeof clicked_class.split(' ')[4] != 'undefined' && clicked_class.split(' ')[4].indexOf("free") != -1) {
+            num_free = clicked_class.split(' ')[4].charAt(4)
+            console.log('enter if clickedid, have free in class');
+            fm_arr = document.getElementsByClassName('Specialization');
+            var new_num_free = 0;
+
+            for(var i =0; i < fm_arr.length; i++){
+                var full_classname = fm_arr[i].getAttribute('class');
+                if(full_classname.split(' ')[4].indexOf("free") != -1){
+                    new_num_free++;
+                  }
+            }
+
             selected_special = parseInt(clicked_class.split(' ')[2]);
-            var dataStringFree = '&modname=' + encodeURIComponent('Freely Chosen Module') + '&count=' + selected_special;
+            var dataStringFree = '&modname=' + encodeURIComponent('Freely Chosen Module') + '&count=' + selected_special+ '&numfree=' + new_num_free;
             $('.modDescription').empty();
             $.ajax({
                 type: 'GET',
@@ -290,34 +343,51 @@
                 dataType: 'json',
                 success: function (data) {
                     $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
-                    for (var mod = 0; mod < data.free.length; mod++) {
-                        $('#interestelectives').html('<br/>You have expressed interest in: <br/>');
-                        for (var spec = 0 ; spec < data.interest.length ; spec++) {
-                            $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
-                        }
 
-                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.free[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.free[mod].module_name + '">' + data.free[mod].module_name + '</label></div>');
+                    for (var mod = 0; mod < data.free.length; mod++) {
+
+{#                        for (var spec = 0 ; spec < data.interest.length ; spec++) {#}
+{#                            $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");#}
+
+{#                        }#}
+
+{#                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.free[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.free[mod].module_name + '">' + data.free[mod].module_name + '</label></div>');#}
                     }
+                    $('#interestelectives').append('Showing Popular Modules:<br />');
+
+
+                    for(var i = 0; i < data.fmarr.length; i++){
+                        $('#interestelectives').append('<br /><div class="currentinterest">' + data.fmarr[i][0] + " </div><br /><br /><div>");
+                        for(var j = 0; j < data.fmarr[i][1].length; j++) {
+                            $('#interestelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.fmarr[i][1][j][0] + '" id="mod' + mod + '" class="b1 btn-default ' +data.fmarr[i][1][j][1]+ ' ' + data.fmarr[i][1][j][0] + '">' + data.fmarr[i][1][j][0] + ' ('+ data.fmarr[i][1][j][1] + ')' + '</label>');
+
+                        }
+                        $('#interestelectives').append('<div>');
+                    }
+
+
                     $("input[name=options]").change(function () {
+                        $('.modselecteddiv').empty();
+                        var specname = $("input[name=options]:checked").val();
                         document.getElementById("save-module-btn").style.display = 'block';
-                        $('#interestelectives').empty();
                         var changediv = document.getElementsByClassName(div_class)[0];
                         $(changediv).html($("input[name=options]:checked").val());
-                        $('.specialmodsdesc').html('<br/><b>' + $("input[name=options]:checked").val() + '</b>')
-                        var s = $("input[name=options]:checked").val().replace('&amp;', '&');
+                        $('.specialmodsdesc').html('<br/><b>' + specname + '</b>')
+                        var s = specname.replace('&amp;', '&');
                         var specialmod = '&modname=' + encodeURIComponent(s);
-                        $('#interestelectives').append('<br/>You have expressed interest in: <br/>');
-                        for (var spec = 0 ; spec < data.interest.length ; spec++) {
-                            $('#interestelectives').append('<div class="currentinterest">' + data.interest[spec].course_specialization + " </div>");
-                        }
-                        $('#interestelectives').append('<inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected." + '</inline>');
+
+                        $('.modselecteddiv').append('<br /><inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected.<br /><span class=\"glyphicon glyphicon-user\"></span> " +this.className.split(' ')[2] + " students have chosen this module." + '</inline>');
+
+{#                        $('#interestelectives').append('<br /><inline style="font-weight:normal; font-size:16px; color: #31708f;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>  ' + s + " is selected. " +this.className.split(' ')[2] + " students have selected this." + '</inline>');#}
                         $.get("/moddesc/", specialmod, function (data) {
                             $('.specialmodsdesc').append('<br/><p>' + data.des + '</p>');
                         });
                     });
+
+
                 }
             });
-        } else if (document.getElementById(clicked_id).id == "Specialization Module") {
+        } else if (document.getElementById(clicked_id) && document.getElementById(clicked_id).id == "Specialization Module") {
             selected_special = parseInt(clicked_class.split(' ')[2]);
             var data_with_count = dataString + '&count=' + selected_special;
 
@@ -329,6 +399,7 @@
                 success: function (data) {
                     $('.modDescription').empty();
                     document.getElementById("descontainer").style.display = 'block';
+
                     $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
                     if (special_class.length > data.specialise_mods.length) {
                         var extraMods = special_class.length - data.specialise_mods.length;
@@ -343,7 +414,7 @@
 
                     for (var mod = 0; mod < data.specialise_mods.length; mod++) {
                         $('#interestelectives').html('<br/>Select an elective:');
-                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.specialise_mods[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.specialise_mods[mod].module_name + '">' + data.specialise_mods[mod].module_name + '</label></div>');
+                        $('.specialelectives').append('<label class="b1 btn btn-default"><input type="radio" name="options" autocomplete="off" value="' + data.specialise_mods[mod].module_name + '" id="mod' + mod + '" class="b1 btn btn-default ' + data.specialise_mods[mod].module_name + '">' + data.specialise_mods[mod].module_name + '</label>');
                     }
 
 
@@ -363,7 +434,11 @@
                 }
             });
         } else {
+            console.log('under else', clicked_class);
             document.getElementById("descontainer").style.display = 'block';
+            if(!dataString.split('=')[1]){
+                dataString = dataString + clicked_class.split(' ')[0];
+            }
             $('html,body').animate({scrollTop: $("#descontainer").offset().top}, 'slow');
             $.get("/moddesc/", dataString, function (data) {
                 $('.modDescription').html('<h4><b>' + clicked_id + '</h4></b><p>' + String(data.des).split(".").join(".<br />") + '</p>');
@@ -372,6 +447,7 @@
     }
 
     $(function () {
+        $('#updatedbox').hide();
         $.ajax({
             type: 'GET',
             url: '/specialisedropdown/',
@@ -389,7 +465,48 @@
                 }
             }
         });
+        $('.Internship').click(function (){
+            $('#interestelectives').append('<button class="btn btn-default" id="saveInternship" onClick="updateInternship();"> Save Internship Option</button>');
+        });
+
+        $("p[class^='Project']").click(function (){
+            $('#interestelectives').append('<button class="btn btn-default" id="saveProject" onClick="updateProject();"> Save Project Option</button>');
+        });
+
     });
+
+    function updateInternship(){
+        $.post("/setinternshipoption/", function (data) {
+            if (data.status == 'success') {
+                $('#updatedbox').show();
+                window.setTimeout(function() {
+                    $('#updatedbox').fadeTo(500, 0).slideUp(500, function(){
+                    });
+                    location.reload();
+                }, 2500);
+
+             }
+        });
+    }
+
+    function updateProject(){
+        $.ajax({
+             type:"POST",
+             url:"/setprojoption/",
+             success: function(data) {
+                 if (data.status == 'success') {
+                     $('#updatedbox').show();
+                    window.setTimeout(function() {
+                        $('#updatedbox').fadeTo(500, 0).slideUp(500, function(){
+                            $('#updatedbox').hide();
+                        });
+                        location.reload();
+                    }, 2500);
+
+                 }
+             }
+        });
+    }
 
     $(document).on('click', '#specialisedropdown li a', function () {
         $('.specialelectives').empty();
@@ -427,9 +544,14 @@
         });
     });
 
+    $(".submitinterest").click(function(){
+
+    });
+
     $("#save-module-btn").click(function () {
         var selected_mod = $('.btn-group > .btn.active').text();
-        var dataString = '&moduleselected=' + encodeURIComponent(selected_mod) + '&specialselected=' + encodeURIComponent(specialchoice) + '&count=' + selected_special;
+        var s = $("input[name=options]:checked").val().replace('&amp;', '&');
+        var dataString = '&moduleselected=' + encodeURIComponent(s) + '&specialselected=' + encodeURIComponent(specialchoice) + '&count=' + selected_special;
 {#        alert(dataString)#}
         $.ajax({
             type: 'POST',
@@ -462,6 +584,10 @@
         });
 
         $('#back-to-top').tooltip('show');
+
+        $(".alert button.close").click(function () {
+            $(this).parent().fadeOut('fast');
+        });
 
     });
 </script>

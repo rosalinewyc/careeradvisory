@@ -157,3 +157,6 @@ class BookmarkJob(models.Model):
     job_keyword = models.CharField(max_length=255, null=True)
     job_interest = models.CharField(max_length=255, null=True)
     job_mbti = models.CharField(max_length=255, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+
+

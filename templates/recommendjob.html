@@ -300,7 +300,6 @@
 
     function bmbtnclick(link){
         var ele = $(".bmbtn[href='"+ link+ "']");
-        console.log(ele);
         var bClass = ele.attr('class');
         var status = bClass.split("-")[1];
         if(status == 'success'){

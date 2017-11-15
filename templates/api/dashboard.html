@@ -298,7 +298,7 @@
             </div>
             <!-- /.nav-tabs-custom -->
 
-        <div class="col-md-12">
+        <div class="col-md-7">
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">Specialisations</h3>
@@ -366,6 +366,42 @@
                 </div>
             </div><!-- /.box -->
             </div><!-- /.margin 15 row -->
+        <div class="col-md-5">
+            <!-- USERS LIST -->
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Popular Freely Chosen Module</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                    <div class="box box-widget widget-user-2"
+                         style="display:inline-block;padding:30px 50px 30px 50px; ">
+                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                        <div class="widget-user-header" style="background-color:#d3d3d3;box-shadow: 5px 5px 3px #888888;">
+                            <h3 class="widget-user-username" style="margin-left:0px!important;">Popular Freely Chosen Modules</h3>
+                        </div>
+                        <div class="box-footer no-padding">
+                            <ul class="nav nav-stacked">
+                                <li><a href="#"><strong><u>Module</u></strong><span class="pull-right badge ">Students</span></a></li>
+                                {% for fm in fmcount %}
+                                    <li><a href="#">{{ fm.0 }}<span class="pull-right badge bg-blue">{{ fm.1 }}</span></a>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
 <div class="row">
     <div class="col-md-6">
@@ -558,8 +594,8 @@
                             resize: true,
                             colors: ["#3c8dbc", "#f56954"],
                             data: [
-                                {label: "Diploma Align with Career Interest", value: newdiplomaSameAsInterestCount},
-                                {label: "Diploma Not Align with Interest", value: newnotSameCount},
+                                {label: "Diploma Align with Career Interest in %", value: newdiplomaSameAsInterestCount/{{population}}*100 },
+                                {label: "Diploma Not Align with Interest in %", value: newnotSameCount/{{population}}*100 },
                             ],
                             hideHover: 'auto'
                         });
@@ -739,7 +775,7 @@
             console.log(text)
             $('#sp-dropdown-menu a').closest('.btn-group-success').find('.field-btn').text(text);
         });
-
+        console.log('yearoptions', yearoptions)
         $('#sp-filterBtn').on('click', function () {
             barChartData.labels = []
             barChartData.datasets = []
