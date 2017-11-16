@@ -173,7 +173,7 @@
                     <p id="alertmsgtext">Update successful!</p>
                 </div>
             </div>
-            <div id="interestelectives" class="row col-list" style="font-weight:bold;"></div>
+            <div class="btn-group row col-list" role="group" aria-label="..." data-toggle="buttons" id="interestelectives" style="font-weight:bold;"></div>
             <div class = "modselecteddiv"></div>
             <div class="row col-list modDescription"></div>
 
@@ -326,12 +326,12 @@
             fm_arr = document.getElementsByClassName('Specialization');
             var new_num_free = 0;
 
-            for(var i =0; i < fm_arr.length; i++){
-                var full_classname = fm_arr[i].getAttribute('class');
-                if(full_classname.split(' ')[4].indexOf("free") != -1){
-                    new_num_free++;
-                  }
-            }
+{#            for(var i =0; i < fm_arr.length; i++){#}
+{#                var full_classname = fm_arr[i].getAttribute('class');#}
+{#                if(full_classname.split(' ')[4].indexOf("free") != -1){#}
+{#                    new_num_free++;#}
+{#                  }#}
+{#            }#}
 
             selected_special = parseInt(clicked_class.split(' ')[2]);
             var dataStringFree = '&modname=' + encodeURIComponent('Freely Chosen Module') + '&count=' + selected_special+ '&numfree=' + new_num_free;

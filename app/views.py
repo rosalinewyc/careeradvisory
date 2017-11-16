@@ -1434,27 +1434,55 @@ def data_edit_check(request):
     student = Student.objects.get(user_id_id=request.session.get('user'))
     course = Course.objects.get(course_code=student.course_code_id)
     mod_clicked = request.GET.get('moduleselected')
-
     if mod_clicked != "NaN":
-        try:
-            studentmod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
-            module = Module.objects.get(module_code=studentmod.student_module_interest_id)
-            if module.school != "ICT":
-                interest_sector = []
-                interest_special = []
-                student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
-                if student_interest is not None:
-                    for si in student_interest:
-                        if si.user_id_id == student.user_id_id:
-                            interest_sector.append(
-                                InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+        studentmod = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+        module = Module.objects.get(module_code=studentmod.student_module_interest_id)
+        if module.school != "ICT":
+            interest_sector = []
+            interest_special = []
+            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
+            if student_interest is not None:
+                for si in student_interest:
+                    if si.user_id_id == student.user_id_id:
+                        interest_sector.append(
+                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
+            free_mods = []
+            for sector in interest_sector:
+                spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
+                interest_special.append(model_to_dict(spec))
+                free_mods.append(
+                    SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
 
-                free_mods = []
-                for sector in interest_sector:
-                    spec = CourseSpecialization.objects.get(course_specialization_id=sector.course_specialization_id_id)
-                    interest_special.append(model_to_dict(spec))
-                    free_mods.append(
-                        SpecializationModule.objects.filter(course_specialization_id=sector.course_specialization_id_id))
+            chosen_mods = []
+            mod_id = []
+            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
+            for mod in chosen_mods:
+                for moditem in mod:
+                    mod_id.append(moditem.student_module_interest_id)
+
+            mods_desc = []
+            for fm in free_mods:
+                for item in fm:
+                    if item.module_code_id not in mod_id:
+                        freemod = Module.objects.get(module_code=item.module_code_id)
+                        course = CourseSpecialization.objects.get(
+                            course_specialization_id=item.course_specialization_id_id)
+                        mods_desc.append(model_to_dict(freemod))
+            response['specialise_mods'] = mods_desc
+            response['interest'] = interest_special
+            response['status'] = 'success'
+        else:
+            try:
+                check_present = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
+                chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
+                chosen_specialise = chosen.course_specialization
+                coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
+                if coursespecialization is not None:
+                    special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
+                    for special in coursespecialization:
+                        cc = special.course_specialization_id
+                        if cc == special_course.course_specialization_id:
+                            specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
 
                 chosen_mods = []
                 mod_id = []
@@ -1463,60 +1491,15 @@ def data_edit_check(request):
                     for moditem in mod:
                         mod_id.append(moditem.student_module_interest_id)
 
-                mods_desc = []
-                for fm in free_mods:
-                    for item in fm:
-                        if item.module_code_id not in mod_id:
-                            freemod = Module.objects.get(module_code=item.module_code_id)
-                            course = CourseSpecialization.objects.get(
-                                course_specialization_id=item.course_specialization_id_id)
-                            mods_desc.append(model_to_dict(freemod))
-                response['specialise_mods'] = mods_desc
-                response['interest'] = interest_special
+                for special in specialise_mods_id:
+                    for item in special:
+                        specialmod = Module.objects.get(module_code=item.module_code_id)
+                        specialise_mods.append(model_to_dict(specialmod))
+
+                response['specialise_mods'] = specialise_mods
                 response['status'] = 'success'
-        except:
-            response['status'] = "failed"
-    else:
-        try:
-            print('should enter check present mod click:', mod_clicked)
-            check_present = StudentChosenModule.objects.get(user_id_id=student.user_id_id, position=mod_clicked)
-            chosen = CourseSpecialization.objects.get(course_specialization_id=student.course_specialization_id)
-            chosen_specialise = chosen.course_specialization
-            coursespecialization = CourseSpecialization.objects.filter(course_code_id=course.course_code)
-            if coursespecialization is not None:
-                special_course = CourseSpecialization.objects.get(course_specialization=chosen_specialise)
-                for special in coursespecialization:
-                    cc = special.course_specialization_id
-                    if cc == special_course.course_specialization_id:
-                        specialise_mods_id.append(SpecializationModule.objects.filter(course_specialization_id_id=cc))
-
-            chosen_mods = []
-            mod_id = []
-            chosen_mods.append(StudentChosenModule.objects.filter(user_id_id=student.user_id_id))
-            for mod in chosen_mods:
-                for moditem in mod:
-                    mod_id.append(moditem.student_module_interest_id)
-            #ade add to enable freely chosen mod editable
-            student_interest = StudentInterestSector.objects.filter(user_id_id=student.user_id_id)
-            if student_interest is not None:
-                for si in student_interest:
-                    if si.user_id_id == student.user_id_id:
-                        interest_sector.append(
-                            InterestSector.objects.get(interest_sector_id=si.personal_interest_sector_id))
-            specmod
-            for sector in interest_sector:
-                specialise_mods_id.append(SpecializationModule.objects.filter(
-                        course_specialization_id=sector.course_specialization_id_id))
-
-            for special in specialise_mods_id:
-                for item in special:
-                    specialmod = Module.objects.get(module_code=item.module_code_id)
-                    specialise_mods.append(model_to_dict(specialmod))
-            print(specialise_mods)
-            response['specialise_mods'] = specialise_mods
-            response['status'] = 'success'
-        except:
-            response['status'] = "failed"
+            except:
+                response['status'] = "failed"
 
     response['results'] = data
     return HttpResponse(json.dumps(response), content_type="application/json")
@@ -2023,8 +2006,8 @@ def uploadphoto(request):
                 file_uploaded_lower = str(file_uploaded).lower()
                 if len(token) != 0 and (file_uploaded_lower.find("jpeg") != -1 or file_uploaded_lower.find("jpg") != -1 or file_uploaded_lower.find("png") != -1):
                     # Image type is correct. Proceed to upload photo to Amazon S3
-                    ACCESS_KEY_ID = 'AKIAJ4J6L6UYAB5UV64A'
-                    ACCESS_SECRET_KEY = '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'
+                    ACCESS_KEY_ID = 'AKIAJMOKOHXPXJGLEUAA'
+                    ACCESS_SECRET_KEY = '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'
                     BUCKET_NAME = 'is480firestorm'
                     FILE_NAME = request.session['user'] + ".png";
 
